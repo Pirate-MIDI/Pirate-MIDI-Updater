@@ -1,13 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import { listen } from '@tauri-apps/api/event'
+import { useRouter } from 'next/router'
 import Image from "next/image";
-import reactLogo from "../assets/react.svg";
-import tauriLogo from "../assets/tauri.svg";
-import nextLogo from "../assets/next.svg";
+
+
+import backgroundImage from "../assets/background.svg"
+import pirateMidiImage from "../assets/piratemidi.png"
+import bridge6Image from "../assets/bridge6.svg"
+import bridge4Image from "../assets/bridge4.svg"
+import clickImage from "../assets/click.svg"
+import uloopImage from "../assets/uloop.svg"
+
+
+
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+  const router = useRouter();
+
+  // listen for devices that have arrived
+  useEffect(() => {
+    const deviceConnected = async () => {
+      await listen("device_connected", event => { router.push("/bridge") });
+    }
+    const deviceDisconnected = async () => {
+      await listen("device_disconnected", event => { router.push("/") });
+    }
+    deviceConnected().catch(console.error);
+    deviceDisconnected().catch(console.error);
+  }, [router]);
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -15,61 +38,70 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <div className="row">
-        <span className="logos">
-          <a href="https://nextjs.org" target="_blank">
-            <Image
-              width={144}
-              height={144}
-              src={nextLogo}
-              className="logo next"
-              alt="Next logo"
-            />
-          </a>
-        </span>
-        <span className="logos">
-          <a href="https://tauri.app" target="_blank">
-            <Image
-              width={144}
-              height={144}
-              src={tauriLogo}
-              className="logo tauri"
-              alt="Tauri logo"
-            />
-          </a>
-        </span>
-        <span className="logos">
-          <a href="https://reactjs.org" target="_blank">
-            <Image
-              width={144}
-              height={144}
-              src={reactLogo}
-              className="logo react"
-              alt="React logo"
-            />
-          </a>
-        </span>
-      </div>
-
-      <p>Click on the Tauri, Next, and React logos to learn more.</p>
-
-      <div className="row">
-        <div>
-          <input
-            id="greet-input"
-            onChange={(e) => setName(e.currentTarget.value)}
-            placeholder="Enter a name..."
-          />
-          <button type="button" onClick={() => greet()}>
-            Greet
-          </button>
+    <div className="m-0 pt-[20vh] h-full flex flex-col justify-between container mx-auto text-center">
+      <div>
+        <h2 className="text-xl font-semibold text-white">Connect one of the following devices to get started:</h2>
+        <div className="flex justify-center">
+          <span className="device-images">
+            <a href="https://piratemidi.com/pages/bridge-6" target="_blank">
+              <Image
+                width={288}
+                height={288}
+                src={bridge6Image}
+                className="device-image"
+                alt="Bridge6 Image"
+              />
+            </a>
+          </span>
+          <span className="device-images">
+            <a href="https://piratemidi.com/pages/bridge4" target="_blank">
+              <Image
+                width={288}
+                height={288}
+                src={bridge4Image}
+                className="device-image"
+                alt="Bridge4 Image"
+              />
+            </a>
+          </span>
+          <span className="device-images">
+            <a href="https://piratemidi.com/products/click-midi-interface-relay-switcher" target="_blank">
+              <Image
+                width={288}
+                height={288}
+                src={clickImage}
+                className="device-image"
+                alt="CLiCK Image"
+              />
+            </a>
+          </span>
+          <span className="device-images">
+            <a href="https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface" target="_blank">
+              <Image
+                width={288}
+                height={288}
+                src={uloopImage}
+                className="device-image"
+                alt="uLOOP Image"
+              />
+            </a>
+          </span>
         </div>
+
+        <p>Click a device to learn more about Pirate MIDI's products.</p>
       </div>
 
-      <p>{greetMsg}</p>
+      <span className="device-images">
+        <a href="https://piratemidi.com/" target="_blank">
+          <Image
+            width={75}
+            height={75}
+            src={pirateMidiImage}
+            className="logo"
+            alt="Pirate MIDI Logo"
+          />
+        </a>
+      </span>
     </div>
   );
 }

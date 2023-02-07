@@ -25,6 +25,8 @@ log = "0.4.17"
 crossbeam-channel = "0.5.6"
 rusb = { version = "0.9.1", features = ["vendored"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+usb_enumeration = "0.2.0"
+futures = "0.3.26"
 
 [features]
 # by default Tauri runs in production mode

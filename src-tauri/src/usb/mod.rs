@@ -1,45 +1,58 @@
-use tauri::{App, Manager};
+use futures::StreamExt;
+use log::*;
+use tauri::{AppHandle, Manager};
+use usb_enumeration::{Event as UsbEvent, UsbDevice};
 
-use crate::UsbState;
+mod watcher;
 
-use self::observer::{Event, Observer};
-
-pub mod observer;
-
-pub fn setup_usb_listener(app: &App) -> Result<(), Box<dyn std::error::Error>> {
-    // create a subscription and a moveable app handle
-    let subscription = Observer::new()?.subscribe();
-    let handle = app.app_handle();
-
-    // start in it's own thread so we don't block the main thread
-    std::thread::spawn(move || {
-        // get the state so we can update it
-        let state = handle.state::<UsbState>();
-
-        // iterate through events
-        for event in subscription.rx_event.iter() {
+pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    tauri::async_runtime::spawn(async move {
+        let mut subscription = watcher::subscribe();
+        loop {
+            let event = subscription.select_next_some().await;
             match event {
-                Event::Initial(devices) => devices.iter().for_each(|device| {
-                    if device.is_stm_device() || device.is_dfu_device() {
-                        state.devices.lock().unwrap().insert(device.clone());
-                        let _ = handle.emit_all("device_arrived", device);
+                UsbEvent::Initial(devices) => match devices
+                    .iter()
+                    .find(|device| try_get_board_info(device).is_ok())
+                {
+                    Some(device) => {
+                        debug!("device connected: {:?}", device);
+                        handle
+                            .emit_all(
+                                "device_connected",
+                                format!("VID: {}, PID: {}", device.vendor_id, device.product_id),
+                            )
+                            .unwrap();
                     }
-                }),
-                Event::Connected(device) => {
-                    if device.is_stm_device() || device.is_dfu_device() {
-                        state.devices.lock().unwrap().insert(device.clone());
-                        let _ = handle.emit_all("device_arrived", device);
+                    None => debug!("no devices connected"),
+                },
+                UsbEvent::Connect(device) => match try_get_board_info(&device) {
+                    Ok(_) => {
+                        debug!("device connected: {:?}", device);
+                        handle
+                            .emit_all(
+                                "device_connected",
+                                format!("VID: {}, PID: {}", device.vendor_id, device.product_id),
+                            )
+                            .unwrap();
                     }
-                }
-                Event::Disconnected(device) => {
-                    if device.is_stm_device() || device.is_dfu_device() {
-                        state.devices.lock().unwrap().remove(&device);
-                        let _ = handle.emit_all("device_left", device);
-                    }
+                    Err(e) => todo!(),
+                },
+                UsbEvent::Disconnect(device) => {
+                    debug!("device disconnected: {:?}", device);
+                    handle
+                        .emit_all(
+                            "device_disconnected",
+                            format!("VID: {}, PID: {}", device.vendor_id, device.product_id),
+                        )
+                        .unwrap();
                 }
             }
         }
     });
+    Ok(())
+}
 
+fn try_get_board_info(_device: &UsbDevice) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }

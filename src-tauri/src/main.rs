@@ -4,7 +4,8 @@
 )]
 
 use std::{collections::HashSet, sync::Mutex, time::Duration};
-use usb::observer::UsbDevice;
+use tauri::Manager;
+use usb_enumeration::UsbDevice;
 // use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
 use tauri_plugin_log::LogTarget;
 
@@ -39,7 +40,11 @@ fn main() {
         .menu(tauri::Menu::os_default(&context.package_info().name))
         .setup(|app| {
             // setup our global usb listener
-            usb::setup_usb_listener(app)?;
+            usb::setup_usb_listener(app.handle())?;
+
+            // update state
+            // app.
+
             Ok(())
         })
         .plugin(
@@ -49,7 +54,7 @@ fn main() {
         )
         // .menu(menu)
         .manage(UsbState {
-            ..Default::default()
+            devices: Default::default(),
         })
         .invoke_handler(tauri::generate_handler![
             crate::commands::github::fetch_releases,
