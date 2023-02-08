@@ -3,11 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-use std::{collections::HashSet, sync::Mutex, time::Duration};
-use tauri::Manager;
-use usb_enumeration::UsbDevice;
-// use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
+use std::{collections::HashSet, sync::Mutex};
 use tauri_plugin_log::LogTarget;
+use usb_enumeration::UsbDevice;
 
 // modules
 mod commands;
@@ -17,7 +15,6 @@ mod usb;
 const USB_VENDOR_ID: u16 = 0x0483;
 const USB_PRODUCT_ID: u16 = 0x5740;
 const USB_PRODUCT_DFU_ID: u16 = 0xDF11;
-const USB_TIMEOUT: Duration = Duration::from_secs(1);
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_ORG: &str = "Pirate-MIDI";
 const GITHUB_REPO: &str = "Pirate-MIDI-Features-Bug-Tracking";

@@ -1,5 +1,6 @@
-use log::info;
-use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT};
+use log::{info, trace};
+use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, USER_AGENT};
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::env::temp_dir;
 use std::fs::File;
@@ -71,11 +72,24 @@ pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
     );
     let request = reqwest::Client::new().get(url).headers(headers).send();
     match request.await {
-        Ok(res) => match res.json::<Vec<Release>>().await {
-            Ok(releases) => Ok(releases),
-            Err(err) => Err(CommandError::Http(err.to_string())),
-        },
-        Err(err) => Err(CommandError::Http(err.to_string())),
+        Ok(res) => {
+            trace!("success [raw]: {:?}", res);
+            match res.status() {
+                StatusCode::OK => match res.json::<Vec<Release>>().await {
+                    Ok(releases) => Ok(releases),
+                    Err(err) => Err(CommandError::Http(err.to_string())),
+                },
+                StatusCode::FORBIDDEN | StatusCode::TOO_MANY_REQUESTS => {
+                    log::error!("Rate limited from Github - headers: {:?}", res.headers());
+                    Err(CommandError::Http("Github rate limit hit!".to_string()))
+                }
+                _ => todo!(),
+            }
+        }
+        Err(err) => {
+            trace!("error [raw]: {:?}", err);
+            Err(CommandError::Http(err.to_string()))
+        }
     }
 }
 

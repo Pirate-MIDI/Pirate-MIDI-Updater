@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 :root {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,106 +11,30 @@
 }
 
 html, body, #__next {
-  height: 100%;
+  @apply h-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100;
 }
 
-/* .container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-} */
-
-.device-image {
-  height: 6em;
-  padding: 1.5em !important;
-  filter: drop-shadow(0 0 0.1em #eeeeee);
-}
-
-.logo, .device-image {
+.logo, .image-lift {
   will-change: filter;
   transition: 0.2s;
 }
 
-span.device-images > a > span {
+span.clickable-image > a > span, span.logo > a > span {
   overflow: inherit !important;
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 1em #de626a);
+  @apply -translate-y-1;
+  filter: drop-shadow(0 10px 1em #de626a) !important;
 }
 
-.device-image:hover {
-  filter: drop-shadow(0 0 1em #ffff);
+.image-lift:hover {
+  @apply -translate-y-2;
+  filter: drop-shadow(0 10px 1em rgb(55 65 81)) !important;
 }
 
 @media (prefers-color-scheme: dark) {
-  .device-image:hover {
-    filter: drop-shadow(0 0 1em #ffff);
-  }
-}
-/* 
-.row {
-  display: flex;
-  justify-content: center;
-} */
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-/* 
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-
-input,
-button {
-  outline: none;
-} */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    @apply bg-slate-800 text-slate-400;
-    /* color: #f6f6f6; */
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
+  .image-lift:hover {
+    filter: drop-shadow(0 10px 1em rgb(242 242 242)) !important;
   }
 }

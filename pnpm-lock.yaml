@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@heroicons/react': ^2.0.14
   '@tauri-apps/api': ^1.2.0
   '@tauri-apps/cli': ^1.2.3
   '@types/node': ^18.11.19
@@ -17,6 +18,7 @@ specifiers:
   typescript: ^4.9.5
 
 dependencies:
+  '@heroicons/react': 2.0.14_react@18.2.0
   '@tauri-apps/api': 1.2.0
   autoprefixer: 10.4.13_postcss@8.4.21
   next: 12.3.4_biqbaboplfbrettd7655fr4n2y
@@ -35,6 +37,14 @@ devDependencies:
   typescript: 4.9.5
 
 packages:
+
+  /@heroicons/react/2.0.14_react@18.2.0:
+    resolution: {integrity: sha512-eFL4if6L7woL1fUvk/jjXx4z9NxVESHHrQnEd2qKVelTFTIr/3VLGWdPb0biia9ZVe26P0JSs/xmOlRNur3SrQ==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /@next/env/12.3.4:
     resolution: {integrity: sha512-H/69Lc5Q02dq3o+dxxy5O/oNxFsZpdL6WREtOOtOM1B/weonIwDXkekr1KV5DPVPr12IHFPrMrcJQ6bgPMfn7A==}

@@ -60,11 +60,13 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
         "resizable": true,
         "title": "Ahoy! - Pirate MIDI Firmware Updater",
         "width": 800,
-        "theme": "Dark"
+        "height": 600,
+        "minWidth": 800,
+        "minHeight": 600,
+        "fileDropEnabled": true
       }
     ]
   }

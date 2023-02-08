@@ -36,7 +36,7 @@ pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::E
                             )
                             .unwrap();
                     }
-                    Err(e) => todo!(),
+                    Err(e) => error!("error connecting to board: {:?}", e),
                 },
                 UsbEvent::Disconnect(device) => {
                     debug!("device disconnected: {:?}", device);

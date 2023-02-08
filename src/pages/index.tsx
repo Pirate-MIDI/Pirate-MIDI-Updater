@@ -40,64 +40,64 @@ function App() {
   return (
     <div className="m-0 pt-[20vh] h-full flex flex-col justify-between container mx-auto text-center">
       <div>
-        <h2 className="text-xl font-semibold text-white">Connect one of the following devices to get started:</h2>
+        <h2 className="text-xl font-semibold">Connect one of the following devices to get started:</h2>
         <div className="flex justify-center">
-          <span className="device-images">
+          <span className="clickable-image">
             <a href="https://piratemidi.com/pages/bridge-6" target="_blank">
               <Image
                 width={288}
                 height={288}
                 src={bridge6Image}
-                className="device-image"
+                className="!p-4 image-lift"
                 alt="Bridge6 Image"
               />
             </a>
           </span>
-          <span className="device-images">
+          <span className="clickable-image">
             <a href="https://piratemidi.com/pages/bridge4" target="_blank">
               <Image
                 width={288}
                 height={288}
                 src={bridge4Image}
-                className="device-image"
+                className="!p-4 image-lift"
                 alt="Bridge4 Image"
               />
             </a>
           </span>
-          <span className="device-images">
+          {/* <span className="clickable-image">
             <a href="https://piratemidi.com/products/click-midi-interface-relay-switcher" target="_blank">
               <Image
                 width={288}
                 height={288}
                 src={clickImage}
-                className="device-image"
+                className="!p-4 image-lift"
                 alt="CLiCK Image"
               />
             </a>
           </span>
-          <span className="device-images">
+          <span className="clickable-image">
             <a href="https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface" target="_blank">
               <Image
                 width={288}
                 height={288}
                 src={uloopImage}
-                className="device-image"
+                className="!p-4 image-lift"
                 alt="uLOOP Image"
               />
             </a>
-          </span>
+          </span> */}
         </div>
 
         <p>Click a device to learn more about Pirate MIDI's products.</p>
       </div>
 
-      <span className="device-images">
+      <span className="clickable-image">
         <a href="https://piratemidi.com/" target="_blank">
           <Image
             width={75}
             height={75}
-            src={pirateMidiImage}
             className="logo"
+            src={pirateMidiImage}
             alt="Pirate MIDI Logo"
           />
         </a>

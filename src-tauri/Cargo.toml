@@ -18,11 +18,10 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2", features = ["shell-open"] }
 reqwest = { version = "0.11", features = ["json"] }
-dfu-libusb = "0.3.1"
+dfu-libusb = "0.4"
 pirate-midi-rs = "1.1.4"
-thiserror = "1.0.38"
-log = "0.4.17"
-crossbeam-channel = "0.5.6"
+thiserror = "1.0"
+log = "0.4"
 rusb = { version = "0.9.1", features = ["vendored"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 usb_enumeration = "0.2.0"
