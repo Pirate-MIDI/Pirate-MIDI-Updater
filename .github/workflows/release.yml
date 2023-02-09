@@ -1,0 +1,57 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # Job that allows the creation of the release
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: rust
+          package-name: release-please-action
+
+  # Job that builds the executables
+  publish-tauri:
+    name: "Build and upload release binaries"
+    needs: release_please
+    if: ${{ needs.release_please.outputs.release_created == 'true' }}
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-20.04, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: install app dependencies and build it
+        run: yarn && yarn build
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: "App v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
