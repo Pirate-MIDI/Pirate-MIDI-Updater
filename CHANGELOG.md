@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1-beta](https://github.com/beckler/ahoy-next/compare/v0.1.0-beta...v0.1.1-beta) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* release 0.1.0-beta ([c5aa272](https://github.com/beckler/ahoy-next/commit/c5aa27251e12b9ba7054ce6b948178f64f8108ac))
+* release 0.1.1-beta ([66a0ee7](https://github.com/beckler/ahoy-next/commit/66a0ee7e03e8d3048ab8c87c864d306fe4867731))
+
 ## [0.1.0-beta](https://github.com/beckler/ahoy-next/compare/v0.1.0-beta...v0.1.0-beta) (2023-02-09)
 
 
