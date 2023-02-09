@@ -1,12 +1,25 @@
 use std::path::PathBuf;
 
 use dfu_libusb::DfuLibusb;
-use log::{error, info};
+use log::{debug, error, info};
 use pirate_midi_rs::{Command, ControlArgs, PirateMIDIDevice};
+use tauri_api::dialog;
 
 use crate::{USB_PRODUCT_DFU_ID, USB_VENDOR_ID};
 
 use super::CommandError;
+
+#[tauri::command]
+pub fn prompt_local_file() -> Result<(), CommandError> {
+    match dialog::select(Some(""), Some("")) {
+        Ok(response) => match response {
+            dialog::Response::Okay(selected_path) => debug!("selected path: {}", selected_path),
+            dialog::Response::OkayMultiple(_) | dialog::Response::Cancel => todo!(),
+        },
+        Err(_) => todo!(),
+    }
+    Ok(())
+}
 
 #[tauri::command]
 pub async fn install_binary(binary_path: PathBuf) -> Result<(), CommandError> {

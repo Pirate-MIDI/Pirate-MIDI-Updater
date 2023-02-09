@@ -13,7 +13,7 @@ mod usb;
 
 // GLOBALS
 const USB_VENDOR_ID: u16 = 0x0483;
-const USB_PRODUCT_ID: u16 = 0x5740;
+// const USB_PRODUCT_ID: u16 = 0x5740;
 const USB_PRODUCT_DFU_ID: u16 = 0xDF11;
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_ORG: &str = "Pirate-MIDI";
@@ -23,12 +23,6 @@ const GITHUB_REPO: &str = "Pirate-MIDI-Features-Bug-Tracking";
 #[derive(Default)]
 pub struct UsbState {
     pub devices: Mutex<HashSet<UsbDevice>>,
-}
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
 fn main() {
@@ -58,7 +52,7 @@ fn main() {
             crate::commands::github::fetch_asset,
             crate::commands::dfu::install_binary,
             crate::commands::dfu::enter_bootloader,
-            greet
+            crate::commands::dfu::prompt_local_file,
         ])
         .run(context)
         .expect("error while running tauri application");

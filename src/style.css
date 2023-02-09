@@ -10,8 +10,21 @@
   -webkit-text-size-adjust: 100%;
 }
 
+* {
+  transition: color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
 html, body, #__next {
   @apply h-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100;
+}
+
+.markdown > * {
+  margin: 1em 0;
+}
+
+.markdown > ul {
+  list-style-type: disc;
+  margin-left: 2em;
 }
 
 .logo, .image-lift {

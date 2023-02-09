@@ -5,17 +5,18 @@ import bridge6ImageDark from "../assets/bridge6-dark.svg"
 import bridge4ImageLight from "../assets/bridge4-light.svg"
 import bridge4ImageDark from "../assets/bridge4-dark.svg"
 
-function DeviceInfo(device) {
-
+function DeviceInfoBar(device) {
     let DisplayImage = bridge6ImageLight;
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         DisplayImage = bridge6ImageDark;
     }
 
     return (
-        <div className="flex items-center justify-between p-4 m-2 border-b border-slate-600">
+        <div className="flex items-center justify-between p-4 mx-2 border-b h-1/6 border-slate-600">
             <div>
-                <p>CONNECTED - BRIDGE6</p>
+                <p>
+                    <span className="text-emerald-500">CONNECTED</span> - BRIDGE6
+                </p>
                 <p>UID: 000000000000000</p>
             </div>
             <Image
@@ -29,4 +30,4 @@ function DeviceInfo(device) {
     )
 }
 
-export default DeviceInfo;
+export default DeviceInfoBar;

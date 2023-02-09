@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import { useEffect } from "react";
 import { listen } from '@tauri-apps/api/event'
 import { useRouter } from 'next/router'
 import Image from "next/image";
-
 
 import backgroundImage from "../assets/background.svg"
 import pirateMidiImage from "../assets/piratemidi.png"
@@ -12,12 +10,7 @@ import bridge4Image from "../assets/bridge4.svg"
 import clickImage from "../assets/click.svg"
 import uloopImage from "../assets/uloop.svg"
 
-
-
-
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
   const router = useRouter();
 
   // listen for devices that have arrived
@@ -31,11 +24,6 @@ function App() {
     deviceConnected().catch(console.error);
     deviceDisconnected().catch(console.error);
   }, [router]);
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
 
   return (
     <div className="m-0 pt-[20vh] h-full flex flex-col justify-between container mx-auto text-center">
@@ -64,7 +52,7 @@ function App() {
               />
             </a>
           </span>
-          {/* <span className="clickable-image">
+          <span className="clickable-image">
             <a href="https://piratemidi.com/products/click-midi-interface-relay-switcher" target="_blank">
               <Image
                 width={288}
@@ -75,7 +63,7 @@ function App() {
               />
             </a>
           </span>
-          <span className="clickable-image">
+          {/* <span className="clickable-image">
             <a href="https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface" target="_blank">
               <Image
                 width={288}
