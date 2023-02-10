@@ -33,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.piratemidi.ahoy",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -65,8 +65,7 @@
         "width": 800,
         "height": 600,
         "minWidth": 800,
-        "minHeight": 600,
-        "fileDropEnabled": true
+        "minHeight": 600
       }
     ]
   }
