@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6-beta](https://github.com/beckler/ahoy-next/compare/v0.1.5-beta...v0.1.6-beta) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* fixing gh action - pt.6 ([0764669](https://github.com/beckler/ahoy-next/commit/0764669b609464edfa23637b822fc6cac89bdeac))
+
 ## [0.1.5-beta](https://github.com/beckler/ahoy-next/compare/v0.1.4-beta...v0.1.5-beta) (2023-02-09)
 
 
