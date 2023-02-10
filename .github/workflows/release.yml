@@ -62,7 +62,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ needs.release_please.outputs.tag_name }} # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: "Ahoy v__VERSION__"
+          releaseName: "Ahoy v${{ needs.release_please.outputs.tag_name }}"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
