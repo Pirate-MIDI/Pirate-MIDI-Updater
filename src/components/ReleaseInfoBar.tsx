@@ -20,7 +20,7 @@ import ReactMarkdown from 'react-markdown'
 // pub assets: Vec<Asset>,
 
 function ReleaseInfoBar({ release }) {
-    let published = release.published_at ? new Date(release.published_at).toDateString() : 'Unknown'
+    const published = release.published_at ? new Date(release.published_at).toDateString() : 'Unknown'
 
     const getChannel = (prerelease) => {
         return prerelease ? (

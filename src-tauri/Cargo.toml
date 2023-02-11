@@ -27,6 +27,7 @@ tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", br
 usb_enumeration = "0.2.0"
 futures = "0.3.26"
 tauri-api = "0.7.6"
+ts-rs = "6.2.1"
 
 [features]
 # by default Tauri runs in production mode

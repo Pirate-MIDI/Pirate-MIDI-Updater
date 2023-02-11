@@ -1,7 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-
+/* global require */
 const defaultTheme = require('tailwindcss/defaultTheme')
 
+/* global module */
 module.exports = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",

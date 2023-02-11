@@ -11,33 +11,31 @@ import { Release } from "../../../src-tauri/bindings/Release";
 
 
 function Bridge() {
-    const [spinner, setSpinner] = useState(true)
-    const [releases, setReleases] = useState([])
-    const [selected, setSelected] = useState(undefined)
+    // const [spinner, setSpinner] = useState(true)
+    // const [releases, setReleases] = useState([])
+    // const [selected, setSelected] = useState(undefined)
 
     // Retrieve releases from Github and select the latest release available
     useEffect(() => {
-        const retrieveReleases = async () => {
-            await invoke("fetch_releases").then((fetched: Release[]) => { // { device: "bridge6" }
-                setReleases(fetched)
-                setSelected(fetched[0])
-                setSpinner(false)
-            })
-        };
-        retrieveReleases()
+        // const retrieveReleases = async () => {
+        //     await invoke("fetch_releases").then((fetched: Release[]) => { // { device: "bridge6" }
+        //         setReleases(fetched)
+        //         setSelected(fetched[0])
+        //         setSpinner(false)
+        //     })
+        // };
+        // retrieveReleases()
     }, [])
 
-    return spinner ? (
-        <Placeholder />
-    ) : (
+    return (
         <FadeIn>
             <div className="flex h-screen overflow-hidden">
-                <ReleaseList releases={releases} selected={selected} onSelect={(release) => setSelected(release)} />
+                {/* <ReleaseList releases={releases} selected={selected} onSelect={(release) => setSelected(release)} />
                 <div className="w-3/4">
                     <DeviceInfo />
                     <ReleaseInfo release={selected} />
                     <InstallBar release={selected} />
-                </div>
+                </div> */}
             </div>
         </FadeIn>
     )

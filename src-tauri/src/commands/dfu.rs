@@ -11,12 +11,14 @@ use super::CommandError;
 
 #[tauri::command]
 pub fn prompt_local_file() -> Result<(), CommandError> {
-    match dialog::select(Some(""), Some("")) {
+    match dialog::select(Some("bin"), Some("")) {
         Ok(response) => match response {
             dialog::Response::Okay(selected_path) => debug!("selected path: {}", selected_path),
-            dialog::Response::OkayMultiple(_) | dialog::Response::Cancel => todo!(),
+            dialog::Response::OkayMultiple(_) | dialog::Response::Cancel => {
+                debug!("local file selection cancelled")
+            }
         },
-        Err(_) => todo!(),
+        Err(e) => error!("local file selection cancelled: {:?}", e),
     }
     Ok(())
 }

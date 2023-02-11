@@ -2,18 +2,20 @@ use log::{info, trace};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, USER_AGENT};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
-use std::env::temp_dir;
+use std::env::{self, temp_dir};
 use std::fs::File;
 use std::io::{copy, Cursor};
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
+use ts_rs::TS;
 
 use crate::{GITHUB_API_URL, GITHUB_ORG, GITHUB_REPO};
 
 use super::CommandError;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, TS, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
+#[ts(export)]
 pub struct Release {
     pub url: String,
     pub html_url: String,
@@ -35,8 +37,9 @@ pub struct Release {
     pub assets: Vec<Asset>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, TS, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
+#[ts(export)]
 pub struct Asset {
     pub url: String,
     pub browser_download_url: String,
@@ -58,19 +61,38 @@ struct Query {
     page: u32,
 }
 
-#[tauri::command]
-/// retrieve all available github releases
-pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
+fn build_headers() -> HeaderMap {
+    // create some headers for our fetching
     let mut headers = HeaderMap::new();
+
     // add the user-agent header required by github
     headers.insert(USER_AGENT, HeaderValue::from_static("reqwest"));
 
+    // add the authorization header if the enviroment variable GITHUB_TOKEN is defined
+    // this is good for developing, as the rate limit for unauthencated requests is 65 requests/hour
+    match env::var("GITHUB_TOKEN") {
+        Ok(token) => match HeaderValue::from_str(format!("Bearer {}", token).as_str()) {
+            Ok(val) => headers.insert(AUTHORIZATION, val),
+            Err(_) => todo!(),
+        },
+        Err(_) => todo!(),
+    };
+
+    headers
+}
+
+/// retrieve all available github releases
+pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
+    // perform the fetch
     info!("fetching releases from github...");
     let url = format!(
         "{}/repos/{}/{}/releases",
         GITHUB_API_URL, GITHUB_ORG, GITHUB_REPO
     );
-    let request = reqwest::Client::new().get(url).headers(headers).send();
+    let request = reqwest::Client::new()
+        .get(url)
+        .headers(build_headers())
+        .send();
     match request.await {
         Ok(res) => {
             trace!("success [raw]: {:?}", res);
@@ -96,15 +118,11 @@ pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
 #[tauri::command]
 // retrieve specific binary asset and save to the filesystem
 pub async fn fetch_asset(asset: Asset) -> Result<PathBuf, CommandError> {
-    let mut headers = HeaderMap::new();
-    // add the user-agent header required by github
-    headers.insert(USER_AGENT, HeaderValue::from_static("reqwest"));
-
     // download the binary
     info!("fetching asset from github: {}", asset.browser_download_url);
     let request = reqwest::Client::new()
         .get(asset.browser_download_url)
-        .headers(headers)
+        .headers(build_headers())
         .send();
 
     match request.await {

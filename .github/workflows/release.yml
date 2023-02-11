@@ -54,6 +54,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: test Rust via cargo
+        run: cargo test --all-features
+
       - name: install app dependencies and build it
         run: pnpm install && pnpm build
 
