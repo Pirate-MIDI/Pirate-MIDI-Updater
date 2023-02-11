@@ -81,6 +81,7 @@ fn build_headers() -> HeaderMap {
     headers
 }
 
+#[tauri::command]
 /// retrieve all available github releases
 pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
     // perform the fetch
