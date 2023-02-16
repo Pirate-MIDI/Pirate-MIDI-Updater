@@ -10,7 +10,6 @@
   "dependencies": {
     "@heroicons/react": "^2.0.14",
     "@tauri-apps/api": "^1.2.0",
-    "@xstate/react": "^3.1.2",
     "autoprefixer": "^10.4.13",
     "next": "^12.3.4",
     "postcss": "^8.4.21",
@@ -19,7 +18,7 @@
     "react-dom": "^18.2.0",
     "react-fade-in": "^2.0.1",
     "react-markdown": "^8.0.5",
-    "xstate": "^4.35.4"
+    "react-spinners": "^0.13.8"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.2.3",

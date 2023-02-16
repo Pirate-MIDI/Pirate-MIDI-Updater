@@ -72,7 +72,7 @@ impl ConnectedDevice {
             Some(value) => match value.as_str() {
                 "Bridge 6" => Some(ConnectedDeviceType::Bridge6),
                 "Bridge 4" => Some(ConnectedDeviceType::Bridge4),
-                "RP2040" => Some(ConnectedDeviceType::Click), // TODO: verify this with a production board
+                "Pico" => Some(ConnectedDeviceType::Click), // TODO: verify this with a production board
                 "RP2 Boot" => Some(ConnectedDeviceType::RPBootloader),
                 _ => None,
             },

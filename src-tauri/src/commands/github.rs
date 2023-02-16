@@ -9,7 +9,8 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 use ts_rs::TS;
 
-use crate::{GITHUB_API_URL, GITHUB_ORG, GITHUB_REPO};
+use crate::usb::device::ConnectedDeviceType;
+use crate::{BRIDGE_GITHUB_REPO, CLICK_GITHUB_REPO, GITHUB_API_URL, GITHUB_ORG};
 
 use super::CommandError;
 
@@ -83,13 +84,22 @@ fn build_headers() -> HeaderMap {
 
 #[tauri::command]
 /// retrieve all available github releases
-pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
+pub async fn fetch_releases(
+    device_type: ConnectedDeviceType,
+) -> Result<Vec<Release>, CommandError> {
     // perform the fetch
     info!("fetching releases from github...");
-    let url = format!(
-        "{}/repos/{}/{}/releases",
-        GITHUB_API_URL, GITHUB_ORG, GITHUB_REPO
-    );
+
+    // determine which repo to get
+    let repo = match device_type {
+        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => BRIDGE_GITHUB_REPO,
+        ConnectedDeviceType::Click => CLICK_GITHUB_REPO,
+        ConnectedDeviceType::ULoop => todo!(),
+        ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => todo!(),
+    };
+
+    // retrieve the releases!
+    let url = format!("{}/repos/{}/{}/releases", GITHUB_API_URL, GITHUB_ORG, repo);
     let request = reqwest::Client::new()
         .get(url)
         .headers(build_headers())
@@ -117,7 +127,7 @@ pub async fn fetch_releases() -> Result<Vec<Release>, CommandError> {
 }
 
 #[tauri::command]
-// retrieve specific binary asset and save to the filesystem
+/// retrieve specific binary asset and save to the filesystem
 pub async fn fetch_asset(asset: Asset) -> Result<PathBuf, CommandError> {
     // download the binary
     info!("fetching asset from github: {}", asset.browser_download_url);

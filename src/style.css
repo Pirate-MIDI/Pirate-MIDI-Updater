@@ -11,7 +11,8 @@
 }
 
 * {
-  transition: color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  //transition: color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  @apply transition;
 }
 
 html, body, #__next {
@@ -29,11 +30,18 @@ html, body, #__next {
 
 .logo, .image-lift {
   will-change: filter;
-  transition: 0.2s;
 }
 
 span.clickable-image > a > span, span.logo > a > span {
   overflow: inherit !important;
+}
+
+.device-button {
+  @apply flex items-center justify-between w-full px-4 py-2 mx-0 my-2 border rounded border-slate-400;
+}
+
+button {
+  @apply hover:shadow-lg hover:-translate-y-1 dark:hover:shadow-slate-600 active:translate-y-0 active:shadow-none
 }
 
 .logo:hover {

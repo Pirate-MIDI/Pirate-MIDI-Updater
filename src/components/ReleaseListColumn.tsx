@@ -14,15 +14,13 @@ function ReleaseListColumn({ releases, selected, onSelect }) {
     }
 
     return (
-        <div className="w-1/4 max-w-xs">
-            <ul className="items-center h-screen p-3 overflow-y-auto dark:[color-scheme:dark]">
-                {releases.map((release) => (
-                    <li key={release.id}>
-                        {createReleaseButton(release, selected)}
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <ul className="h-screen p-3 overflow-y-auto dark:[color-scheme:dark]">
+            {releases.map((release) => (
+                <li key={release.id}>
+                    {createReleaseButton(release, selected)}
+                </li>
+            ))}
+        </ul>
     )
 }
 

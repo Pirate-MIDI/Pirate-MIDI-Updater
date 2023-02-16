@@ -17,7 +17,8 @@ const USB_VENDOR_ID: u16 = 0x0483;
 const USB_PRODUCT_DFU_ID: u16 = 0xDF11;
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_ORG: &str = "Pirate-MIDI";
-const GITHUB_REPO: &str = "Pirate-MIDI-Features-Bug-Tracking";
+const BRIDGE_GITHUB_REPO: &str = "Pirate-MIDI-BridgeOS";
+const CLICK_GITHUB_REPO: &str = "Pirate-MIDI-CLiCK";
 
 // state
 #[derive(Default)]

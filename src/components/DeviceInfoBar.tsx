@@ -1,9 +1,9 @@
 import Image from 'next/image'
 
-import bridge6ImageLight from '../assets/bridge6-light.svg'
-import bridge6ImageDark from '../assets/bridge6-dark.svg'
-import bridge4ImageLight from '../assets/bridge4-light.svg'
-import bridge4ImageDark from '../assets/bridge4-dark.svg'
+import bridge6ImageLight from '../assets/logo-bridge6-light.svg'
+import bridge6ImageDark from '../assets/logo-bridge6-dark.svg'
+import bridge4ImageLight from '../assets/logo-bridge4-light.svg'
+import bridge4ImageDark from '../assets/logo-bridge4-dark.svg'
 
 function DeviceInfoBar(device) {
     let DisplayImage = bridge6ImageLight

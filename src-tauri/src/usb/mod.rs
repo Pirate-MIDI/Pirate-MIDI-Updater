@@ -5,7 +5,7 @@ use usb_enumeration::Event as UsbEvent;
 
 use self::device::ConnectedDevice;
 
-mod device;
+pub mod device;
 mod watcher;
 
 pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
