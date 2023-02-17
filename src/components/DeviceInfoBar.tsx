@@ -1,31 +1,27 @@
 import Image from 'next/image'
 
-import bridge6ImageLight from '../assets/logo-bridge6-light.svg'
-import bridge6ImageDark from '../assets/logo-bridge6-dark.svg'
-import bridge4ImageLight from '../assets/logo-bridge4-light.svg'
-import bridge4ImageDark from '../assets/logo-bridge4-dark.svg'
+import DeviceLogo from './DeviceLogo'
+import { ConnectedDevice } from '../../src-tauri/bindings/ConnectedDevice'
 
-function DeviceInfoBar(device) {
-    let DisplayImage = bridge6ImageLight
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        DisplayImage = bridge6ImageDark
-    }
-
+function DeviceInfoBar({ device }: { device: ConnectedDevice }) {
     return (
         <div className='flex items-center justify-between p-4 mx-2 border-b h-1/6 border-slate-600'>
             <div>
-                <p>
-                    <span className='text-emerald-500'>CONNECTED</span> - BRIDGE6
+                <p className='uppercase'>
+                    <span className='text-emerald-500'>CONNECTED</span> - {device.device_type}
                 </p>
-                <p>UID: 000000000000000</p>
+                <p>Serial: {device.serial_number}</p>
+                <p>UID: {device.device_details ? device.device_details.uid : 'N/A'}</p>
+
             </div>
-            <Image
-                width={90}
-                height={50}
-                src={DisplayImage}
-                className='w-12'
-                alt='Device Image'
-            />
+            <span className='mx-6 mt-1'>
+                <Image
+                    width={100}
+                    height={50}
+                    src={DeviceLogo(device)}
+                    alt={device.device_type + ' Logo'}
+                />
+            </span>
         </div>
     )
 }

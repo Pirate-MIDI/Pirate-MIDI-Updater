@@ -53,7 +53,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
                     <ReleaseList releases={releases} selected={selected} onSelect={(release) => setSelected(release)} />
                 </div>
                 <div className="w-3/4">
-                    <DeviceInfo />
+                    <DeviceInfo device={device} />
                     <ReleaseInfo release={selected} />
                     <InstallBar release={selected} />
                 </div>

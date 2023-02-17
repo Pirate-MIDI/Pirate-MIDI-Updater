@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "Ahoy",
+    "productName": "Pirate MIDI Firmware Updater",
     "version": "0.0.0"
   },
   "tauri": {
@@ -61,7 +61,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Ahoy! - Pirate MIDI Firmware Updater",
+        "title": "Pirate MIDI Firmware Updater",
         "width": 800,
         "height": 600,
         "minWidth": 800,

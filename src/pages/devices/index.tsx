@@ -1,50 +1,16 @@
 import { encode, stringify } from 'querystring'
 import Image from 'next/image';
 import FadeIn from "react-fade-in";
+import DeviceLogo from '../../components/DeviceLogo';
 import { useRouter } from 'next/router';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 
-
-import bridge6Light from '../../assets/logo-bridge6-light.svg'
-import bridge6Dark from '../../assets/logo-bridge6-dark.svg'
-import bridge4Light from '../../assets/logo-bridge4-light.svg'
-import bridge4Dark from '../../assets/logo-bridge4-dark.svg'
-import clickDark from '../../assets/logo-click-dark.svg'
-import clickLight from '../../assets/logo-click-light.svg'
-import uLoopDark from '../../assets/logo-uloop-dark.svg'
-import uLoopLight from '../../assets/logo-uloop-light.svg'
 import pirateMidiImage from '../../assets/piratemidi.png'
 
 import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevice'
 
 function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter();
-
-    function getDeviceLogo(device: ConnectedDevice) {
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            switch (device.device_type) {
-                case "Bridge6":
-                    return bridge6Dark
-                case "Bridge4":
-                    return bridge4Dark
-                case "Click":
-                    return clickDark
-                case "ULoop":
-                    return uLoopDark
-            }
-        } else {
-            switch (device.device_type) {
-                case "Bridge6":
-                    return bridge6Light
-                case "Bridge4":
-                    return bridge4Light
-                case "Click":
-                    return clickLight
-                case "ULoop":
-                    return uLoopLight
-            }
-        }
-    }
 
     return (
         <FadeIn>
@@ -74,8 +40,8 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                 <Image
                                     width={100}
                                     height={50}
-                                    src={getDeviceLogo(device)}
-                                    alt='Bridge6 Image'
+                                    src={DeviceLogo(device)}
+                                    alt={device.device_type + ' Logo'}
                                 />
                             </span>
                             <div className='flex flex-col flex-grow pl-8 mx-3 text-left border-l'>
