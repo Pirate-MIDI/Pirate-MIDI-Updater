@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0-beta](https://github.com/beckler/ahoy-next/compare/v0.1.6-beta...v0.2.0-beta) (2023-02-17)
+
+
+### Features
+
+* bootloader rewrite now works for bridge and click ([107af01](https://github.com/beckler/ahoy-next/commit/107af01208651f71fb5156585ee71ce7d2354195))
+* started down the path of getting the install state front-end aware ([bab3146](https://github.com/beckler/ahoy-next/commit/bab314672e741f8770e70a61befb0a01c0922e35))
+* ui is shaping up! ([ef39968](https://github.com/beckler/ahoy-next/commit/ef3996821748de09384bba9c8c429929ff30cc4b))
+
+
+### Bug Fixes
+
+* bad ref to library ([edcfff8](https://github.com/beckler/ahoy-next/commit/edcfff815912e3fd1f70c10ee994da1005ece940))
+* missing tauri command header ([fb2590a](https://github.com/beckler/ahoy-next/commit/fb2590a85077546332ac7c358997a5d87139fdd1))
+
 ## [0.1.6-beta](https://github.com/beckler/ahoy-next/compare/v0.1.5-beta...v0.1.6-beta) (2023-02-10)
 
 
