@@ -19,7 +19,7 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2", features = ["shell-open"] }
 reqwest = { version = "0.11", features = ["json"] }
 dfu-libusb = "0.4"
-pirate-midi-rs = "1.1.4"
+pirate-midi-rs = { path = "../../development/pirate-midi-rs"}
 thiserror = "1.0"
 log = "0.4"
 rusb = { version = "0.9.1", features = ["vendored"] }
@@ -28,6 +28,7 @@ usb_enumeration = "0.2.0"
 futures = "0.3.26"
 tauri-api = "0.7.6"
 ts-rs = "6.2.1"
+serialport = "4.2.0"
 
 [features]
 # by default Tauri runs in production mode

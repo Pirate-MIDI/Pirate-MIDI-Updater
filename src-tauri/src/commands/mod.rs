@@ -2,6 +2,7 @@ use serde::Serialize;
 
 pub mod dfu;
 pub mod github;
+pub mod install;
 
 // error object
 #[derive(thiserror::Error, Debug, Clone, PartialEq, Serialize)]

@@ -6,7 +6,7 @@ use ts_rs::TS;
 use usb_enumeration::UsbDevice;
 
 // list of the supported devices
-#[derive(Deserialize, Serialize, TS, Debug, Clone)]
+#[derive(Deserialize, Serialize, TS, Debug, Clone, PartialEq)]
 #[ts(export)]
 pub enum ConnectedDeviceType {
     Bridge6,
@@ -99,6 +99,16 @@ impl ConnectedDevice {
                 error!("unable to connect to device: {:?}", err);
                 None
             }
+        }
+    }
+
+    pub fn is_bootloader_mode(self: Self) -> bool {
+        match &self.device_type {
+            Some(device_type) => {
+                device_type == &ConnectedDeviceType::BridgeBootloader
+                    || device_type == &ConnectedDeviceType::RPBootloader
+            }
+            None => false,
         }
     }
 }

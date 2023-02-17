@@ -1,9 +1,9 @@
-import { encode, stringify } from 'querystring'
+import { invoke } from "@tauri-apps/api/tauri";
 import Image from 'next/image';
 import FadeIn from "react-fade-in";
 import DeviceLogo from '../../components/DeviceLogo';
 import { useRouter } from 'next/router';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 
 import pirateMidiImage from '../../assets/piratemidi.png'
 
@@ -11,6 +11,10 @@ import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevic
 
 function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter();
+
+    const openFilePrompt = async (device: ConnectedDevice) => {
+        await invoke("local_binary", { device: device })
+    }
 
     return (
         <FadeIn>
@@ -30,13 +34,8 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
             <ul className='w-full h-full p-0 px-4 py-2 overflow-y-auto'>
                 {devices.map((device) => (
                     <li className='w-full' key={device.id}>
-                        <button className='device-button' onClick={() => {
-                            router.push({
-                                pathname: '/releases',
-                                query: { serial_number: device.serial_number }
-                            }, '/releases')
-                        }}>
-                            <span className='mx-6 mt-1'>
+                        <div className='device-button'>
+                            <span className='mx-2 mt-1'>
                                 <Image
                                     width={100}
                                     height={50}
@@ -44,16 +43,34 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                     alt={device.device_type + ' Logo'}
                                 />
                             </span>
-                            <div className='flex flex-col flex-grow pl-8 mx-3 text-left border-l'>
+                            <div className='flex flex-col flex-grow pl-8 mx-2 text-xs text-left border-l'>
                                 <span className='text-lg font-bold'>{device.device_details ? device.device_details.deviceName : "N/A"}</span>
-                            </div>
-                            <div className='flex flex-col mx-3 text-xs text-right'>
                                 <span>UID: <strong>{device.device_details ? device.device_details.uid : "N/A"}</strong></span>
-                                <span>Firmware Version: <strong>{device.device_details ? device.device_details.firmwareVersion : "N/A"}</strong> </span>
-                                <span>Hardware Version: <strong>{device.device_details ? device.device_details.hardwareVersion : "N/A"}</strong> </span>
+                                <span>Firmware: <strong>{device.device_details ? device.device_details.firmwareVersion : "N/A"}</strong> </span>
+                                <span>Hardware: <strong>{device.device_details ? device.device_details.hardwareVersion : "N/A"}</strong> </span>
                             </div>
-                            <ArrowRightIcon className='w-5 h-5 mx-6' />
-                        </button>
+                            <div className="flex flex-col items-center">
+                                <p className="text-sm">Select an installation method:</p>
+                                <div className="flex flex-row items-center">
+                                    <button onClick={() => openFilePrompt(device)} className={`flex items-center px-4 py-2 m-2 text-xs border rounded border-blue-500 hover:bg-blue-400 hover:text-slate-800`}>
+                                        <DocumentIcon className='w-5 h-5 mr-4' />
+                                        Local File
+                                        <ArrowUpIcon className='w-5 h-5 ml-4' />
+                                    </button>
+                                    <span>|</span>
+                                    <button onClick={() => {
+                                        router.push({
+                                            pathname: '/releases',
+                                            query: { serial_number: device.serial_number }
+                                        }, '/releases')
+                                    }} className={`flex items-center px-4 py-2 m-4 text-xs border rounded hover:bg-emerald-400 border-emerald-500 hover:text-slate-800`}>
+                                        <CheckBadgeIcon className='w-5 h-5 mr-4' />
+                                        Official Release
+                                        <ArrowRightIcon className='w-5 h-5 ml-4' />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 ))}
             </ul>

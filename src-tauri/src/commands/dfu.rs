@@ -3,28 +3,20 @@ use std::path::PathBuf;
 use dfu_libusb::DfuLibusb;
 use log::{debug, error, info};
 use pirate_midi_rs::{Command, ControlArgs, PirateMIDIDevice};
-use tauri_api::dialog;
+use serialport::{available_ports, SerialPortBuilder, SerialPortType};
 
-use crate::{USB_PRODUCT_DFU_ID, USB_VENDOR_ID};
+pub const DEFAULT_USB_BAUD_RATE: u32 = 9600;
+pub const RPI_BOOTLOADER_BAUD_RATE: u32 = 1200;
+
+use crate::{
+    usb::device::ConnectedDevice, usb::device::ConnectedDeviceType, USB_PRODUCT_DFU_ID,
+    USB_VENDOR_ID,
+};
 
 use super::CommandError;
 
 #[tauri::command]
-pub fn prompt_local_file() -> Result<(), CommandError> {
-    match dialog::select(Some("bin"), Some("")) {
-        Ok(response) => match response {
-            dialog::Response::Okay(selected_path) => debug!("selected path: {}", selected_path),
-            dialog::Response::OkayMultiple(_) | dialog::Response::Cancel => {
-                debug!("local file selection cancelled")
-            }
-        },
-        Err(e) => error!("local file selection cancelled: {:?}", e),
-    }
-    Ok(())
-}
-
-#[tauri::command]
-pub async fn install_binary(binary_path: PathBuf) -> Result<(), CommandError> {
+pub async fn install_remote_binary(binary_path: PathBuf) -> Result<(), CommandError> {
     // open the binary file and get the file size
     let file = std::fs::File::open(binary_path)
         .map_err(|e| CommandError::IO(format!("could not open firmware file: {}", e)))?;
@@ -73,13 +65,68 @@ pub async fn install_binary(binary_path: PathBuf) -> Result<(), CommandError> {
     }
 }
 
-#[tauri::command]
-pub async fn enter_bootloader() -> Result<(), CommandError> {
-    match PirateMIDIDevice::new().send(Command::Control(ControlArgs::EnterBootloader)) {
-        Ok(_) => Ok(()),
-        Err(err) => Err(CommandError::Device(format!(
-            "UNABLE TO ENTER BOOTLOADER: {}",
-            err
-        ))),
+fn build_serialport_builder(
+    device: &ConnectedDevice,
+    baud_rate: u32,
+) -> Result<SerialPortBuilder, CommandError> {
+    match available_ports() {
+        Ok(ports) => {
+            for p in ports {
+                debug!("reviewing port: {:?}", p);
+                if let SerialPortType::UsbPort(usb_info) = p.port_type {
+                    if usb_info.serial_number == device.serial_number {
+                        return Ok(serialport::new(p.port_name, baud_rate));
+                    }
+                }
+            }
+            Err(CommandError::Device("unable to locate device".to_string()))
+        }
+        Err(err) => Err(CommandError::Device(err.to_string())),
+    }
+}
+
+fn enter_bridge_bootloader(device: &ConnectedDevice) -> Result<(), CommandError> {
+    match build_serialport_builder(device, DEFAULT_USB_BAUD_RATE) {
+        Ok(builder) => match PirateMIDIDevice::new()
+            .with_serialport_builder(builder)
+            .send(Command::Control(ControlArgs::EnterBootloader))
+        {
+            Ok(_) => Ok(()),
+            Err(err) => Err(CommandError::Device(format!(
+                "Unable to enter bootloader due to error: {}",
+                err
+            ))),
+        },
+        Err(err) => Err(err),
+    }
+}
+
+// the RP2040 will immidately enter bootloader mode if you connect to it with
+// a baud rate of 1200, so we're just going to quickly connect and bail
+fn enter_rpi_bootloader(device: &ConnectedDevice) -> Result<(), CommandError> {
+    match build_serialport_builder(device, RPI_BOOTLOADER_BAUD_RATE) {
+        Ok(builder) => match builder.open() {
+            Ok(_) => Ok(()),
+            Err(err) => Err(CommandError::Device(format!(
+                "Unable to open RP serial port due to error: {}",
+                err
+            ))),
+        },
+        Err(err) => Err(err),
+    }
+}
+
+pub fn enter_bootloader(device: &ConnectedDevice) -> Result<(), CommandError> {
+    match &device.device_type {
+        Some(device_type) => match device_type {
+            ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => {
+                enter_bridge_bootloader(device)
+            }
+            ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => enter_rpi_bootloader(device),
+            ConnectedDeviceType::BridgeBootloader | ConnectedDeviceType::RPBootloader => Ok(()), // already in bootloader mode
+        },
+        None => Err(CommandError::Device(
+            "Unable to enter bootloader mode for unsupported device!".to_string(),
+        )),
     }
 }

@@ -21,10 +21,10 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
     const [releases, setReleases] = useState([])
     const [selected, setSelected] = useState(undefined)
 
-    // retrieve device from router
+    // retrieve selected device from router
     const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
 
-    // Retrieve releases from Github and select the latest release available
+    // retrieve releases from Github and select the latest release available
     useEffect(() => {
         if (device) {
             const retrieveReleases = async () => {
@@ -55,7 +55,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
                 <div className="w-3/4">
                     <DeviceInfo device={device} />
                     <ReleaseInfo release={selected} />
-                    <InstallBar release={selected} />
+                    <InstallBar device={device} release={selected} />
                 </div>
             </div>
         </FadeIn>
