@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2-beta](https://github.com/beckler/ahoy-next/compare/v0.2.1-beta...v0.2.2-beta) (2023-02-17)
+
+
+### Bug Fixes
+
+* added working-dir for cargo tests ([a1e9f2e](https://github.com/beckler/ahoy-next/commit/a1e9f2e7494249326107ce5d9b3f4fcc78e9370a))
+
 ## [0.2.1-beta](https://github.com/beckler/ahoy-next/compare/v0.2.0-beta...v0.2.1-beta) (2023-02-17)
 
 
