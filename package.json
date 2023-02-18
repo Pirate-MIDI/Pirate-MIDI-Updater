@@ -1,7 +1,7 @@
 {
   "name": "ahoy",
   "private": true,
-  "version": "0.2.1-beta",
+  "version": "0.2.2-beta",
   "scripts": {
     "dev": "next dev -p 1420",
     "build": "next build && next export -o dist",
