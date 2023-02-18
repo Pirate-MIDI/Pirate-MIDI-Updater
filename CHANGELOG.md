@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3-beta](https://github.com/beckler/ahoy-next/compare/v0.2.2-beta...v0.2.3-beta) (2023-02-18)
+
+
+### Bug Fixes
+
+* updated eslint rules, and fixed errors ([7d03cda](https://github.com/beckler/ahoy-next/commit/7d03cdaa42c99fe69f1111ff610b45df72b65831))
+
 ## [0.2.2-beta](https://github.com/beckler/ahoy-next/compare/v0.2.1-beta...v0.2.2-beta) (2023-02-17)
 
 
