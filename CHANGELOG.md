@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0-beta](https://github.com/beckler/ahoy-next/compare/v0.2.3-beta...v0.3.0-beta) (2023-02-18)
+
+
+### Features
+
+* added installer listeners ([85dcc5d](https://github.com/beckler/ahoy-next/commit/85dcc5d14290c53ea9c7828b090133b867a80e53))
+
 ## [0.2.3-beta](https://github.com/beckler/ahoy-next/compare/v0.2.2-beta...v0.2.3-beta) (2023-02-18)
 
 
