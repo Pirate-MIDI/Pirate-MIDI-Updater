@@ -3,8 +3,7 @@ import { listen } from '@tauri-apps/api/event'
 import { useRouter } from 'next/router'
 import { useEffect, useState, createContext, useContext } from 'react';
 
-
-import type { ConnectedDevice } from '../../src-tauri/bindings/ConnectedDevice';
+import { ConnectedDevice } from '../../src-tauri/bindings/ConnectedDevice';
 
 import "../style.css";
 
@@ -12,9 +11,7 @@ import "../style.css";
 export default function Ahoy({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const [devices, setDevices] = useState<ConnectedDevice[]>([])
-  const [selected, setSelected] = useState<ConnectedDevice>(undefined)
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
-
 
   // listen for devices being plugged and unplugged
   useEffect(() => {
@@ -39,18 +36,38 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
       return !shouldListen ? listener() : () => { }
     }
 
+    // listen for installer to start
+    async function enteringInstaller() {
+      const listener = await listen<ConnectedDevice>('entering_installer', payload => {
+        console.log(payload)
+        shouldListen ? setIsInstalling(_ => true) : () => { }
+      })
+      return !shouldListen ? listener() : () => { }
+    }
+
+    // listen for installer to exit
+    async function exitingInstaller() {
+      const listener = await listen<ConnectedDevice>('exiting_installer', payload => {
+        console.log(payload)
+        shouldListen ? setIsInstalling(_ => false) : () => { }
+      })
+      return !shouldListen ? listener() : () => { }
+    }
+
     // route depending on state
-    router.push(devices.length > 0 ? '/devices' : '/')
+    isInstalling ? router.push('/install') : router.push(devices.length > 0 ? '/devices' : '/')
 
     // start our listeners
     deviceArrivals().catch(console.error)
     deviceDepartures().catch(console.error)
+    enteringInstaller().catch(console.error)
+    exitingInstaller().catch(console.error)
 
     // destructor
     return () => {
       shouldListen = false
     }
-  }, [devices, router])
+  }, [devices, router, isInstalling])
 
   // return main component
   return (
