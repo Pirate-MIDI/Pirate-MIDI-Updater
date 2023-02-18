@@ -36,7 +36,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
             };
             retrieveReleases()
         }
-    }, [])
+    }, [device])
 
     return spinner ? (
         <Placeholder />

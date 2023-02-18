@@ -50,7 +50,7 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
     return () => {
       shouldListen = false
     }
-  }, [devices])
+  }, [devices, router])
 
   // return main component
   return (

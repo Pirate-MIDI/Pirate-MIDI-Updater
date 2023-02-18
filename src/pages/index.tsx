@@ -13,7 +13,7 @@ function App() {
         <h2 className='text-xl font-semibold'>Connect one of the following devices to get started:</h2>
         <div className='flex justify-center'>
           <span className='clickable-image'>
-            <a href='https://piratemidi.com/pages/bridge-6' target='_blank'>
+            <a href='https://piratemidi.com/pages/bridge-6' target='_blank' rel="noreferrer">
               <Image
                 width={288}
                 height={288}
@@ -24,7 +24,7 @@ function App() {
             </a>
           </span>
           <span className='clickable-image'>
-            <a href='https://piratemidi.com/pages/bridge4' target='_blank'>
+            <a href='https://piratemidi.com/pages/bridge4' target='_blank' rel="noreferrer">
               <Image
                 width={288}
                 height={288}
@@ -35,7 +35,7 @@ function App() {
             </a>
           </span>
           <span className='clickable-image'>
-            <a href='https://piratemidi.com/products/click-midi-interface-relay-switcher' target='_blank'>
+            <a href='https://piratemidi.com/products/click-midi-interface-relay-switcher' target='_blank' rel="noreferrer">
               <Image
                 width={288}
                 height={288}
@@ -46,7 +46,7 @@ function App() {
             </a>
           </span>
           <span className='clickable-image'>
-            <a href='https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface' target='_blank'>
+            <a href='https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface' target='_blank' rel="noreferrer">
               <Image
                 width={288}
                 height={288}
@@ -58,11 +58,11 @@ function App() {
           </span>
         </div>
 
-        <p>Click a device to learn more about Pirate MIDI's products.</p>
+        <p>Click a device to learn more about Pirate MIDI&apos;s products.</p>
       </div>
 
       <span className='clickable-image'>
-        <a href='https://piratemidi.com/' target='_blank'>
+        <a href='https://piratemidi.com/' target='_blank' rel="noreferrer">
           <Image
             width={75}
             height={75}

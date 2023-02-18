@@ -39,7 +39,7 @@ function ReleaseInfoBar({ release }) {
                     <p className='text-sm text-slate-400'>Published: <strong>{published}</strong></p>
                 </div>
             </div>
-            <ReactMarkdown className='p-4 overflow-y-auto h-5/6 markdown dark:[color-scheme:dark]' children={release.body}></ReactMarkdown>
+            <ReactMarkdown className='p-4 overflow-y-auto h-5/6 markdown dark:[color-scheme:dark]'>{release.body}</ReactMarkdown>
         </div>
     ) : (
         <div className='flex items-center justify-center py-12 text-slate-400'>
