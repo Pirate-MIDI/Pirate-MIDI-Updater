@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0-beta](https://github.com/beckler/ahoy-next/compare/v0.3.0-beta...v0.4.0-beta) (2023-02-19)
+
+
+### Features
+
+* major implementation change around event handling - much more reliable! ([3728c4c](https://github.com/beckler/ahoy-next/commit/3728c4c2c5f50264017e7986371aac65a1f491f7))
+
 ## [0.3.0-beta](https://github.com/beckler/ahoy-next/compare/v0.2.3-beta...v0.3.0-beta) (2023-02-18)
 
 
