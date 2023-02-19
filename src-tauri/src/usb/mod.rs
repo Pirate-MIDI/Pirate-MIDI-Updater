@@ -1,79 +1,63 @@
-use std::{thread, time::Duration};
-
 use futures::StreamExt;
-use log::*;
+use log::debug;
 use tauri::{AppHandle, Manager};
 use usb_enumeration::Event as UsbEvent;
 
-use self::device::ConnectedDevice;
+use crate::{device::ConnectedDevice, InstallState};
 
-pub mod device;
 mod watcher;
 
-fn determine_connected_emit_event(handle: &AppHandle, device: &ConnectedDevice) {
-    match &device.device_type {
-        Some(device_type) => match device_type {
-            device::ConnectedDeviceType::Bridge6
-            | device::ConnectedDeviceType::Bridge4
-            | device::ConnectedDeviceType::Click
-            | device::ConnectedDeviceType::ULoop => {
-                handle.emit_all("device_connected", device).unwrap()
-            }
-            device::ConnectedDeviceType::BridgeBootloader
-            | device::ConnectedDeviceType::RPBootloader => {
-                handle.emit_all("installing", device).unwrap()
-            }
-        },
-        None => (), // do nothing
-    }
-}
-
 pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
-    tauri::async_runtime::spawn(async move {
-        let mut subscription = watcher::subscribe();
-        loop {
-            let event = subscription.select_next_some().await;
-            match event {
-                UsbEvent::Initial(devices) => {
-                    trace!("initial devices detected: {:?}", devices);
+    // use a new handle to add the global listener - but we only need to hear it one time
+    handle.app_handle().once_global("ready", move |_| {
+        debug!("ready event recieved");
+        // when the ready event is detected, spawn the connection emitters
+        let emitter = handle.app_handle();
+        tauri::async_runtime::spawn(async move {
+            // get the global state object
+            let state = handle.state::<InstallState>();
 
-                    // change our device type
-                    let connected_devices: Vec<ConnectedDevice> = devices
-                        .iter()
-                        .map(|device| ConnectedDevice::from(device))
-                        .collect();
+            // kick off the USB subscription
+            let mut subscription = watcher::subscribe();
+            loop {
+                let event = subscription.select_next_some().await;
+                // get the mutex
+                let mut device_guard = state.devices.lock().unwrap();
 
-                    // pause the thread for 0.5 second to give our UI a chance to get setup
-                    // alternatively, we could have our UI pull the available devices
-                    // ...but pushing is much easier
-                    thread::sleep(Duration::from_millis(500));
+                debug!("new event: {:?}", event);
 
-                    // send out events about the newly connected devices
-                    for device in connected_devices {
-                        debug!("supported device connected: {:?}", device);
-                        determine_connected_emit_event(&handle, &device);
+                // detemine what to do based on the event type
+                match event {
+                    UsbEvent::Initial(devices) => {
+                        // change our device type
+                        let mut connected_devices: Vec<ConnectedDevice> = devices
+                            .iter()
+                            .map(|device| ConnectedDevice::from(device))
+                            .filter(|device| device.device_type.is_some())
+                            .collect();
+
+                        device_guard.append(&mut connected_devices);
+                    }
+                    UsbEvent::Connect(device) => {
+                        let arriving = ConnectedDevice::from(&device);
+                        if arriving.device_type.is_some() {
+                            device_guard.push(arriving);
+                        }
+                    }
+                    UsbEvent::Disconnect(device) => {
+                        let leaving = ConnectedDevice::from(&device);
+                        if leaving.device_type.is_some() {
+                            device_guard.retain(|d| d.serial_number != leaving.serial_number);
+                        }
                     }
                 }
-                UsbEvent::Connect(device) => {
-                    trace!("new device connected: {:?}", device);
-                    let connected_device = ConnectedDevice::from(&device);
-                    if connected_device.device_type.is_some() {
-                        debug!("supported device connected: {:?}", connected_device);
-                        determine_connected_emit_event(&handle, &connected_device);
-                    }
-                }
-                UsbEvent::Disconnect(device) => {
-                    trace!("new device disconnected: {:?}", device);
-                    let disconnected_device = ConnectedDevice::from(&device);
-                    if disconnected_device.device_type.is_some() {
-                        debug!("supported device disconnected: {:?}", disconnected_device);
-                        handle
-                            .emit_all("device_disconnected", disconnected_device)
-                            .unwrap();
-                    }
-                }
+
+                // send the updated devices to the front end
+                emitter
+                    .emit_all("devices_update", device_guard.clone())
+                    .unwrap();
             }
-        }
+        });
     });
     Ok(())
 }

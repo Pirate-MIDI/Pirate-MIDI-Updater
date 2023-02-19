@@ -1,30 +1,30 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import ReleaseList from "../../components/ReleaseListColumn";
-import DeviceInfo from "../../components/DeviceInfoBar";
-import Placeholder from "../../components/Placeholder";
+import { listen } from '@tauri-apps/api/event'
 import FadeIn from "react-fade-in";
-import ReleaseInfo from "../../components/ReleaseInfoBar";
-import InstallBar from "../../components/InstallBar";
-import { Release } from "../../../src-tauri/bindings/Release";
+import { ConnectedDevice } from "../../../src-tauri/bindings/ConnectedDevice";
+import { useRouter } from "next/router";
 // import { Asset } from "../../../src-tauri/bindings/Asset";
 
 
-function Bridge() {
-    // const [spinner, setSpinner] = useState(true)
-    // const [releases, setReleases] = useState([])
+function Install({ devices }: { devices: ConnectedDevice[] }) {
+    const router = useRouter();
+    const [status, setStatus] = useState(undefined)
     // const [selected, setSelected] = useState(undefined)
 
-    // Retrieve releases from Github and select the latest release available
+    // retrieve selected device from router
+    const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
+
+    // listen for install events
     useEffect(() => {
-        // const retrieveReleases = async () => {
-        //     await invoke("fetch_releases").then((fetched: Release[]) => { // { device: "bridge6" }
-        //         setReleases(fetched)
-        //         setSelected(fetched[0])
-        //         setSpinner(false)
-        //     })
-        // };
-        // retrieveReleases()
+        const installListener = listen<ConnectedDevice[]>('devices_update', event => {
+            console.log(event)
+            setStatus(event.payload)
+        })
+
+        // destructor
+        return () => {
+            installListener.then(f => f())
+        }
     }, [])
 
     return (
@@ -36,9 +36,10 @@ function Bridge() {
                     <ReleaseInfo release={selected} />
                     <InstallBar release={selected} />
                 </div> */}
+                <span>woowoowowowowowowowo</span>
             </div>
         </FadeIn>
     )
 }
 
-export default Bridge;
+export default Install;

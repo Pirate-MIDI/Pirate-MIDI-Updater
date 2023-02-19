@@ -3,24 +3,34 @@
     windows_subsystem = "windows"
 )]
 
+use device::ConnectedDevice;
+use serde::Serialize;
 use std::{path::PathBuf, sync::Mutex};
 use tauri_plugin_log::LogTarget;
-use usb::device::ConnectedDevice;
+use ts_rs::TS;
 
 // modules
+mod bootloader;
 mod commands;
+mod device;
 mod usb;
 
-// GLOBALS
+/* GLOBAL CONSTANTS */
+// usb / device
 const USB_VENDOR_ID: u16 = 0x0483;
 // const USB_PRODUCT_ID: u16 = 0x5740;
 const USB_PRODUCT_DFU_ID: u16 = 0xDF11;
+const DEFAULT_USB_BAUD_RATE: u32 = 9600;
+const RPI_BOOTLOADER_BAUD_RATE: u32 = 1200;
+// github
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_ORG: &str = "Pirate-MIDI";
-const BRIDGE_GITHUB_REPO: &str = "Pirate-MIDI-BridgeOS";
-const CLICK_GITHUB_REPO: &str = "Pirate-MIDI-CLiCK";
+const GITHUB_BRIDGE_REPO: &str = "Pirate-MIDI-BridgeOS";
+const GITHUB_CLICK_REPO: &str = "Pirate-MIDI-CLiCK";
 
-#[derive(Default)]
+#[derive(Default, TS, Serialize, Clone)]
+#[ts(export)]
+#[serde(tag = "type")]
 pub enum InstallerState {
     #[default]
     Init,
@@ -31,10 +41,14 @@ pub enum InstallerState {
     Installing {
         device: ConnectedDevice,
         binary: PathBuf,
+        message: String,
+        progress: i32,
     },
 }
 
+#[derive(Default)]
 pub struct InstallState {
+    pub devices: Mutex<Vec<ConnectedDevice>>,
     pub current_state: Mutex<InstallerState>,
 }
 
@@ -42,19 +56,13 @@ fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
         .menu(tauri::Menu::os_default(&context.package_info().name))
-        .setup(|app| {
-            // setup our global usb listener
-            usb::setup_usb_listener(app.handle())
-        })
+        .manage(InstallState::default())
+        .setup(|app| usb::setup_usb_listener(app.handle()))
         .plugin(
             tauri_plugin_log::Builder::default()
                 .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
                 .build(),
         )
-        // .menu(menu)
-        .manage(InstallState {
-            current_state: Default::default(),
-        })
         .invoke_handler(tauri::generate_handler![
             crate::commands::github::fetch_releases,
             crate::commands::github::fetch_asset,

@@ -1,73 +1,54 @@
 import type { AppProps } from "next/app";
-import { listen } from '@tauri-apps/api/event'
+import { listen, emit } from '@tauri-apps/api/event'
 import { useRouter } from 'next/router'
 import { useEffect, useState, createContext, useContext } from 'react';
 
 import { ConnectedDevice } from '../../src-tauri/bindings/ConnectedDevice';
 
 import "../style.css";
+import { InstallerState } from "../../src-tauri/bindings/InstallerState";
 
 // This default export is required in a new `pages/_app.js` file.
 export default function Ahoy({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const [devices, setDevices] = useState<ConnectedDevice[]>([])
-  const [isInstalling, setIsInstalling] = useState<boolean>(false)
+  const [installerState, setInstallerState] = useState<InstallerState>({ type: "Init" })
 
   // listen for devices being plugged and unplugged
   useEffect(() => {
-    // flag to keep track of listeners
-    let shouldListen = true;
+    // event listeners
+    const deviceListener = listen<ConnectedDevice[]>('devices_update', event => {
+      console.log(event)
+      setDevices(event.payload)
+    })
 
-    // define arrival listener
-    async function deviceArrivals() {
-      const listener = await listen<ConnectedDevice>('device_connected', arrived => {
-        console.log(arrived)
-        shouldListen ? setDevices(current => [...current, arrived.payload]) : () => { }
-      })
-      return !shouldListen ? listener() : () => { }
-    }
+    const installerStateListener = listen<InstallerState>('installer_state', event => setInstallerState(event.payload))
 
-    // define departature listener
-    async function deviceDepartures() {
-      const listener = await listen<ConnectedDevice>('device_disconnected', leaving => {
-        console.log(leaving)
-        shouldListen ? setDevices(current => current.filter(device => device.serial_number !== leaving.payload.serial_number)) : () => { }
-      })
-      return !shouldListen ? listener() : () => { }
-    }
-
-    // listen for installer to start
-    async function enteringInstaller() {
-      const listener = await listen<ConnectedDevice>('entering_installer', payload => {
-        console.log(payload)
-        shouldListen ? setIsInstalling(_ => true) : () => { }
-      })
-      return !shouldListen ? listener() : () => { }
-    }
-
-    // listen for installer to exit
-    async function exitingInstaller() {
-      const listener = await listen<ConnectedDevice>('exiting_installer', payload => {
-        console.log(payload)
-        shouldListen ? setIsInstalling(_ => false) : () => { }
-      })
-      return !shouldListen ? listener() : () => { }
-    }
-
-    // route depending on state
-    isInstalling ? router.push('/install') : router.push(devices.length > 0 ? '/devices' : '/')
-
-    // start our listeners
-    deviceArrivals().catch(console.error)
-    deviceDepartures().catch(console.error)
-    enteringInstaller().catch(console.error)
-    exitingInstaller().catch(console.error)
+    // tell the backend we're ready for events
+    emit('ready')
 
     // destructor
     return () => {
-      shouldListen = false
+      deviceListener.then(f => f())
+      installerStateListener.then(f => f())
     }
-  }, [devices, router, isInstalling])
+  }, [])
+
+  // force routing should state change
+  useEffect(() => {
+    switch (installerState.type) {
+      case "Init":
+        router.replace(devices.length > 0 ? '/devices' : '/')
+        break;
+      case "Installing":
+      case "EnterBootloader":
+        router.replace({
+          pathname: '/install',
+          query: { serial_number: installerState.device.serial_number, binary: installerState.binary }
+        }, '/releases')
+        break;
+    }
+  }, [devices, installerState])
 
   // return main component
   return (

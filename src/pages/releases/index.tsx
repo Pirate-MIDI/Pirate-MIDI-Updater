@@ -45,7 +45,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
             <div className="flex h-screen overflow-hidden">
                 <div className='flex flex-col w-1/4 max-w-xs border-r'>
                     <div className="px-3 py-1 border-b">
-                        <button onClick={() => router.push('/devices')} className='flex items-center justify-around w-full px-4 py-2 my-2 border rounded border-slate-400'>
+                        <button onClick={() => router.back()} className='flex items-center justify-around w-full px-4 py-2 my-2 border rounded border-slate-400'>
                             <ArrowLeftIcon className="w-5 h-5" />
                             <span>Device List</span>
                         </button>

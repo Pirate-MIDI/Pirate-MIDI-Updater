@@ -9,8 +9,8 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 use ts_rs::TS;
 
-use crate::usb::device::ConnectedDeviceType;
-use crate::{BRIDGE_GITHUB_REPO, CLICK_GITHUB_REPO, GITHUB_API_URL, GITHUB_ORG};
+use crate::device::ConnectedDeviceType;
+use crate::{GITHUB_API_URL, GITHUB_BRIDGE_REPO, GITHUB_CLICK_REPO, GITHUB_ORG};
 
 use super::CommandError;
 
@@ -92,8 +92,8 @@ pub async fn fetch_releases(
 
     // determine which repo to get
     let repo = match device_type {
-        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => BRIDGE_GITHUB_REPO,
-        ConnectedDeviceType::Click => CLICK_GITHUB_REPO,
+        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => GITHUB_BRIDGE_REPO,
+        ConnectedDeviceType::Click => GITHUB_CLICK_REPO,
         ConnectedDeviceType::ULoop => todo!(),
         ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => todo!(),
     };

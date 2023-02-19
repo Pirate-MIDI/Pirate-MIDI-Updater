@@ -1,19 +1,22 @@
 use std::path::PathBuf;
 
 use log::{debug, info};
+use tauri::Manager;
 use tauri_api::dialog;
 
 use crate::{
-    usb::device::{ConnectedDevice, ConnectedDeviceType},
+    bootloader::enter_bootloader,
+    device::{ConnectedDevice, ConnectedDeviceType},
     InstallState, InstallerState,
 };
 
-use super::{dfu::enter_bootloader, CommandError};
+use super::CommandError;
 
 #[tauri::command]
 pub fn local_binary(
     device: ConnectedDevice,
     state: tauri::State<InstallState>,
+    handle: tauri::AppHandle,
 ) -> Result<(), CommandError> {
     // select the file type filter based on the device type
     let file_type = match &device.device_type {
@@ -49,6 +52,11 @@ pub fn local_binary(
                     device: device,
                     binary: PathBuf::from(file_path),
                 };
+
+                // signal to the frontend that we're entering the installer
+                handle
+                    .emit_all("installer_state", state_guard.clone())
+                    .unwrap();
                 Ok(())
             }
             Err(err) => Err(err),
