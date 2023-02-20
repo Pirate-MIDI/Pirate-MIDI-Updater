@@ -9,8 +9,8 @@ import pirateMidiImage from '../assets/piratemidi.png'
 
 function App() {
   return (
-    <FadeIn>
-      <div className='m-0 pt-[20vh] h-full flex flex-col justify-between container mx-auto text-center'>
+    <FadeIn className='w-full h-full'>
+      <div className='mt-[20vh] h-full flex flex-col justify-between container mx-auto text-center'>
         <div>
           <h2 className='text-xl font-semibold'>Connect one of the following devices to get started:</h2>
           <div className='flex justify-center'>
@@ -63,7 +63,7 @@ function App() {
           <p>Click a device to learn more about Pirate MIDI&apos;s products.</p>
         </div>
 
-        <span className='clickable-image'>
+        <span className='mt-[10vh] clickable-image'>
           <a href='https://piratemidi.com/' target='_blank' rel="noreferrer">
             <Image
               width={75}

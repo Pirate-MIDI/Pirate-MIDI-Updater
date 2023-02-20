@@ -38,11 +38,11 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
   useEffect(() => {
     switch (installerState.type) {
       case "Init":
-        router.replace(devices.length > 0 ? '/devices' : '/')
+        void router.replace(devices.length > 0 ? '/devices' : '/')
         break;
       case "Installing":
       case "EnterBootloader":
-        router.replace({
+        void router.replace({
           pathname: '/install',
           query: { serial_number: installerState.device.serial_number, binary: installerState.binary }
         }, '/releases')
