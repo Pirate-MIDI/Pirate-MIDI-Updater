@@ -5,7 +5,7 @@ use serialport::{available_ports, SerialPortBuilder, SerialPortType};
 use crate::{
     commands::CommandError,
     device::{ConnectedDevice, ConnectedDeviceType},
-    DEFAULT_USB_BAUD_RATE, RPI_BOOTLOADER_BAUD_RATE,
+    USB_DEFAULT_BAUD_RATE, USB_RPI_BOOTLOADER_BAUD_RATE,
 };
 
 fn build_serialport_builder(
@@ -29,7 +29,7 @@ fn build_serialport_builder(
 }
 
 fn enter_bridge_bootloader(device: &ConnectedDevice) -> Result<(), CommandError> {
-    match build_serialport_builder(device, DEFAULT_USB_BAUD_RATE) {
+    match build_serialport_builder(device, USB_DEFAULT_BAUD_RATE) {
         Ok(builder) => match PirateMIDIDevice::new()
             .with_serialport_builder(builder)
             .send(Command::Control(ControlArgs::EnterBootloader))
@@ -47,7 +47,7 @@ fn enter_bridge_bootloader(device: &ConnectedDevice) -> Result<(), CommandError>
 // the RP2040 will immidately enter bootloader mode if you connect to it with
 // a baud rate of 1200, so we're just going to quickly connect and bail
 fn enter_rpi_bootloader(device: &ConnectedDevice) -> Result<(), CommandError> {
-    match build_serialport_builder(device, RPI_BOOTLOADER_BAUD_RATE) {
+    match build_serialport_builder(device, USB_RPI_BOOTLOADER_BAUD_RATE) {
         Ok(builder) => match builder.open() {
             Ok(_) => Ok(()),
             Err(err) => Err(CommandError::Device(format!(

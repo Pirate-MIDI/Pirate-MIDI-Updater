@@ -29,6 +29,7 @@ futures = "0.3.26"
 tauri-api = "0.7.6"
 ts-rs = "6.2.1"
 serialport = "4.2.0"
+sysinfo = "0.28.0"
 
 [features]
 # by default Tauri runs in production mode

@@ -1,11 +1,32 @@
+use futures::channel::mpsc;
+use futures::channel::mpsc::Receiver;
+use futures::SinkExt;
 use futures::StreamExt;
 use log::debug;
 use tauri::{AppHandle, Manager};
 use usb_enumeration::Event as UsbEvent;
+use usb_enumeration::{Event, Observer};
 
+use crate::device::ConnectedDeviceType;
+use crate::install::install_rpi;
+use crate::USB_POLL_INTERVAL;
 use crate::{device::ConnectedDevice, InstallState};
 
-mod watcher;
+fn subscribe() -> Receiver<Event> {
+    let (mut sender, receiver) = mpsc::channel(0);
+
+    tauri::async_runtime::spawn(async move {
+        let subscription = Observer::new()
+            .with_poll_interval(USB_POLL_INTERVAL)
+            .subscribe();
+
+        for event in subscription.rx_event.iter() {
+            let _ = sender.send(event).await;
+        }
+    });
+
+    receiver
+}
 
 pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     // use a new handle to add the global listener - but we only need to hear it one time
@@ -18,10 +39,10 @@ pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::E
             let state = handle.state::<InstallState>();
 
             // kick off the USB subscription
-            let mut subscription = watcher::subscribe();
+            let mut subscription = subscribe();
             loop {
                 let event = subscription.select_next_some().await;
-                // get the mutex
+                // get the mutexes
                 let mut device_guard = state.devices.lock().unwrap();
 
                 debug!("new event: {:?}", event);
@@ -40,8 +61,23 @@ pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::E
                     }
                     UsbEvent::Connect(device) => {
                         let arriving = ConnectedDevice::from(&device);
-                        if arriving.device_type.is_some() {
-                            device_guard.push(arriving);
+                        match &arriving.device_type {
+                            Some(device_type) => {
+                                // if we detect a bootloaded device, enter installer
+                                debug!("new device type: {:?}", device_type);
+                                match device_type {
+                                    ConnectedDeviceType::BridgeBootloader => todo!(),
+                                    ConnectedDeviceType::RPBootloader => {
+                                        debug!("entering bootloader");
+                                        install_rpi(emitter.app_handle())
+                                    }
+                                    _ => (), // do nothing
+                                }
+
+                                // make sure to append device to our device collection
+                                device_guard.push(arriving);
+                            }
+                            None => (), // do nothing
                         }
                     }
                     UsbEvent::Disconnect(device) => {

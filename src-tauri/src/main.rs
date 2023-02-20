@@ -13,15 +13,17 @@ use ts_rs::TS;
 mod bootloader;
 mod commands;
 mod device;
+mod install;
 mod usb;
 
 /* GLOBAL CONSTANTS */
 // usb / device
+const USB_POLL_INTERVAL: u32 = 1; // in seconds
 const USB_VENDOR_ID: u16 = 0x0483;
 // const USB_PRODUCT_ID: u16 = 0x5740;
 const USB_PRODUCT_DFU_ID: u16 = 0xDF11;
-const DEFAULT_USB_BAUD_RATE: u32 = 9600;
-const RPI_BOOTLOADER_BAUD_RATE: u32 = 1200;
+const USB_DEFAULT_BAUD_RATE: u32 = 9600;
+const USB_RPI_BOOTLOADER_BAUD_RATE: u32 = 1200;
 // github
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_ORG: &str = "Pirate-MIDI";

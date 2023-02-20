@@ -102,16 +102,6 @@ impl ConnectedDevice {
             }
         }
     }
-
-    pub fn is_bootloader_mode(self: Self) -> bool {
-        match &self.device_type {
-            Some(device_type) => {
-                device_type == &ConnectedDeviceType::BridgeBootloader
-                    || device_type == &ConnectedDeviceType::RPBootloader
-            }
-            None => false,
-        }
-    }
 }
 
 impl From<&UsbDevice> for ConnectedDevice {

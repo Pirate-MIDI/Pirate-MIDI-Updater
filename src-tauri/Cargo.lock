@@ -57,6 +57,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serialport",
+ "sysinfo 0.28.0",
  "tauri",
  "tauri-api",
  "tauri-build",
@@ -2024,6 +2025,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ntapi"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc51db7b362b205941f71232e56c625156eb9a929f8cf74a428fd5bc094a4afc"
+dependencies = [
+ "winapi",
+]
+
+[[package]]
 name = "nu-ansi-term"
 version = "0.46.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3215,7 +3225,22 @@ dependencies = [
  "cfg-if 0.1.10",
  "doc-comment",
  "libc",
- "ntapi",
+ "ntapi 0.3.7",
+ "once_cell",
+ "rayon",
+ "winapi",
+]
+
+[[package]]
+name = "sysinfo"
+version = "0.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "727220a596b4ca0af040a07091e49f5c105ec8f2592674339a5bf35be592f76e"
+dependencies = [
+ "cfg-if 1.0.0",
+ "core-foundation-sys 0.8.3",
+ "libc",
+ "ntapi 0.4.0",
  "once_cell",
  "rayon",
  "winapi",
@@ -3515,7 +3540,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d8a4b0daeec9b0493cf894a918ba30e6768d6cca1cab757f802a9e78bc0bbfd"
 dependencies = [
  "anyhow",
- "sysinfo",
+ "sysinfo 0.10.5",
  "thiserror",
 ]
 
