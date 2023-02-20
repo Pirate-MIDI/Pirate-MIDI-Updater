@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1-beta](https://github.com/beckler/ahoy-next/compare/v0.4.0-beta...v0.4.1-beta) (2023-02-20)
+
+
+### Bug Fixes
+
+* attempting to fix the build ([2085151](https://github.com/beckler/ahoy-next/commit/2085151e6a5acbc2e503b4e65fe89f768881c913))
+* fixed release tag issue ([a3fefbb](https://github.com/beckler/ahoy-next/commit/a3fefbbc852aaa00073e325965666aebaed356e2))
+
 ## [0.4.0-beta](https://github.com/beckler/ahoy-next/compare/v0.3.0-beta...v0.4.0-beta) (2023-02-19)
 
 
