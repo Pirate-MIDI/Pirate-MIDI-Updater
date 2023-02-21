@@ -9,9 +9,9 @@ use usb_enumeration::UsbDevice;
 #[derive(Deserialize, Serialize, TS, Debug, Clone, PartialEq)]
 #[ts(export)]
 pub enum ConnectedDeviceType {
+    Bridge4,
     Bridge6,
     BridgeBootloader,
-    Bridge4,
     Click,
     ULoop,
     RPBootloader,
@@ -27,6 +27,16 @@ pub struct DeviceDetails {
     pub hardware_version: String,
     pub device_name: String,
     pub profile_id: String,
+}
+
+impl DeviceDetails {
+    pub fn get_hardware_revision(&self) -> Option<u32> {
+        if self.hardware_version.is_empty() {
+            None
+        } else {
+            self.hardware_version.chars().last().unwrap().to_digit(10)
+        }
+    }
 }
 
 impl From<CheckResponse> for DeviceDetails {

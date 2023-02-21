@@ -67,7 +67,6 @@ fn main() {
         )
         .invoke_handler(tauri::generate_handler![
             crate::commands::github::fetch_releases,
-            crate::commands::github::fetch_asset,
             crate::commands::install::local_binary,
             crate::commands::dfu::install_remote_binary,
         ])

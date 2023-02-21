@@ -17,11 +17,7 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
   // listen for devices being plugged and unplugged
   useEffect(() => {
     // event listeners
-    const deviceListener = listen<ConnectedDevice[]>('devices_update', event => {
-      console.log(event)
-      setDevices(event.payload)
-    })
-
+    const deviceListener = listen<ConnectedDevice[]>('devices_update', event => setDevices(event.payload))
     const installerStateListener = listen<InstallerState>('installer_state', event => setInstallerState(event.payload))
 
     // tell the backend we're ready for events

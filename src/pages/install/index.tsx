@@ -36,7 +36,9 @@ function Install({ devices }: { devices: ConnectedDevice[] }) {
                     <ReleaseInfo release={selected} />
                     <InstallBar release={selected} />
                 </div> */}
-                <span>woowoowowowowowowowo</span>
+                <div className="flex items-center justify-center text-center">
+                    <span>Installing to device! Device will restart when finished</span>
+                </div>
             </div>
         </FadeIn>
     )
