@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0-beta](https://github.com/beckler/ahoy-next/compare/v0.4.1-beta...v0.5.0-beta) (2023-02-22)
+
+
+### Features
+
+* click local install now working! started on remote install ([d1f334d](https://github.com/beckler/ahoy-next/commit/d1f334d9722499ce601f018359e94f8f5959dccc))
+* close to getting click install working ([802b80c](https://github.com/beckler/ahoy-next/commit/802b80cf113d0f4944cf03c2c48b663af6f0d59b))
+
 ## [0.4.1-beta](https://github.com/beckler/ahoy-next/compare/v0.4.0-beta...v0.4.1-beta) (2023-02-20)
 
 
