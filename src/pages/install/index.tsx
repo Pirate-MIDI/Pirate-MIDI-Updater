@@ -3,23 +3,19 @@ import { listen } from '@tauri-apps/api/event'
 import FadeIn from "react-fade-in";
 import { ConnectedDevice } from "../../../src-tauri/bindings/ConnectedDevice";
 import { useRouter } from "next/router";
-// import { Asset } from "../../../src-tauri/bindings/Asset";
+import ProgressBar from "../../components/ProgressBar";
 
 
 function Install({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter();
-    const [status, setStatus] = useState(undefined)
-    // const [selected, setSelected] = useState(undefined)
+    const [percent, setPercent] = useState<number>(0)
 
     // retrieve selected device from router
     const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
 
     // listen for install events
     useEffect(() => {
-        const installListener = listen<ConnectedDevice[]>('devices_update', event => {
-            console.log(event)
-            setStatus(event.payload)
-        })
+        const installListener = listen<number>('install_progress', event => setPercent(event.payload))
 
         // destructor
         return () => {
@@ -28,17 +24,11 @@ function Install({ devices }: { devices: ConnectedDevice[] }) {
     }, [])
 
     return (
-        <FadeIn>
-            <div className="flex h-screen overflow-hidden">
-                {/* <ReleaseList releases={releases} selected={selected} onSelect={(release) => setSelected(release)} />
-                <div className="w-3/4">
-                    <DeviceInfo />
-                    <ReleaseInfo release={selected} />
-                    <InstallBar release={selected} />
-                </div> */}
-                <div className="flex items-center justify-center text-center">
-                    <span>Installing to device! Device will restart when finished</span>
-                </div>
+        <FadeIn className="overflow-hidden">
+            <div className="flex items-center justify-center w-screen h-screen overflow-hidden">
+                {/* <span>Device will restart when finished</span> */}
+                <div className="ldBar" data-preset="stripe"></div>
+                <ProgressBar size={300} progress={percent} label={percent < 1 ? "Waiting for device..." : "Installing..."} />
             </div>
         </FadeIn>
     )

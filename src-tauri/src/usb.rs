@@ -1,16 +1,21 @@
+use fs_extra::file::TransitProcess;
 use futures::channel::mpsc;
 use futures::channel::mpsc::Receiver;
 use futures::SinkExt;
 use futures::StreamExt;
 use log::debug;
+use log::error;
+use log::info;
 use tauri::{AppHandle, Manager};
 use usb_enumeration::Event as UsbEvent;
 use usb_enumeration::{Event, Observer};
 
+use crate::device::ConnectedDevice;
 use crate::device::ConnectedDeviceType;
-use crate::install::install_rpi;
+use crate::dfu::install_rpi;
+use crate::state::InstallState;
+use crate::state::InstallerState;
 use crate::USB_POLL_INTERVAL;
-use crate::{device::ConnectedDevice, InstallState};
 
 fn subscribe() -> Receiver<Event> {
     let (mut sender, receiver) = mpsc::channel(0);
@@ -42,9 +47,6 @@ pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::E
             let mut subscription = subscribe();
             loop {
                 let event = subscription.select_next_some().await;
-                // get the mutexes
-                let mut device_guard = state.devices.lock().unwrap();
-
                 debug!("new event: {:?}", event);
 
                 // detemine what to do based on the event type
@@ -57,41 +59,68 @@ pub fn setup_usb_listener(handle: AppHandle) -> Result<(), Box<dyn std::error::E
                             .filter(|device| device.device_type.is_some())
                             .collect();
 
-                        device_guard.append(&mut connected_devices);
+                        state.add_devices(&mut connected_devices, &emitter).unwrap();
                     }
                     UsbEvent::Connect(device) => {
                         let arriving = ConnectedDevice::from(&device);
-                        match &arriving.device_type {
-                            Some(device_type) => {
-                                // if we detect a bootloaded device, enter installer
-                                debug!("new device type: {:?}", device_type);
-                                match device_type {
-                                    ConnectedDeviceType::BridgeBootloader => todo!(),
-                                    ConnectedDeviceType::RPBootloader => {
-                                        debug!("entering bootloader");
-                                        install_rpi(emitter.app_handle())
-                                    }
-                                    _ => (), // do nothing
-                                }
+                        let read_guard = state.current_state.read().unwrap();
 
-                                // make sure to append device to our device collection
-                                device_guard.push(arriving);
-                            }
-                            None => (), // do nothing
-                        }
+                        match read_guard.clone() {
+                            InstallerState::Init => match &arriving.device_type {
+                                Some(device_type) => match device_type {
+                                    ConnectedDeviceType::Bridge4 
+                                    | ConnectedDeviceType::Bridge6  
+                                    | ConnectedDeviceType::Click 
+                                    | ConnectedDeviceType::ULoop => state.add_device(arriving, &emitter).unwrap(),
+                                    _ => ()
+                                },
+                                None => (),
+                            },
+                            InstallerState::Bootloader { device, binary } => {
+                                // drop the reader so we don't deadlock in case we need to write
+                                drop(read_guard);
+
+                                // REMEMBER: the device in this step is NOT the bootloader version
+                                match device.device_type {
+                                    Some(device_type) => match device_type {
+                                        ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => todo!(),
+                                        ConnectedDeviceType::Click => {
+                                            let progress_handler =
+                                            |process_info: TransitProcess| {
+                                                handle
+                                                    .emit_all(
+                                                        "install_progress",
+                                                        ((process_info.copied_bytes as f32 / process_info.total_bytes as f32) * 100.).round() as u64,
+                                                    )
+                                                    .unwrap();
+                                            };
+
+                                            match install_rpi(binary, progress_handler) {
+                                                Ok(bytes_written) => 
+                                                {
+                                                    info!("successfully wrote {bytes_written} bytes to device");
+                                                    state.init_transition(&handle).unwrap();
+                                                },
+                                                Err(err) => error!(
+                                                    "unable to upload file to device: {:?}",
+                                                    err
+                                                ),
+                                            }
+                                        },
+                                        _ => (),
+                                    },
+                                    None => todo!(),
+                                }
+                            },
+                        };
                     }
                     UsbEvent::Disconnect(device) => {
                         let leaving = ConnectedDevice::from(&device);
                         if leaving.device_type.is_some() {
-                            device_guard.retain(|d| d.serial_number != leaving.serial_number);
+                            state.remove_device(leaving, &emitter).unwrap();
                         }
                     }
                 }
-
-                // send the updated devices to the front end
-                emitter
-                    .emit_all("devices_update", device_guard.clone())
-                    .unwrap();
             }
         });
     });

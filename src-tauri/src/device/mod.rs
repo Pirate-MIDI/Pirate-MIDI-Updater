@@ -1,9 +1,13 @@
-use log::error;
+use self::bootloader::{enter_bridge_bootloader, enter_rpi_bootloader};
+use crate::error::{Error, Result};
 
+use log::error;
 use pirate_midi_rs::{check::CheckResponse, Command, PirateMIDIDevice, Response};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 use usb_enumeration::UsbDevice;
+
+mod bootloader;
 
 // list of the supported devices
 #[derive(Deserialize, Serialize, TS, Debug, Clone, PartialEq)]
@@ -110,6 +114,21 @@ impl ConnectedDevice {
                 error!("unable to connect to device: {:?}", err);
                 None
             }
+        }
+    }
+
+    pub fn enter_bootloader(&self) -> Result<()> {
+        match &self.device_type {
+            Some(device_type) => match device_type {
+                ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => {
+                    enter_bridge_bootloader(self)
+                }
+                ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => {
+                    enter_rpi_bootloader(self)
+                }
+                ConnectedDeviceType::BridgeBootloader | ConnectedDeviceType::RPBootloader => Ok(()), // already in bootloader mode
+            },
+            None => err!(Error::Bootloader("unsupported device".to_string())),
         }
     }
 }

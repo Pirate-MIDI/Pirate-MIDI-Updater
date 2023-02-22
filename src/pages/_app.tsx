@@ -32,12 +32,12 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
 
   // force routing should state change
   useEffect(() => {
+    console.log("routing: ", installerState.type)
     switch (installerState.type) {
       case "Init":
         void router.replace(devices.length > 0 ? '/devices' : '/')
         break;
-      case "Installing":
-      case "EnterBootloader":
+      case "Bootloader":
         void router.replace({
           pathname: '/install',
           query: { serial_number: installerState.device.serial_number, binary: installerState.binary }
@@ -48,6 +48,6 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
 
   // return main component
   return (
-    <Component {...pageProps} devices={devices} />
+    <Component {...pageProps} devices={devices} className="overflow-hidden" />
   )
 }

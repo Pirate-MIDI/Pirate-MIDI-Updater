@@ -1,23 +1,19 @@
-use std::path::PathBuf;
-
 use log::{debug, info};
-use tauri::Manager;
 use tauri_api::dialog;
 
 use crate::{
-    bootloader::enter_bootloader,
     device::{ConnectedDevice, ConnectedDeviceType},
-    InstallState, InstallerState,
+    error::{Error, Result},
+    github::Asset,
+    state::InstallState,
 };
-
-use super::CommandError;
 
 #[tauri::command]
 pub fn local_binary(
     device: ConnectedDevice,
     state: tauri::State<InstallState>,
     handle: tauri::AppHandle,
-) -> Result<(), CommandError> {
+) -> Result<()> {
     // select the file type filter based on the device type
     let file_type = match &device.device_type {
         Some(device_type) => match device_type {
@@ -44,25 +40,23 @@ pub fn local_binary(
     };
 
     match local_file_path {
-        Some(file_path) => match enter_bootloader(&device) {
-            Ok(_) => {
-                // update the state to bootloading mode!
-                let mut state_guard = state.current_state.lock().unwrap();
-                *state_guard = InstallerState::EnterBootloader {
-                    device: device,
-                    binary: PathBuf::from(file_path),
-                };
+        Some(file_path) => {
+            state
+                .bootloader_transition(device, file_path.into(), &handle)
+                .unwrap();
 
-                // signal to the frontend that we're entering the installer
-                handle
-                    .emit_all("installer_state", state_guard.clone())
-                    .unwrap();
-                Ok(())
-            }
-            Err(err) => Err(err),
-        },
-        None => Err(CommandError::Device(
-            "Unable to find local file, cancelling install".to_string(),
-        )),
+            Ok(())
+        }
+        None => Err(Error::IO("Unable to find local file".to_string())),
     }
+}
+
+#[tauri::command]
+pub fn remote_binary(
+    device: ConnectedDevice,
+    asset: Asset,
+    state: tauri::State<InstallState>,
+    handle: tauri::AppHandle,
+) -> Result<()> {
+    Ok(())
 }

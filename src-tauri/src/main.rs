@@ -3,17 +3,27 @@
     windows_subsystem = "windows"
 )]
 
-use device::ConnectedDevice;
-use serde::Serialize;
-use std::{path::PathBuf, sync::Mutex};
+macro_rules! err {
+    ($kind:expr) => {
+        return Err($kind)
+    };
+
+    ($text:expr) => {
+        err!(ErrorKind::Other($text))
+    };
+}
+
+use state::InstallState;
 use tauri_plugin_log::LogTarget;
 use ts_rs::TS;
 
 // modules
-mod bootloader;
 mod commands;
 mod device;
-mod install;
+mod dfu;
+mod error;
+mod github;
+mod state;
 mod usb;
 
 /* GLOBAL CONSTANTS */
@@ -30,30 +40,6 @@ const GITHUB_ORG: &str = "Pirate-MIDI";
 const GITHUB_BRIDGE_REPO: &str = "Pirate-MIDI-BridgeOS";
 const GITHUB_CLICK_REPO: &str = "Pirate-MIDI-CLiCK";
 
-#[derive(Default, TS, Serialize, Clone)]
-#[ts(export)]
-#[serde(tag = "type")]
-pub enum InstallerState {
-    #[default]
-    Init,
-    EnterBootloader {
-        device: ConnectedDevice,
-        binary: PathBuf,
-    },
-    Installing {
-        device: ConnectedDevice,
-        binary: PathBuf,
-        message: String,
-        progress: i32,
-    },
-}
-
-#[derive(Default)]
-pub struct InstallState {
-    pub devices: Mutex<Vec<ConnectedDevice>>,
-    pub current_state: Mutex<InstallerState>,
-}
-
 fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
@@ -68,7 +54,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             crate::commands::github::fetch_releases,
             crate::commands::install::local_binary,
-            crate::commands::dfu::install_remote_binary,
+            crate::commands::install::remote_binary,
         ])
         .run(context)
         .expect("error while running tauri application");

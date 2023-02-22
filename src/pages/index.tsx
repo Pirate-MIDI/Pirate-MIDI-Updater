@@ -9,7 +9,7 @@ import pirateMidiImage from '../assets/piratemidi.png'
 
 function App() {
   return (
-    <FadeIn className='w-full h-full'>
+    <FadeIn className='w-full h-full overflow-hidden'>
       <div className='mt-[20vh] h-full flex flex-col justify-between container mx-auto text-center'>
         <div>
           <h2 className='text-xl font-semibold'>Connect one of the following devices to get started:</h2>

@@ -24,7 +24,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
     }
 
     return (
-        <FadeIn>
+        <FadeIn className="overflow-hidden">
             <div className='flex items-center py-4 mx-4 mb-2 border-b'>
                 <Image
                     width={75}
