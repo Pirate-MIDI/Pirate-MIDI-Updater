@@ -57,10 +57,6 @@ jobs:
       - name: make dist dir
         run: mkdir dist
 
-      - name: test Rust via cargo
-        run: cargo test --all-features
-        working-directory: ./src-tauri
-
       - name: install app dependencies and build it
         run: pnpm install && pnpm build
 

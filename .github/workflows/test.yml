@@ -1,39 +1,54 @@
-name: "create test build"
-on: [pull_request]
+name: Test
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-  test-tauri:
+  test:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
-
+        platform: [macos-10.15, ubuntu-20.04, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: setup node
+      - name: Node.js setup
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+          node-version: 18
 
       - name: setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 7
 
-      - name: install dependencies (ubuntu only)
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ./src-tauri
+
+      - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
-      - name: install app dependencies and build it
-        run: pnpm install && pnpm build
+      - run: pnpm install
 
-      - uses: tauri-apps/tauri-action@v0
+      - run: pnpm run build
+
+      - run: pnpm run lint
+        if: matrix.platform == 'ubuntu-20.04'
+
+      - name: Build
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
