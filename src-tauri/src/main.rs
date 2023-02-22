@@ -15,7 +15,6 @@ macro_rules! err {
 
 use state::InstallState;
 use tauri_plugin_log::LogTarget;
-use ts_rs::TS;
 
 // modules
 mod commands;

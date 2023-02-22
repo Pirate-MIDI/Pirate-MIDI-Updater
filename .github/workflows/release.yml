@@ -33,20 +33,24 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout repository
+        uses: actions/checkout@v3
 
       - name: setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+          node-version: 18
 
       - name: setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 7
+
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: install rust - stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
@@ -58,14 +62,13 @@ jobs:
         run: mkdir dist
 
       - name: install app dependencies and build it
-        run: pnpm install && pnpm build
+        run: pnpm install && pnpm run build
 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: "App v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
+          tagName: app-${{ needs.release_please.outputs.tag_name }} # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: "${{ needs.release_please.outputs.tag_name }}"
           releaseDraft: true
           prerelease: false
