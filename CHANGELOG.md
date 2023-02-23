@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0-beta](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.5.0-beta...v0.6.0-beta) (2023-02-23)
+
+
+### Features
+
+* remote install now works for click, started working on local and remote for bridge ([78d2d92](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/78d2d92358d0e3c6b38f25aed4eee77212e9e426))
+
 ## [0.5.0-beta](https://github.com/beckler/ahoy-next/compare/v0.4.1-beta...v0.5.0-beta) (2023-02-22)
 
 
