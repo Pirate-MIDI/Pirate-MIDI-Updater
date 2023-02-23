@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.8...v0.7.0) (2023-02-23)
+
+
+### Features
+
+* added apple code signing ([d884bad](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/d884bad2391ecf777cdd3b2c7c40761d7a3e7403))
+
 ## [0.6.8](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.7...v0.6.8) (2023-02-23)
 
 
