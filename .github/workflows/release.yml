@@ -32,7 +32,7 @@ jobs:
       matrix:
         include:
           - platform: macos-latest
-            delay: 1
+            delay: 0
           - platform: ubuntu-20.04
             delay: 90
           - platform: windows-latest
@@ -43,11 +43,11 @@ jobs:
       # introduce a delay due to concurrency issues with the latest.json
       - name: Sleep for ${{matrix.delay}} seconds - nix
         if: matrix.platform != 'windows-latest'
-        run: sleep ${{matrix.delay}}s
+        run: sleep ${{matrix.delay}}
         shell: bash
 
       - name: Sleep for ${{matrix.delay}} seconds - Windows
-        if: matrix.platform != 'windows-latest'
+        if: matrix.platform == 'windows-latest'
         run: Start-Sleep -s ${{matrix.delay}}
         shell: powershell
 
