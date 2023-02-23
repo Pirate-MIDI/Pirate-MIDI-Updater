@@ -64,11 +64,10 @@ jobs:
       - name: install app dependencies and build it
         run: pnpm install && pnpm run build
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: app-${{ needs.release_please.outputs.tag_name }} # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: "${{ needs.release_please.outputs.tag_name }}"
-          releaseDraft: true
-          prerelease: false
+          releaseId: ${{ github.event.release.id }}

@@ -82,18 +82,18 @@ impl Asset {
         }
     }
 
-    fn _is_not_diag(&self, device: &ConnectedDevice, device_str: &str) -> bool {
+    fn _is_not_diag(&self, device_str: &str) -> bool {
         self.name.starts_with(format!("{device_str}_v").as_str())
     }
 
     pub fn is_compatible(&self, device: &ConnectedDevice) -> bool {
         match &device.device_type {
-            // assume format: bridgeX_v1.2.1.1.bin
+            // assume format: bridgeX_v1.2.1.1.bin || device_v1.0.0.0.uf2
             // the last number in the version is the compatible revision
             Some(device_type) => match device_type {
                 ConnectedDeviceType::Bridge6 => self._is_compatible(&device, "bridge6"),
                 ConnectedDeviceType::Bridge4 => self._is_compatible(&device, "bridge4"),
-                ConnectedDeviceType::Click => self._is_not_diag(&device, "click"),
+                ConnectedDeviceType::Click => self._is_not_diag("click"),
                 _ => true, // assume it's true by default if we have a device type
             },
             None => false,
