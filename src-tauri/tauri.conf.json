@@ -62,11 +62,12 @@
       "csp": null
     },
     "updater": {
-      "active": false,
+      "active": true,
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY1QzRBODJCRkY0MTYxNQpSV1FWRnZTL2drcGNEMlBNWXMrc3U5NDlMbzR1TnFURnFOZS80cXJhMklUSGFQbHh0K0RVLzBEbgo=",
       "endpoints": [
-        "https://tauri-update-server.vercel.app/update/{{target}}/{{current_version}}"
+        "https://github.com/Pirate-MIDI/Pirate-MIDI-Firmware-Updater/releases/latest/download/latest.json",
+        "https://github.com/beckler/Pirate-MIDI-Firmware-Updater/releases/latest/download/latest.json"
       ]
     },
     "windows": [
