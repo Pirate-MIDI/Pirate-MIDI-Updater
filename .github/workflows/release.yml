@@ -30,10 +30,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        include:
+          - platform: macos-latest
+            delay: 0
+          - platform: ubuntu-20.04
+            delay: 90
+          - platform: windows-latest
+            delay: 180
 
     runs-on: ${{ matrix.platform }}
     steps:
+      # introduce a delay due to concurrency issues with the latest.json
+      - name: Sleep for ${{matrix.delay}} seconds - nix
+        if: matrix.platform != 'windows-latest'
+        run: sleep ${{matrix.delay}}s
+        shell: bash
+
+      - name: Sleep for ${{matrix.delay}} seconds - Windows
+        if: matrix.platform != 'windows-latest'
+        run: Start-Sleep -s ${{matrix.delay}}
+        shell: powershell
+
       - name: checkout repository
         uses: actions/checkout@v3
 
@@ -46,9 +63,6 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
-
-      - name: get version
-        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - name: install rust - stable
         uses: dtolnay/rust-toolchain@stable
