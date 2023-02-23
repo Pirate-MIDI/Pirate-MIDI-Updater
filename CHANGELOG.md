@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.6](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.5...v0.6.6) (2023-02-23)
+
+
+### Miscellaneous Chores
+
+* release 0.6.6 ([972cb58](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/972cb582c38fc50b04504754d59a2053c1e99bff))
+
 ## [0.6.5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.4...v0.6.5) (2023-02-23)
 
 
