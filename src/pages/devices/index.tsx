@@ -25,7 +25,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
         await invoke("local_binary", { device: selected })
     }
 
-    const openFilePrompt = async (device: ConnectedDevice) => {
+    const onLocalInstall = async (device: ConnectedDevice) => {
         // show the bridge cable diagram
         if (device.device_type === "Bridge6" || device.device_type === "Bridge4") {
             setIsOpen(true)
@@ -71,7 +71,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                             <div className="flex flex-col items-center">
                                 <p className="text-sm">Select an installation method:</p>
                                 <div className="flex flex-row items-center">
-                                    <button onClick={() => openFilePrompt(device)} className={`flex items-center px-4 py-2 m-2 text-xs border rounded border-blue-500 hover:bg-blue-400 hover:text-slate-800`}>
+                                    <button onClick={() => onLocalInstall(device)} className={`flex items-center px-4 py-2 m-2 text-xs border rounded border-blue-500 hover:bg-blue-400 hover:text-slate-800`}>
                                         <DocumentIcon className='w-5 h-5 mr-4' />
                                         Local File
                                         <ArrowUpIcon className='w-5 h-5 ml-4' />

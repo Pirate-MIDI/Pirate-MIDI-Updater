@@ -12,6 +12,7 @@ import InstallBar from "../../components/InstallBar";
 
 import type { Release } from "../../../src-tauri/bindings/Release";
 import type { ConnectedDevice } from "../../../src-tauri/bindings/ConnectedDevice";
+import BridgeModal from "../../components/BridgeModal";
 
 // import { Asset } from "../../../src-tauri/bindings/Asset";
 
@@ -20,15 +21,34 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
     const [spinner, setSpinner] = useState(true)
     const [releases, setReleases] = useState([])
     const [selected, setSelected] = useState(undefined)
+    const [isOpen, setIsOpen] = useState(false)
 
     // retrieve selected device from router
     const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
+
+    const onClose = () => {
+        setIsOpen(false)
+    }
+
+    const onAccept = async (connected: ConnectedDevice, release: Release) => {
+        onClose()
+        await invoke("remote_binary", { device: connected, release })
+    }
+
+    const onRemoteInstall = async (connected: ConnectedDevice, release: Release) => {
+        // show the bridge cable diagram
+        if (connected.device_type === "Bridge6" || connected.device_type === "Bridge4") {
+            setIsOpen(true)
+        } else {
+            await onAccept(connected, release)
+        }
+    }
 
     // retrieve releases from Github and select the latest release available
     useEffect(() => {
         if (device) {
             const retrieveReleases = async () => {
-                await invoke("fetch_releases", { deviceType: device.device_type }).then((fetched: Release[]) => {
+                await invoke("fetch_releases", { device }).then((fetched: Release[]) => {
                     setReleases(fetched)
                     setSelected(fetched[0])
                     setSpinner(false)
@@ -55,9 +75,10 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
                 <div className="w-3/4">
                     <DeviceInfo device={device} />
                     <ReleaseInfo release={selected} />
-                    <InstallBar device={device} release={selected} />
+                    <InstallBar release={selected} onClick={() => onRemoteInstall(device, selected)} />
                 </div>
             </div>
+            <BridgeModal show={isOpen} onClose={onClose} onAccept={() => onAccept(device, selected)} />
         </FadeIn>
     )
 }

@@ -2,9 +2,10 @@ use log::{debug, info};
 use tauri_api::dialog;
 
 use crate::{
+    commands::github::fetch_compatable_asset,
     device::{ConnectedDevice, ConnectedDeviceType},
     error::{Error, Result},
-    github::{Asset, Release},
+    github::Release,
     state::InstallState,
 };
 
@@ -52,11 +53,18 @@ pub fn local_binary(
 }
 
 #[tauri::command]
-pub fn remote_binary(
+pub async fn remote_binary(
     device: ConnectedDevice,
     release: Release,
-    state: tauri::State<InstallState>,
+    state: tauri::State<'_, InstallState>,
     handle: tauri::AppHandle,
 ) -> Result<()> {
-    Ok(())
+    // retrieve the remote binary
+    match fetch_compatable_asset(&device, release).await {
+        Ok(file_path) => state.bootloader_transition(device, file_path.into(), &handle),
+        Err(err) => err!(Error::Other(format!(
+            "unable to retrieve asset: {:?}",
+            err.to_string()
+        ))),
+    }
 }

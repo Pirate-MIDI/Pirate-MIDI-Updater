@@ -1,3 +1,4 @@
+use log::debug;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -46,31 +47,43 @@ pub struct Asset {
 }
 
 impl Asset {
-    // https://www.dotnetperls.com/between-before-after-rust
-    // finds the substring between the value of two strings
-    fn between<'value>(value: &'value str, a: &str, b: &str) -> &'value str {
-        // Find the two strings.
-        if let Some(pos_a) = value.find(a) {
-            if let Some(pos_b) = value.rfind(b) {
-                // Return the part in between the 2 strings.
-                let adjusted_pos_a = &pos_a + a.len();
-                if adjusted_pos_a < pos_b {
-                    return &value[adjusted_pos_a..pos_b];
-                }
+    fn after<'value>(value: &'value str, a: &str) -> &'value str {
+        // Find the string and return the part after.
+        if let Some(pos_a) = value.rfind(a) {
+            let adjusted_pos_a = pos_a + a.len();
+            if adjusted_pos_a < value.len() {
+                return &value[adjusted_pos_a..];
             }
         }
         return "";
     }
 
     fn _is_compatible(&self, device: &ConnectedDevice, device_str: &str) -> bool {
-        let version = Asset::between(&self.name, format!("{device_str}_v").as_str(), ".bin");
+        // get the version string - should be 7 characters long
+        let version = Asset::after(&self.name, format!("{device_str}_v").as_str())
+            .chars()
+            .take(7)
+            .collect::<String>();
+
+        // collect our device details and determine if the last character of the version matches our hardware revision
         match &device.device_details {
             Some(details) => match version.chars().last() {
-                Some(last) => last.to_digit(10) == details.get_hardware_revision(),
+                Some(last) => {
+                    let result = last.to_digit(10) == details.get_hardware_revision();
+                    debug!(
+                        "{} is compatible: {result} - version: {version}",
+                        &self.name
+                    );
+                    result
+                }
                 None => false,
             },
             None => false,
         }
+    }
+
+    fn _is_not_diag(&self, device: &ConnectedDevice, device_str: &str) -> bool {
+        self.name.starts_with(format!("{device_str}_v").as_str())
     }
 
     pub fn is_compatible(&self, device: &ConnectedDevice) -> bool {
@@ -80,6 +93,7 @@ impl Asset {
             Some(device_type) => match device_type {
                 ConnectedDeviceType::Bridge6 => self._is_compatible(&device, "bridge6"),
                 ConnectedDeviceType::Bridge4 => self._is_compatible(&device, "bridge4"),
+                ConnectedDeviceType::Click => self._is_not_diag(&device, "click"),
                 _ => true, // assume it's true by default if we have a device type
             },
             None => false,

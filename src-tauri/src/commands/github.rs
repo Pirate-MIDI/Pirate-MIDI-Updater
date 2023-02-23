@@ -41,48 +41,71 @@ fn build_headers() -> HeaderMap {
 
 #[tauri::command]
 /// retrieve all compatable github releases
-pub async fn fetch_releases(device_type: ConnectedDeviceType) -> Result<Vec<Release>> {
+pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
     // perform the fetch
     info!("fetching releases from github...");
 
-    // determine which repo to get
-    let repo = match device_type {
-        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => GITHUB_BRIDGE_REPO,
-        ConnectedDeviceType::Click => GITHUB_CLICK_REPO,
-        ConnectedDeviceType::ULoop => todo!(),
-        ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => todo!(),
-    };
-
-    // retrieve the releases!
-    let url = format!("{}/repos/{}/{}/releases", GITHUB_API_URL, GITHUB_ORG, repo);
-    let request = reqwest::Client::new()
-        .get(url)
-        .headers(build_headers())
-        .send();
-    match request.await {
-        Ok(res) => {
-            trace!("success [raw]: {:?}", res);
-            match res.status() {
-                StatusCode::OK => match res.json::<Vec<Release>>().await {
-                    Ok(releases) => Ok(releases),
-                    Err(err) => err!(Error::Http(err.to_string())),
-                },
-                StatusCode::FORBIDDEN | StatusCode::TOO_MANY_REQUESTS => {
-                    log::error!("Rate limited from Github - headers: {:?}", res.headers());
-                    err!(Error::Http("Github rate limit hit!".to_string()))
+    match &device.device_type {
+        Some(device_type) => {
+            // determine which repo to get
+            let repo = match device_type {
+                ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => GITHUB_BRIDGE_REPO,
+                ConnectedDeviceType::Click => GITHUB_CLICK_REPO,
+                ConnectedDeviceType::ULoop => todo!(),
+                ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => {
+                    todo!()
                 }
-                _ => todo!(),
+            };
+
+            // retrieve the releases!
+            let url = format!("{}/repos/{}/{}/releases", GITHUB_API_URL, GITHUB_ORG, repo);
+            let request = reqwest::Client::new()
+                .get(url)
+                .headers(build_headers())
+                .send();
+            match request.await {
+                Ok(res) => {
+                    trace!("success [raw]: {:?}", res);
+                    match res.status() {
+                        StatusCode::OK => match res.json::<Vec<Release>>().await {
+                            Ok(releases) => {
+                                // trace!("releases: {:?}", releases);
+                                let compatible: Vec<Release> = releases
+                                    .iter()
+                                    .filter(|release| {
+                                        // find releases compatible with our device
+                                        release
+                                            .assets
+                                            .iter()
+                                            .find(|&asset| asset.is_compatible(&device))
+                                            .is_some()
+                                    })
+                                    .cloned()
+                                    .collect::<Vec<Release>>();
+                                // trace!("compatible releases: {:?}", compatible);
+                                Ok(compatible)
+                            }
+                            Err(err) => err!(Error::Http(err.to_string())),
+                        },
+                        StatusCode::FORBIDDEN | StatusCode::TOO_MANY_REQUESTS => {
+                            log::error!("Rate limited from Github - headers: {:?}", res.headers());
+                            err!(Error::Http("Github rate limit hit!".to_string()))
+                        }
+                        _ => todo!(),
+                    }
+                }
+                Err(err) => {
+                    trace!("error [raw]: {:?}", err);
+                    Err(Error::Http(err.to_string()))
+                }
             }
         }
-        Err(err) => {
-            trace!("error [raw]: {:?}", err);
-            Err(Error::Http(err.to_string()))
-        }
+        None => err!(Error::Other("unsupported device type".to_string())),
     }
 }
 
 /// retrieve specific binary asset and save to the filesystem
-pub async fn fetch_compatable_asset(device: ConnectedDevice, release: Release) -> Result<PathBuf> {
+pub async fn fetch_compatable_asset(device: &ConnectedDevice, release: Release) -> Result<PathBuf> {
     match release.assets.iter().find(|&a| a.is_compatible(&device)) {
         Some(asset) => {
             // download the binary

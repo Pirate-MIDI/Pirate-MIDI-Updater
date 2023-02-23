@@ -56,7 +56,7 @@ function BridgeModal({ show, onClose, onAccept }) {
                                         type="button"
                                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border rounded-md hover:bg-blue-300"
                                         onClick={onAccept}>
-                                        I'm ready!
+                                        I&apos;m ready!
                                     </button>
                                 </div>
                             </Dialog.Panel>
