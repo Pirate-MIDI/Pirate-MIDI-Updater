@@ -32,7 +32,7 @@ jobs:
       matrix:
         include:
           - platform: macos-latest
-            delay: 0
+            delay: 1
           - platform: ubuntu-20.04
             delay: 90
           - platform: windows-latest
