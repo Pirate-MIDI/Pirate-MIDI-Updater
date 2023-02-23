@@ -13,7 +13,9 @@ macro_rules! err {
     };
 }
 
+use log::debug;
 use state::InstallState;
+use tauri::Manager;
 use tauri_plugin_log::LogTarget;
 
 // modules
@@ -44,7 +46,16 @@ fn main() {
     tauri::Builder::default()
         .menu(tauri::Menu::os_default(&context.package_info().name))
         .manage(InstallState::default())
-        .setup(|app| usb::setup_usb_listener(app.handle()))
+        .setup(|app| {
+            // listen for the 'ready' event - but we only need to hear it one time
+            let handle = app.app_handle();
+            app.app_handle().once_global("ready", move |_| {
+                debug!("ready event recieved");
+                usb::setup_usb_listener(handle);
+            });
+
+            Ok(())
+        })
         .plugin(
             tauri_plugin_log::Builder::default()
                 .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])

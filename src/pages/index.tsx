@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import FadeIn from "react-fade-in";
 
-import uloopIcon from '../assets/icon-uloop.svg'
-import clickIcon from '../assets/icon-click.svg'
-import bridge4Icon from '../assets/icon-bridge4.svg'
-import bridge6Icon from '../assets/icon-bridge6.svg'
+import uloopIcon from '../assets/icon-uloop.png'
+import clickIcon from '../assets/icon-click.png'
+import bridge4Icon from '../assets/icon-bridge4.png'
+import bridge6Icon from '../assets/icon-bridge6.png'
 import pirateMidiImage from '../assets/piratemidi.png'
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
               <a href='https://piratemidi.com/pages/bridge-6' target='_blank' rel="noreferrer">
                 <Image
                   width={288}
-                  height={288}
+                  height={212}
                   src={bridge6Icon}
                   className='!p-4 image-lift'
                   alt='Bridge6 Image'
@@ -29,7 +29,7 @@ function App() {
               <a href='https://piratemidi.com/pages/bridge4' target='_blank' rel="noreferrer">
                 <Image
                   width={288}
-                  height={288}
+                  height={212}
                   src={bridge4Icon}
                   className='!p-4 image-lift'
                   alt='Bridge4 Image'
@@ -40,7 +40,7 @@ function App() {
               <a href='https://piratemidi.com/products/click-midi-interface-relay-switcher' target='_blank' rel="noreferrer">
                 <Image
                   width={288}
-                  height={288}
+                  height={212}
                   src={clickIcon}
                   className='!p-4 image-lift'
                   alt='CLiCK Image'
@@ -51,7 +51,7 @@ function App() {
               <a href='https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface' target='_blank' rel="noreferrer">
                 <Image
                   width={288}
-                  height={288}
+                  height={212}
                   src={uloopIcon}
                   className='!p-4 image-lift'
                   alt='uLOOP Image'

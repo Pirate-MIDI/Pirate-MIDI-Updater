@@ -4,7 +4,7 @@ use tauri_api::dialog;
 use crate::{
     device::{ConnectedDevice, ConnectedDeviceType},
     error::{Error, Result},
-    github::Asset,
+    github::{Asset, Release},
     state::InstallState,
 };
 
@@ -54,7 +54,7 @@ pub fn local_binary(
 #[tauri::command]
 pub fn remote_binary(
     device: ConnectedDevice,
-    asset: Asset,
+    release: Release,
     state: tauri::State<InstallState>,
     handle: tauri::AppHandle,
 ) -> Result<()> {

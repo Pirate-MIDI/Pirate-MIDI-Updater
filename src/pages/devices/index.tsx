@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import Image from 'next/image';
 import FadeIn from "react-fade-in";
 import DeviceLogo from '../../components/DeviceLogo';
+import BridgeModal from '../../components/BridgeModal';
 import { useRouter } from 'next/router';
 import { DocumentIcon, ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 
@@ -11,13 +12,24 @@ import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevic
 import { useState } from "react";
 
 function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
-    const router = useRouter();
-    const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter()
+    const [isOpen, setIsOpen] = useState(false)
+    const [selected, setSelected] = useState<ConnectedDevice>(undefined)
+
+    const onClose = () => {
+        setIsOpen(false)
+    }
+
+    const onAccept = async () => {
+        onClose()
+        await invoke("local_binary", { device: selected })
+    }
 
     const openFilePrompt = async (device: ConnectedDevice) => {
         // show the bridge cable diagram
         if (device.device_type === "Bridge6" || device.device_type === "Bridge4") {
             setIsOpen(true)
+            setSelected(device)
         } else {
             await invoke("local_binary", { device: device })
         }
@@ -81,6 +93,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                     </li>
                 ))}
             </ul>
+            <BridgeModal show={isOpen} onClose={onClose} onAccept={onAccept} />
         </FadeIn>
     )
 }
