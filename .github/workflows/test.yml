@@ -43,9 +43,9 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       - run: pnpm lint
+
       - run: cargo test --all-features
-        with:
-          working-directory: ./src-tauri
+        working-directory: ./src-tauri
 
       - name: Build
         uses: tauri-apps/tauri-action@v0
