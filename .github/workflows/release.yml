@@ -54,18 +54,26 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v3
 
-      - name: setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
       - name: setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 7
 
-      - name: install rust - stable
-        uses: dtolnay/rust-toolchain@stable
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - name: install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: cache rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
@@ -77,7 +85,7 @@ jobs:
         run: mkdir dist
 
       - name: install app dependencies and build it
-        run: pnpm install && pnpm run build
+        run: pnpm install && pnpm build
 
       - uses: tauri-apps/tauri-action@dev
         env:
@@ -93,4 +101,5 @@ jobs:
         with:
           tagName: ${{ needs.release_please.outputs.tag_name }}
           releaseId: ${{ needs.release_please.outputs.release_id }}
-          args: --verbose
+          tauriScript: pnpm tauri
+          # args: --verbose

@@ -1,5 +1,8 @@
 name: Test
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -12,15 +15,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Node.js setup
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
       - name: setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 7
+
+      - name: Node.js setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
 
       - name: Rust setup
         uses: dtolnay/rust-toolchain@stable
@@ -37,11 +41,11 @@ jobs:
           sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
       - run: pnpm install
-
-      - run: pnpm run build
-
-      - run: pnpm run lint
-        if: matrix.platform == 'ubuntu-20.04'
+      - run: pnpm build
+      - run: pnpm lint
+      - run: cargo test --all-features
+        with:
+          working-directory: ./src-tauri
 
       - name: Build
         uses: tauri-apps/tauri-action@v0
