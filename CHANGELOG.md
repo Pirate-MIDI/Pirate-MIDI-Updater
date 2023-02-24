@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.7.0...v0.7.1) (2023-02-24)
+
+
+### Bug Fixes
+
+* github actions ([8007360](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/8007360c882c4f1a953ec10b0b3a6adbd92d6317))
+
 ## [0.7.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.8...v0.7.0) (2023-02-23)
 
 
