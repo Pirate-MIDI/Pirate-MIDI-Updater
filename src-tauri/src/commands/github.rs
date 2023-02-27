@@ -1,4 +1,4 @@
-use log::{info, trace};
+use log::{error, info, trace};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, USER_AGENT};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -30,10 +30,12 @@ fn build_headers() -> HeaderMap {
     // this is good for developing, as the rate limit for unauthencated requests is 65 requests/hour
     match env::var("GITHUB_TOKEN") {
         Ok(token) => match HeaderValue::from_str(format!("Bearer {}", token).as_str()) {
-            Ok(val) => headers.insert(AUTHORIZATION, val),
-            Err(_) => todo!(),
+            Ok(val) => _ = headers.insert(AUTHORIZATION, val),
+            Err(err) => error!("GITHUB_TOKEN not set correctly - {err}: {token}"),
         },
-        Err(_) => todo!(),
+        Err(_) => {
+            info!("environment variable GITHUB_TOKEN is not set")
+        }
     };
 
     headers
