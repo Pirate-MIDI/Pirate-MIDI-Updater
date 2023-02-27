@@ -24,7 +24,7 @@ thiserror = "1.0"
 log = "0.4"
 rusb = { version = "0.9.1", features = ["vendored"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
-usb_enumeration = "0.2.0"
+usb_enumeration = { git = "https://github.com/beckler/usb_enumeration" }
 futures = "0.3.26"
 tauri-api = "0.7.6"
 ts-rs = "6.2.1"

@@ -4008,8 +4008,7 @@ dependencies = [
 [[package]]
 name = "usb_enumeration"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ace7872a3ee4ee39e793d0a839ace4d59724c92bb1055e0ffdfd2dfcbdbe8bf"
+source = "git+https://github.com/beckler/usb_enumeration#70f3cd9cf3c4f79865735c0aeec4ad1adf179b0e"
 dependencies = [
  "core-foundation 0.6.4",
  "crossbeam",
