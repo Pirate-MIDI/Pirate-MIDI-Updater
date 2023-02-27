@@ -55,7 +55,15 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "wix": {
+          "fragmentPaths": [
+            "wix/driver.wxs"
+          ],
+          "componentRefs": [
+            "InstallDrivers"
+          ]
+        }
       }
     },
     "security": {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+        <Component Id='InstallDrivers' Guid='*'>
+            <File Id='DriverInstaller'
+                Name='InstallDriver.exe'
+                DiskId='1'
+                Source='src-tauri\wix\drivers\InstallDriver.exe'
+                KeyPath='yes'/>
+        </Component>
+    </DirectoryRef>
+
+    <CustomAction Id="PostInstall"
+            FileKey="DriverInstaller"
+            Execute="deferred"
+            Return="asyncNoWait"
+            Impersonate="no"
+            ExeCommand="" />
+
+    <InstallExecuteSequence>
+        <Custom Action="PostInstall" Before="InstallFinalize">NOT Installed</Custom>
+    </InstallExecuteSequence>
+  </Fragment>
+</Wix>

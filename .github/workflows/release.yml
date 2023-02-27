@@ -41,12 +41,12 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       # introduce a delay due to concurrency issues with the latest.json
-      - name: Sleep for ${{matrix.delay}} seconds - nix
+      - name: unix - sleep for ${{matrix.delay}} seconds
         if: matrix.platform != 'windows-latest'
         run: sleep ${{matrix.delay}}
         shell: bash
 
-      - name: Sleep for ${{matrix.delay}} seconds - Windows
+      - name: windows - sleep for ${{matrix.delay}} seconds
         if: matrix.platform == 'windows-latest'
         run: Start-Sleep -s ${{matrix.delay}}
         shell: powershell
@@ -86,6 +86,12 @@ jobs:
 
       - name: install app dependencies and build it
         run: pnpm install && pnpm build
+
+      - name: windows - build driver installer
+        if: matrix.platform == 'windows-latest'
+        run: re-pack-files
+        shell: cmd
+        working-directory: ${{ github.action_path }}/src-tauri/wix/drivers
 
       - uses: tauri-apps/tauri-action@dev
         env:
