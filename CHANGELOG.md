@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.7.2...v0.8.0) (2023-02-28)
+
+
+### Features
+
+* added windows support with updated drivers ([4c0101c](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/4c0101c2845d625e3ce4dcd21e8863324c49adc4))
+* updated wix installer to include driver installer ([27e7823](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/27e782397fca481aeb7db4a2c9f2c0c4df0b748f))
+
+
+### Bug Fixes
+
+* github actions - updated testing script ([cd1b88c](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/cd1b88c6419fabd62f201d5cfe7a80e031074f37))
+
 ## [0.7.2](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.7.1...v0.7.2) (2023-02-24)
 
 
