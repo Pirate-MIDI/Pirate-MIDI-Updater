@@ -6,7 +6,7 @@
             <File Id='DriverInstaller'
                 Name='InstallDriver.exe'
                 DiskId='1'
-                Source='src-tauri\wix\drivers\InstallDriver.exe'
+                Source='..\drivers\InstallDriver.exe'
                 KeyPath='yes'/>
         </Component>
     </DirectoryRef>

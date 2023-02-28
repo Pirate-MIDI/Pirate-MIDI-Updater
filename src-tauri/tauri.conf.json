@@ -49,7 +49,9 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": [
+        "wix/drivers"
+      ],
       "shortDescription": "",
       "targets": "all",
       "windows": {
@@ -58,7 +60,7 @@
         "timestampUrl": "",
         "wix": {
           "fragmentPaths": [
-            "wix/driver.wxs"
+            "wix/drivers.wxs"
           ],
           "componentRefs": [
             "InstallDrivers"
