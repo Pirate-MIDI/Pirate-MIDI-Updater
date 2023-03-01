@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.3](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.2...v0.8.3) (2023-03-01)
+
+
+### Bug Fixes
+
+* change github action rust toolchain ([3beb987](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/3beb987138556d964a9819d86dcbeb73753e317b))
+* github actions ([0f1a0a3](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/0f1a0a36398d16eae9dfe22645cc25d1a553939d))
+* github actions again ([8fbc70f](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/8fbc70f7c7b8d193c09b7a9c33f6dfedb335e3af))
+* migrated from pnpm to npm ([304e867](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/304e8679cd99a3c429161bee9f309b49a4e37df0))
+* migrated from pnpm to npm - script issue ([b8a974c](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/b8a974ccda4d62d30914d7e8967a88061ec91a84))
+* removed tauri-api ([5d7a307](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/5d7a3078da191581167cefbfc836f3e48521cb35))
+* testing github action ([e028e6d](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/e028e6da3c8b04f7343da167cb05b3124832a7e2))
+* updated gh action - rust cache ([9471d29](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/9471d2945d62cece2ff50ac2a3578fa427922ebe))
+
 ## [0.8.2](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.1...v0.8.2) (2023-03-01)
 
 
