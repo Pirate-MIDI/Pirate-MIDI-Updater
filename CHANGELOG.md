@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.4...v0.8.5) (2023-03-01)
+
+
+### Bug Fixes
+
+* fixed file path for macos specific actions ([980c903](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/980c903ee1bd8e585e7f0b0b022bc3051502d71b))
+
 ## [0.8.4](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.3...v0.8.4) (2023-03-01)
 
 
