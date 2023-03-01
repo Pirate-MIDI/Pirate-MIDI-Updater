@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.5...v0.9.0) (2023-03-01)
+
+
+### Features
+
+* bridge dfu update is now supported ([d26cacd](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/d26cacd9d0b7eb261e20e8adebab53a2205e41aa))
+
+
+### Bug Fixes
+
+* attempting to fix the updater again ([139da4b](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/139da4b0f02e5c74f718f1a72a37e81674dc0c9c))
+
 ## [0.8.5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.4...v0.8.5) (2023-03-01)
 
 
