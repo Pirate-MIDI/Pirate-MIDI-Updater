@@ -87,6 +87,12 @@ jobs:
       - name: install app dependencies and build it
         run: pnpm install && pnpm build
 
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          workspaces: src-tauri
+
       - name: windows - build driver installer
         if: matrix.platform == 'windows-latest'
         run: re-pack-files

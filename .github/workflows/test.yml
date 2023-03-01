@@ -20,21 +20,23 @@ jobs:
         with:
           version: 7
 
-      - name: Node.js setup
+      - name: node.js setup
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: pnpm
 
-      - name: Rust setup
-        uses: dtolnay/rust-toolchain@stable
+      - name: install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v1
         with:
           working-directory: src-tauri
 
-      - name: Install dependencies (ubuntu only)
+      - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
@@ -43,6 +45,12 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       - run: pnpm lint
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          workspaces: src-tauri
 
       - name: Build
         uses: tauri-apps/tauri-action@v0
