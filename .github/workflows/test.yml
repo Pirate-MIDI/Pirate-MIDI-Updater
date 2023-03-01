@@ -50,7 +50,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-          workspaces: src-tauri
+          args: --manifest-path src-tauri/Cargo.toml
 
       - name: Build
         uses: tauri-apps/tauri-action@v0
