@@ -21,9 +21,10 @@ If you're concerned, or believe you may have bricked your device, please read th
 You can build this locally if you desire! Here's what you'll need:
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Node](https://nodejs.org/en/)
-- (Optional)[pnpm](https://pnpm.io/)
 
-Once you have it all setup, you can run `npm tauri dev` or `pnpm tauri dev`.
+Once you have it all setup, run:
+- `npm install --legacy-peer-deps`
+- `npm run tauri dev`
 
 ### Recommended IDE Setup
 

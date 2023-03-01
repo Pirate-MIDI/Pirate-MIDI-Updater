@@ -3,53 +3,43 @@ on:
   push:
     branches:
       - main
-
+env:
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-10.15, ubuntu-20.04, windows-latest]
+        platform: [macos-latest, ubuntu-20.04, windows-latest]
+
     runs-on: ${{ matrix.platform }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-
+      - uses: actions/checkout@v3
       - name: node.js setup
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: pnpm
-
-      - name: install rust stable
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Rust Cache
+      - name: setup rust cache
         uses: Swatinem/rust-cache@v1
         with:
+          prefix-key: "ahoy"
+          shared-key: "tauri-release"
           working-directory: src-tauri
-
+      - name: install rust stable
+        uses: dtolnay/rust-toolchain@stable
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
-
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm lint
+      - run: npm install --legacy-peer-deps && npm build
+      - run: npm run lint
       - run: cargo check
         working-directory: src-tauri
-
       - name: Build
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
         with:
-          args: --verbose
+          args: -v -- -v

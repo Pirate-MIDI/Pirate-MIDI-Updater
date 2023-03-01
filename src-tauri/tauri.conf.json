@@ -78,7 +78,10 @@
       "endpoints": [
         "https://github.com/Pirate-MIDI/Pirate-MIDI-Firmware-Updater/releases/latest/download/latest.json",
         "https://github.com/beckler/Pirate-MIDI-Firmware-Updater/releases/latest/download/latest.json"
-      ]
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     },
     "windows": [
       {

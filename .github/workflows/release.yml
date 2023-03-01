@@ -3,7 +3,9 @@ on:
   push:
     branches:
       - main
-
+env:
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 jobs:
   # Job that allows the creation of the release
   release_please:
@@ -30,48 +32,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - platform: macos-latest
-            delay: 0
-          - platform: ubuntu-20.04
-            delay: 90
-          - platform: windows-latest
-            delay: 180
+        platform: [macos-latest, ubuntu-20.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
-      # introduce a delay due to concurrency issues with the latest.json
-      - name: unix - sleep for ${{matrix.delay}} seconds
-        if: matrix.platform != 'windows-latest'
-        run: sleep ${{matrix.delay}}
-        shell: bash
-
-      - name: windows - sleep for ${{matrix.delay}} seconds
-        if: matrix.platform == 'windows-latest'
-        run: Start-Sleep -s ${{matrix.delay}}
-        shell: powershell
-
       - name: checkout repository
         uses: actions/checkout@v3
-
-      - name: setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
 
       - name: setup node
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: pnpm
+
+      - name: setup rust cache
+        uses: Swatinem/rust-cache@v1
+        with:
+          prefix-key: "ahoy"
+          shared-key: "tauri-release"
+          working-directory: src-tauri
 
       - name: install rust stable
         uses: dtolnay/rust-toolchain@stable
-
-      - name: cache rust dependencies
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
@@ -83,7 +64,7 @@ jobs:
         run: mkdir dist
 
       - name: install app dependencies and build it
-        run: pnpm install && pnpm build
+        run: npm install --legacy-peer-deps && npm build
 
       - name: run cargo check
         run: cargo check
@@ -95,12 +76,23 @@ jobs:
         shell: cmd
         working-directory: src-tauri\wix\drivers
 
+      - name: Set providerShortName in tauri.conf.json
+        uses: jossef/action-set-json-field@v2
+        with:
+          file: apps/desktop/src-tauri/tauri.conf.json
+          field: tauri.bundle.macOS.providerShortName
+          value: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Set signingIdentity in tauri.conf.json
+        uses: jossef/action-set-json-field@v2
+        with:
+          file: apps/desktop/src-tauri/tauri.conf.json
+          field: tauri.bundle.macOS.signingIdentity
+          value: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_CONFIG: "src-tauri/tauri.conf.json"
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
@@ -110,5 +102,4 @@ jobs:
         with:
           tagName: ${{ needs.release_please.outputs.tag_name }}
           releaseId: ${{ needs.release_please.outputs.release_id }}
-          tauriScript: pnpm tauri
-          # args: --verbose
+          args: -v -- -v
