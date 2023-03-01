@@ -1,6 +1,10 @@
-use crate::error::{Error, Result};
+use crate::{
+    error::{Error, Result},
+    USB_BRIDGE_PRODUCT_DFU_ID, USB_BRIDGE_VENDOR_ID,
+};
+use dfu_libusb::DfuLibusb;
 use fs_extra::file::{copy_with_progress, CopyOptions, TransitProcess};
-use log::debug;
+use log::{debug, error};
 use std::{path::PathBuf, time::Duration};
 use sysinfo::{DiskExt, RefreshKind, System, SystemExt};
 
@@ -43,8 +47,41 @@ where
     }
 }
 
-pub fn install_bridge(binary: PathBuf) -> Result<()> {
-    Ok(())
+pub fn install_bridge<F>(binary: PathBuf, progress_handler: F) -> Result<()>
+where
+    F: FnMut(usize) + 'static,
+{
+    // open the binary file
+    let file = std::fs::File::open(binary)
+        .map_err(|e| Error::IO(format!("could not open firmware file: {}", e)))?;
+
+    // create + open the DFU interface
+    let mut dfu_iface = {
+        let context = rusb::Context::new()
+            .map_err(|e| Error::Install(format!("unable to create usb context: {}", e)))?;
+        // open the DFU interface
+        DfuLibusb::open(
+            &context,
+            USB_BRIDGE_VENDOR_ID,
+            USB_BRIDGE_PRODUCT_DFU_ID,
+            0,
+            0,
+        )
+        .map_err(|e| Error::Install(e.to_string()))?
+    };
+
+    // setup our progress bar
+    dfu_iface.with_progress(progress_handler);
+
+    // PERFORM THE INSTALL
+    match dfu_iface.download_all(file) {
+        Ok(_) => Ok(()),
+        Err(dfu_libusb::Error::LibUsb(rusb::Error::Io)) => Ok(()),
+        Err(err) => {
+            error!("dfu download error: {}", err);
+            Err(Error::Install(err.to_string()))
+        }
+    }
 }
 // pub fn install_bridge(handle: AppHandle) {
 //     // open the binary file and get the file size

@@ -1,5 +1,4 @@
-import { invoke } from "@tauri-apps/api/tauri";
-import { ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { ArrowRightIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 
 function InstallBar({ release, onClick }) {
     const stylePrerelease = (release) => {

@@ -71,3 +71,8 @@ pub async fn remote_binary(
         ))),
     }
 }
+
+#[tauri::command]
+pub fn post_install(state: tauri::State<'_, InstallState>, handle: tauri::AppHandle) -> Result<()> {
+    state.init_transition(&handle)
+}

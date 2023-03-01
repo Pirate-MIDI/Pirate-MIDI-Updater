@@ -12,6 +12,7 @@ use usb_enumeration::{Event, Observer};
 
 use crate::device::ConnectedDevice;
 use crate::device::ConnectedDeviceType;
+use crate::dfu::install_bridge;
 use crate::dfu::install_rpi;
 use crate::state::InstallState;
 use crate::state::InstallerState;
@@ -83,26 +84,44 @@ pub fn setup_usb_listener(handle: AppHandle) {
                             match device.device_type {
                                 Some(device_type) => match device_type {
                                     ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => {
-                                        todo!()
+                                        let bridge_emitter = handle.app_handle();
+                                        let total_bytes = binary.metadata().unwrap().len() as f32;
+                                        let mut total_copied_bytes: f32 = 0.0;
+                                        let progress_handler = move |copied_bytes: usize| {
+                                            total_copied_bytes += copied_bytes as f32;
+                                            let percentage = ((total_copied_bytes / total_bytes)
+                                                * 100.0)
+                                                .round()
+                                                as u64;
+                                            debug!("total bytes: {total_bytes}, total copied: {total_copied_bytes}, copied: {copied_bytes}, percentage: {percentage}");
+                                            bridge_emitter
+                                                .emit_all("install_progress", percentage)
+                                                .unwrap();
+                                        };
+
+                                        match install_bridge(binary, progress_handler) {
+                                            Ok(_) => (), // do nothing
+                                            Err(err) => {
+                                                error!("unable to upload file to device: {:?}", err)
+                                            }
+                                        }
                                     }
                                     ConnectedDeviceType::Click => {
                                         let progress_handler = |process_info: TransitProcess| {
+                                            let percentage = ((process_info.copied_bytes as f32
+                                                / process_info.total_bytes as f32)
+                                                * 100.0)
+                                                .round()
+                                                as u64;
                                             handle
-                                                .emit_all(
-                                                    "install_progress",
-                                                    ((process_info.copied_bytes as f32
-                                                        / process_info.total_bytes as f32)
-                                                        * 100.)
-                                                        .round()
-                                                        as u64,
-                                                )
+                                                .emit_all("install_progress", percentage)
                                                 .unwrap();
                                         };
 
                                         match install_rpi(binary, progress_handler) {
                                             Ok(bytes_written) => {
                                                 info!("successfully wrote {bytes_written} bytes to device");
-                                                state.init_transition(&handle).unwrap();
+                                                // state.init_transition(&handle).unwrap();
                                             }
                                             Err(err) => {
                                                 error!("unable to upload file to device: {:?}", err)
