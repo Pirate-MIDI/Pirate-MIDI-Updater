@@ -58,7 +58,7 @@ jobs:
         with:
           prefix-key: "ahoy"
           shared-key: "tauri-release"
-          working-directory: src-tauri
+          workspaces: src-tauri
 
       - name: install rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -83,7 +83,7 @@ jobs:
 
       - name: Set providerShortName in tauri.conf.json
         if: matrix.platform == 'macos-latest'
-        uses: jossef/action-set-json-field@v2
+        uses: jossef/action-set-json-field@v2.1
         with:
           file: src-tauri/tauri.conf.json
           field: tauri.bundle.macOS.providerShortName
@@ -91,7 +91,7 @@ jobs:
 
       - name: Set signingIdentity in tauri.conf.json
         if: matrix.platform == 'macos-latest'
-        uses: jossef/action-set-json-field@v2
+        uses: jossef/action-set-json-field@v2.1
         with:
           file: src-tauri/tauri.conf.json
           field: tauri.bundle.macOS.signingIdentity

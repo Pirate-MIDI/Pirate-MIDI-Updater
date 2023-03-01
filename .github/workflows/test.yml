@@ -22,7 +22,7 @@ jobs:
         with:
           prefix-key: "ahoy"
           shared-key: "tauri-release"
-          working-directory: src-tauri
+          workspaces: src-tauri
       - name: install rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: install dependencies (ubuntu only)
