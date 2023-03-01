@@ -32,7 +32,12 @@ jobs:
           sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
       - run: npm install --legacy-peer-deps && npm run build
       - run: npm run lint
-      - name: Build
+      - name: windows - build driver installer
+        if: matrix.platform == 'windows-latest'
+        run: re-pack-files
+        shell: cmd
+        working-directory: src-tauri\wix\drivers
+      - name: build app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
