@@ -29,7 +29,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        include:
+          #- platform: macos-latest
+          #  target: aarch64-apple-darwin
+          - platform: macos-latest
+            target: x86_64-apple-darwin
+          #- platform: ubuntu-latest
+          #  target: aarch64-unknown-linux-gnu
+          - platform: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          #- platform: windows-latest
+          #  target: aarch64-pc-windows-msvc
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -52,7 +64,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-20.04'
+        if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
@@ -97,6 +109,5 @@ jobs:
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           ENABLE_CODE_SIGNING: ${{ secrets.APPLE_CERTIFICATE }}
         with:
-          tagName: ${{ needs.release_please.outputs.tag_name }}
+          args: --target ${{ matrix.target }}
           releaseId: ${{ needs.release_please.outputs.release_id }}
-          # args: -v -- -v
