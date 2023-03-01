@@ -32,7 +32,7 @@ jobs:
       - name: Rust Cache
         uses: Swatinem/rust-cache@v1
         with:
-          working-directory: ${{ github.action_path }}/src-tauri
+          working-directory: src-tauri
 
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
@@ -48,3 +48,6 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+        with:
+          args: --verbose
