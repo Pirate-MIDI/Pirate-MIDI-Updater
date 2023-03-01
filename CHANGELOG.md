@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.4](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.3...v0.8.4) (2023-03-01)
+
+
+### Bug Fixes
+
+* attempting to fix the updater ([fc354e5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/fc354e53ffc24116a5ab0a16fd39afe5de4fd336))
+* push file dialog off main thread ([10b4601](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/10b4601c674dd0caf8bd08406538fb863428c1b9))
+
 ## [0.8.3](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.2...v0.8.3) (2023-03-01)
 
 
