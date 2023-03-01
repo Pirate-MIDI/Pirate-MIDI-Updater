@@ -9,9 +9,9 @@ use crate::{
 };
 
 #[tauri::command]
-pub fn local_binary(
+pub async fn local_binary(
     device: ConnectedDevice,
-    state: tauri::State<InstallState>,
+    state: tauri::State<'_, InstallState>,
     handle: tauri::AppHandle,
 ) -> Result<()> {
     // select the file type filter based on the device type
@@ -38,7 +38,6 @@ pub fn local_binary(
     //         None
     //     }
     // };
-
     let local_file_path = FileDialogBuilder::new()
         .add_filter("Firmware Binary", &[file_type])
         .set_title("Select the firmware file")
