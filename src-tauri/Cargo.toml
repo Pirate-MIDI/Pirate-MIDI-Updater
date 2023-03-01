@@ -16,7 +16,7 @@ tauri-build = { version = "1.2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2", features = ["fs-create-dir", "fs-exists", "fs-read-file", "fs-write-file", "shell-open", "updater"] }
+tauri = { version = "1.2", features = ["dialog", "fs-create-dir", "fs-exists", "fs-read-file", "fs-write-file", "shell-open", "updater"] }
 reqwest = { version = "0.11", features = ["json"] }
 dfu-libusb = "0.4"
 pirate-midi-rs = "1.2"
@@ -26,7 +26,6 @@ rusb = { version = "0.9.1", features = ["vendored"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 usb_enumeration = { git = "https://github.com/beckler/usb_enumeration" }
 futures = "0.3.26"
-tauri-api = "0.7.6"
 ts-rs = "6.2.1"
 serialport = "4.2.0"
 sysinfo = "0.28.0"

@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-env:
-  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 jobs:
   # Job that allows the creation of the release
   release_please:
@@ -66,10 +63,6 @@ jobs:
       - name: install app dependencies and build it
         run: npm install --legacy-peer-deps && npm run build
 
-      - name: run cargo check
-        run: cargo check
-        working-directory: src-tauri
-
       - name: windows - build driver installer
         if: matrix.platform == 'windows-latest'
         run: re-pack-files
@@ -77,6 +70,7 @@ jobs:
         working-directory: src-tauri\wix\drivers
 
       - name: Set providerShortName in tauri.conf.json
+        if: matrix.platform == 'macos-latest'
         uses: jossef/action-set-json-field@v2
         with:
           file: apps/desktop/src-tauri/tauri.conf.json
@@ -84,6 +78,7 @@ jobs:
           value: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Set signingIdentity in tauri.conf.json
+        if: matrix.platform == 'macos-latest'
         uses: jossef/action-set-json-field@v2
         with:
           file: apps/desktop/src-tauri/tauri.conf.json
@@ -93,6 +88,8 @@ jobs:
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
@@ -102,4 +99,4 @@ jobs:
         with:
           tagName: ${{ needs.release_please.outputs.tag_name }}
           releaseId: ${{ needs.release_please.outputs.release_id }}
-          args: -v -- -v
+          # args: -v -- -v
