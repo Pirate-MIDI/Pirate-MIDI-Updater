@@ -64,7 +64,7 @@ jobs:
         run: mkdir dist
 
       - name: install app dependencies and build it
-        run: npm install --legacy-peer-deps && npm build
+        run: npm install --legacy-peer-deps && npm run build
 
       - name: run cargo check
         run: cargo check
