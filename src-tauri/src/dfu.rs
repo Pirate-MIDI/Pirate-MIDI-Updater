@@ -43,6 +43,9 @@ where
     }
 }
 
+pub fn install_bridge(binary: PathBuf) -> Result<()> {
+    Ok(())
+}
 // pub fn install_bridge(handle: AppHandle) {
 //     // open the binary file and get the file size
 //     let file = std::fs::File::open(binary_path)

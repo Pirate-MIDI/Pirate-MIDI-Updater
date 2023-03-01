@@ -85,7 +85,7 @@ jobs:
         if: matrix.platform == 'macos-latest'
         uses: jossef/action-set-json-field@v2
         with:
-          file: apps/desktop/src-tauri/tauri.conf.json
+          file: src-tauri/tauri.conf.json
           field: tauri.bundle.macOS.providerShortName
           value: ${{ secrets.APPLE_TEAM_ID }}
 
@@ -93,7 +93,7 @@ jobs:
         if: matrix.platform == 'macos-latest'
         uses: jossef/action-set-json-field@v2
         with:
-          file: apps/desktop/src-tauri/tauri.conf.json
+          file: src-tauri/tauri.conf.json
           field: tauri.bundle.macOS.signingIdentity
           value: ${{ secrets.APPLE_SIGNING_IDENTITY }}
 
