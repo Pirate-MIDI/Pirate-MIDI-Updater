@@ -83,23 +83,22 @@ impl ConnectedDevice {
     // FYI, this is a hack for discoverability until other devices support device API
     fn parse_device_from_description(device: &UsbDevice) -> Option<ConnectedDeviceType> {
         match &device.serial_number {
-            Some(serial_number) => {
-                if !serial_number.contains("&") {
-                    match &device.description {
-                        Some(value) => match value.as_str() {
-                            "Bridge 6" => Some(ConnectedDeviceType::Bridge6),
-                            "Bridge 4" => Some(ConnectedDeviceType::Bridge4),
-                            "CLiCK" => Some(ConnectedDeviceType::Click), // TODO: verify this with a production board
-                            "RP2 Boot" => Some(ConnectedDeviceType::RPBootloader),
-                            "DFU in FS Mode" => Some(ConnectedDeviceType::BridgeBootloader),
-                            _ => None,
-                        },
-                        None => None,
+            Some(serial_number) => match &device.description {
+                Some(value) => match value.as_str() {
+                    "Bridge 6" => {
+                        (!serial_number.contains("&")).then_some(ConnectedDeviceType::Bridge6)
                     }
-                } else {
-                    None
-                }
-            }
+                    "Bridge 4" => {
+                        (!serial_number.contains("&")).then_some(ConnectedDeviceType::Bridge4)
+                    }
+                    "CLiCK" => (!serial_number.contains("&")).then_some(ConnectedDeviceType::Click),
+                    "uLoop" => (!serial_number.contains("&")).then_some(ConnectedDeviceType::ULoop),
+                    "RP2 Boot" => Some(ConnectedDeviceType::RPBootloader),
+                    "DFU in FS Mode" => Some(ConnectedDeviceType::BridgeBootloader),
+                    _ => None,
+                },
+                None => None,
+            },
             None => None,
         }
     }
