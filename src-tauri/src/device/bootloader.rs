@@ -1,15 +1,8 @@
-use log::debug;
-use pirate_midi_rs::{Command, ControlArgs, PirateMIDIDevice};
-use serialport::{SerialPortBuilder, SerialPortType};
-
-#[cfg(target_family = "unix")]
-use serialport::available_ports;
-
-#[cfg(target_family = "windows")]
-use windows::available_ports;
-
 use crate::error::{Error, Result};
 use crate::{device::ConnectedDevice, USB_DEFAULT_BAUD_RATE, USB_RPI_BOOTLOADER_BAUD_RATE};
+use log::debug;
+use pirate_midi_rs::{Command, ControlArgs, PirateMIDIDevice};
+use serialport::{available_ports, SerialPortBuilder, SerialPortType};
 
 fn build_serialport_builder(device: &ConnectedDevice, baud_rate: u32) -> Result<SerialPortBuilder> {
     match available_ports() {
