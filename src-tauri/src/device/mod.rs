@@ -9,6 +9,9 @@ use usb_enumeration::UsbDevice;
 
 mod bootloader;
 
+#[cfg(target_family = "windows")]
+mod windows;
+
 // list of the supported devices
 #[derive(Deserialize, Serialize, TS, Debug, Clone, PartialEq)]
 #[ts(export)]

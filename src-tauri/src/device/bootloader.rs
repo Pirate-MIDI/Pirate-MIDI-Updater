@@ -1,49 +1,16 @@
 use log::debug;
 use pirate_midi_rs::{Command, ControlArgs, PirateMIDIDevice};
-use serialport::{available_ports, SerialPortBuilder, SerialPortType};
+use serialport::{SerialPortBuilder, SerialPortType};
+
+#[cfg(target_family = "unix")]
+use serialport::available_ports;
+
+#[cfg(target_family = "windows")]
+use windows::available_ports;
 
 use crate::error::{Error, Result};
 use crate::{device::ConnectedDevice, USB_DEFAULT_BAUD_RATE, USB_RPI_BOOTLOADER_BAUD_RATE};
 
-#[cfg(target_family = "windows")]
-fn build_serialport_builder(device: &ConnectedDevice, baud_rate: u32) -> Result<SerialPortBuilder> {
-    match available_ports() {
-        Ok(ports) => {
-            for p in ports {
-                debug!("reviewing port: {:?}", p);
-                if let SerialPortType::UsbPort(usb_info) = p.port_type {
-                    debug!(
-                        "description: {:?}, product: {:?}",
-                        device.description, usb_info.product
-                    );
-                    match usb_info.product {
-                        Some(usb_product) => match &device.description {
-                            Some(device_description) => {
-                                if usb_product.starts_with(device_description) {
-                                    debug!(
-                                        "found device! opening port: {} with baud rate: {}",
-                                        p.port_name, baud_rate
-                                    );
-                                    return Ok(serialport::new(p.port_name, baud_rate));
-                                }
-                            }
-                            None => err!(Error::Serial(
-                                "unable to retrieve device descriptions".to_string()
-                            )),
-                        },
-                        None => err!(Error::Serial(
-                            "unable to retrieve serial port info".to_string()
-                        )),
-                    }
-                }
-            }
-            err!(Error::Serial("no serial ports available".to_string()))
-        }
-        Err(err) => err!(Error::Serial(err.to_string())),
-    }
-}
-
-#[cfg(target_family = "unix")]
 fn build_serialport_builder(device: &ConnectedDevice, baud_rate: u32) -> Result<SerialPortBuilder> {
     match available_ports() {
         Ok(ports) => {
