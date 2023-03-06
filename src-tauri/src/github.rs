@@ -90,23 +90,18 @@ impl Asset {
         match &device.device_type {
             // assume format: bridgeX_v1.2.1.1.bin || device_v1.0.0.0.uf2
             // the last number in the version is the compatible revision
-            Some(device_type) => match device_type {
-                ConnectedDeviceType::Bridge6 => self._is_compatible(&device, "bridge6"),
-                ConnectedDeviceType::Bridge4 => self._is_compatible(&device, "bridge4"),
-                ConnectedDeviceType::Click => self._is_not_diag("click"),
-                _ => true, // assume it's true by default if we have a device type
-            },
-            None => false,
+            ConnectedDeviceType::Bridge6 => self._is_compatible(&device, "bridge6"),
+            ConnectedDeviceType::Bridge4 => self._is_compatible(&device, "bridge4"),
+            ConnectedDeviceType::Click => self._is_not_diag("click"),
+            ConnectedDeviceType::Unknown => false,
+            _ => true, // assume it's true by default if we have a device type
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        device::{ConnectedDevice, ConnectedDeviceType, DeviceDetails},
-        github::Asset,
-    };
+    use crate::{device::ConnectedDevice, github::Asset};
 
     #[test]
     fn _is_compatible() {
@@ -118,17 +113,10 @@ mod tests {
                 id: String::from("test"),
                 vendor_id: 0,
                 product_id: 0,
-                description: Some(String::from("test")),
+                description: Some(String::from("Bridge 4")),
                 serial_number: Some(String::from("test")),
-                device_type: Some(ConnectedDeviceType::Bridge4),
-                device_details: Some(DeviceDetails {
-                    uid: String::from("test"),
-                    device_model: String::from("test"),
-                    firmware_version: String::from("test"),
-                    hardware_version: format!("1.0.{i}"),
-                    device_name: String::from("test"),
-                    profile_id: String::from("test"),
-                }),
+                device_type: crate::device::ConnectedDeviceType::Bridge4,
+                device_details: None,
             })
         }
 

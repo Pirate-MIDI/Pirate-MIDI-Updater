@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use fs_extra::file::TransitProcess;
 use futures::channel::mpsc;
 use futures::channel::mpsc::Receiver;
@@ -5,7 +7,6 @@ use futures::SinkExt;
 use futures::StreamExt;
 use log::debug;
 use log::error;
-use log::info;
 use tauri::{AppHandle, Manager};
 use usb_enumeration::Event as UsbEvent;
 use usb_enumeration::{Event, Observer};
@@ -14,9 +15,41 @@ use crate::device::ConnectedDevice;
 use crate::device::ConnectedDeviceType;
 use crate::dfu::install_bridge;
 use crate::dfu::install_rpi;
+use crate::error::Result;
 use crate::state::InstallState;
 use crate::state::InstallerState;
 use crate::USB_POLL_INTERVAL;
+use crate::USB_TIMEOUT;
+
+fn install_bridge_devices(handle: AppHandle, binary: &PathBuf) -> Result<()> {
+    // these values are for tracking install progress
+    let total_bytes = binary.metadata().unwrap().len() as f32;
+    let mut total_copied_bytes: f32 = 0.0;
+
+    // this is our install progress callback handler - passed to the installer
+    let progress_handler = move |copied_bytes: usize| {
+        total_copied_bytes += copied_bytes as f32;
+        let percentage = ((total_copied_bytes / total_bytes) * 100.0).round() as u64;
+        debug!("total bytes: {total_bytes}, total copied: {total_copied_bytes}, copied: {copied_bytes}, percentage: {percentage}");
+        handle.emit_all("install_progress", percentage).unwrap();
+    };
+
+    // call the installation method - returns Result<()>
+    install_bridge(binary.to_path_buf(), progress_handler)
+}
+
+fn install_rpi_devices(handle: AppHandle, binary: &PathBuf) -> Result<u64> {
+    // this is our install progress callback handler - passed to the installer
+    let progress_handler = |process_info: TransitProcess| {
+        let percentage = ((process_info.copied_bytes as f32 / process_info.total_bytes as f32)
+            * 100.0)
+            .round() as u64;
+        handle.emit_all("install_progress", percentage).unwrap();
+    };
+
+    // call the installation method - returns Result<u64>
+    install_rpi(binary.to_path_buf(), progress_handler)
+}
 
 fn subscribe() -> Receiver<Event> {
     let (mut sender, receiver) = mpsc::channel(0);
@@ -54,90 +87,76 @@ pub fn setup_usb_listener(handle: AppHandle) {
                     let mut connected_devices: Vec<ConnectedDevice> = devices
                         .iter()
                         .map(|device| ConnectedDevice::from(device))
-                        .filter(|device| device.device_type.is_some())
+                        .filter(|device| device.device_type != ConnectedDeviceType::Unknown)
                         .collect();
+
+                    for device in &mut connected_devices {
+                        match device.try_get_device_details(Some(USB_TIMEOUT)) {
+                            Ok(_) => (),
+                            Err(err) => error!("error getting device details: {:?}", err),
+                        }
+                    }
 
                     state.add_devices(&mut connected_devices, &emitter).unwrap();
                 }
                 UsbEvent::Connect(device) => {
-                    let arriving = ConnectedDevice::from(&device);
+                    // convert the device to an expected structure
+                    let mut arriving = ConnectedDevice::from(&device);
+
+                    // attempt to call the device API
+                    match &mut arriving.try_get_device_details(Some(USB_TIMEOUT)) {
+                        Ok(_) => (),
+                        Err(err) => error!("error getting device details: {:?}", err),
+                    }
+
+                    // get the mutex to update the state
                     let read_guard = state.current_state.read().unwrap();
 
+                    // read the current state
                     match read_guard.clone() {
+                        // if we're in the initial state, and if the device matches an expected device type
+                        // then add it to the list of connected devices
                         InstallerState::Init => match &arriving.device_type {
-                            Some(device_type) => match device_type {
-                                ConnectedDeviceType::Bridge4
-                                | ConnectedDeviceType::Bridge6
-                                | ConnectedDeviceType::Click
-                                | ConnectedDeviceType::ULoop => {
-                                    state.add_device(arriving, &emitter).unwrap()
-                                }
-                                _ => (),
-                            },
-                            None => (),
+                            ConnectedDeviceType::Bridge4
+                            | ConnectedDeviceType::Bridge6
+                            | ConnectedDeviceType::Click
+                            | ConnectedDeviceType::ULoop => {
+                                state.add_device(arriving, &emitter).unwrap()
+                            }
+                            _ => (),
                         },
+                        // if we're in bootloader state, take the device and attempt to update it.
                         InstallerState::Bootloader { device, binary } => {
                             // drop the reader so we don't deadlock in case we need to write
                             drop(read_guard);
 
-                            // REMEMBER: the device in this step is NOT the bootloader version
+                            // REMEMBER: the device type is the device that was selected in the list before the bootloader mode
+                            // if we have a bootloader mode device, then we're in a recovery mode for that device
                             match device.device_type {
-                                Some(device_type) => match device_type {
-                                    ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => {
-                                        let bridge_emitter = handle.app_handle();
-                                        let total_bytes = binary.metadata().unwrap().len() as f32;
-                                        let mut total_copied_bytes: f32 = 0.0;
-                                        let progress_handler = move |copied_bytes: usize| {
-                                            total_copied_bytes += copied_bytes as f32;
-                                            let percentage = ((total_copied_bytes / total_bytes)
-                                                * 100.0)
-                                                .round()
-                                                as u64;
-                                            debug!("total bytes: {total_bytes}, total copied: {total_copied_bytes}, copied: {copied_bytes}, percentage: {percentage}");
-                                            bridge_emitter
-                                                .emit_all("install_progress", percentage)
-                                                .unwrap();
-                                        };
-
-                                        match install_bridge(binary, progress_handler) {
-                                            Ok(_) => (), // do nothing
-                                            Err(err) => {
-                                                error!("unable to upload file to device: {:?}", err)
-                                            }
-                                        }
+                                ConnectedDeviceType::Bridge4
+                                | ConnectedDeviceType::Bridge6
+                                | ConnectedDeviceType::BridgeBootloader => {
+                                    match install_bridge_devices(emitter.app_handle(), &binary) {
+                                        Ok(_) => (), // do nothing
+                                        Err(_) => todo!(),
                                     }
-                                    ConnectedDeviceType::Click => {
-                                        let progress_handler = |process_info: TransitProcess| {
-                                            let percentage = ((process_info.copied_bytes as f32
-                                                / process_info.total_bytes as f32)
-                                                * 100.0)
-                                                .round()
-                                                as u64;
-                                            handle
-                                                .emit_all("install_progress", percentage)
-                                                .unwrap();
-                                        };
-
-                                        match install_rpi(binary, progress_handler) {
-                                            Ok(bytes_written) => {
-                                                info!("successfully wrote {bytes_written} bytes to device");
-                                                // state.init_transition(&handle).unwrap();
-                                            }
-                                            Err(err) => {
-                                                error!("unable to upload file to device: {:?}", err)
-                                            }
-                                        }
+                                }
+                                ConnectedDeviceType::Click
+                                | ConnectedDeviceType::ULoop
+                                | ConnectedDeviceType::RPBootloader => {
+                                    match install_rpi_devices(emitter.app_handle(), &binary) {
+                                        Ok(_) => (), // do nothing
+                                        Err(_) => todo!(),
                                     }
-                                    _ => (),
-                                },
-                                None => todo!(),
+                                }
+                                _ => (),
                             }
                         }
                     };
                 }
                 UsbEvent::Disconnect(device) => {
                     let leaving = ConnectedDevice::from(&device);
-                    if leaving.device_type.is_some() {
+                    if leaving.device_type != ConnectedDeviceType::Unknown {
                         state.remove_device(leaving, &emitter).unwrap();
                     }
                 }

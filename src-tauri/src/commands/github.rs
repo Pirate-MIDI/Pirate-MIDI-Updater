@@ -47,62 +47,58 @@ pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
     // perform the fetch
     info!("fetching releases from github...");
 
-    match &device.device_type {
-        Some(device_type) => {
-            // determine which repo to get
-            let repo = match device_type {
-                ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => GITHUB_BRIDGE_REPO,
-                ConnectedDeviceType::Click => GITHUB_CLICK_REPO,
-                ConnectedDeviceType::ULoop => todo!(),
-                ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => {
-                    todo!()
-                }
-            };
+    // determine which repo to get
+    let repo = match &device.device_type {
+        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => GITHUB_BRIDGE_REPO,
+        ConnectedDeviceType::Click => GITHUB_CLICK_REPO,
+        ConnectedDeviceType::ULoop => todo!(),
+        ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => {
+            todo!()
+        }
+        ConnectedDeviceType::Unknown => todo!(),
+    };
 
-            // retrieve the releases!
-            let url = format!("{}/repos/{}/{}/releases", GITHUB_API_URL, GITHUB_ORG, repo);
-            let request = reqwest::Client::new()
-                .get(url)
-                .headers(build_headers())
-                .send();
-            match request.await {
-                Ok(res) => {
-                    trace!("success [raw]: {:?}", res);
-                    match res.status() {
-                        StatusCode::OK => match res.json::<Vec<Release>>().await {
-                            Ok(releases) => {
-                                // trace!("releases: {:?}", releases);
-                                let compatible: Vec<Release> = releases
+    // retrieve the releases!
+    let url = format!("{}/repos/{}/{}/releases", GITHUB_API_URL, GITHUB_ORG, repo);
+    let request = reqwest::Client::new()
+        .get(url)
+        .headers(build_headers())
+        .send();
+    match request.await {
+        Ok(res) => {
+            trace!("success [raw]: {:?}", res);
+            match res.status() {
+                StatusCode::OK => match res.json::<Vec<Release>>().await {
+                    Ok(releases) => {
+                        // trace!("releases: {:?}", releases);
+                        let compatible: Vec<Release> = releases
+                            .iter()
+                            .filter(|release| {
+                                // find releases compatible with our device
+                                release
+                                    .assets
                                     .iter()
-                                    .filter(|release| {
-                                        // find releases compatible with our device
-                                        release
-                                            .assets
-                                            .iter()
-                                            .find(|&asset| asset.is_compatible(&device))
-                                            .is_some()
-                                    })
-                                    .cloned()
-                                    .collect::<Vec<Release>>();
-                                // trace!("compatible releases: {:?}", compatible);
-                                Ok(compatible)
-                            }
-                            Err(err) => err!(Error::Http(err.to_string())),
-                        },
-                        StatusCode::FORBIDDEN | StatusCode::TOO_MANY_REQUESTS => {
-                            log::error!("Rate limited from Github - headers: {:?}", res.headers());
-                            err!(Error::Http("Github rate limit hit!".to_string()))
-                        }
-                        _ => todo!(),
+                                    .find(|&asset| asset.is_compatible(&device))
+                                    .is_some()
+                            })
+                            .cloned()
+                            .collect::<Vec<Release>>();
+                        // trace!("compatible releases: {:?}", compatible);
+                        Ok(compatible)
                     }
+                    Err(err) => err!(Error::Http(err.to_string())),
+                },
+                StatusCode::FORBIDDEN | StatusCode::TOO_MANY_REQUESTS => {
+                    log::error!("Rate limited from Github - headers: {:?}", res.headers());
+                    err!(Error::Http("Github rate limit hit!".to_string()))
                 }
-                Err(err) => {
-                    trace!("error [raw]: {:?}", err);
-                    Err(Error::Http(err.to_string()))
-                }
+                _ => todo!(),
             }
         }
-        None => err!(Error::Other("unsupported device type".to_string())),
+        Err(err) => {
+            trace!("error [raw]: {:?}", err);
+            Err(Error::Http(err.to_string()))
+        }
     }
 }
 

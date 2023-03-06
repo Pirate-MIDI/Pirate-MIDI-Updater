@@ -1,9 +1,15 @@
-use self::bootloader::{enter_bridge_bootloader, enter_rpi_bootloader};
-use crate::error::{Error, Result};
+use std::{thread::sleep, time::Duration};
 
-use log::error;
+use self::bootloader::{enter_bridge_bootloader, enter_rpi_bootloader};
+use crate::{
+    error::{Error, Result},
+    USB_DEFAULT_BAUD_RATE, USB_TIMEOUT,
+};
+
+use log::{debug, info, trace};
 use pirate_midi_rs::{check::CheckResponse, Command, PirateMIDIDevice, Response};
 use serde::{Deserialize, Serialize};
+use serialport::{SerialPortBuilder, SerialPortType};
 use ts_rs::TS;
 use usb_enumeration::UsbDevice;
 
@@ -19,6 +25,7 @@ pub enum ConnectedDeviceType {
     Click,
     ULoop,
     RPBootloader,
+    Unknown,
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize, TS)]
@@ -65,12 +72,12 @@ pub struct ConnectedDevice {
     pub vendor_id: u16,
     /// Product ID
     pub product_id: u16,
+    /// Device Type
+    pub device_type: ConnectedDeviceType,
     /// Optional device description
     pub description: Option<String>,
     /// Optional serial number
     pub serial_number: Option<String>,
-    /// Supported Device Type
-    pub device_type: Option<ConnectedDeviceType>,
     /// Device Details (Currently only Bridge Devices)
     pub device_details: Option<DeviceDetails>,
 }
@@ -81,62 +88,79 @@ impl ConnectedDevice {
     // { id: "16928040556979", vendor_id: 1155, product_id: 22336, description: Some("Bridge 6"), serial_number: Some("208133813536") }
 
     // FYI, this is a hack for discoverability until other devices support device API
-    fn parse_device_from_description(device: &UsbDevice) -> Option<ConnectedDeviceType> {
-        match &device.serial_number {
-            Some(serial_number) => match &device.description {
-                Some(value) => match value.as_str() {
-                    "Bridge 6" => {
-                        (!serial_number.contains("&")).then_some(ConnectedDeviceType::Bridge6)
-                    }
-                    "Bridge 4" => {
-                        (!serial_number.contains("&")).then_some(ConnectedDeviceType::Bridge4)
-                    }
-                    "CLiCK" => (!serial_number.contains("&")).then_some(ConnectedDeviceType::Click),
-                    "uLoop" => (!serial_number.contains("&")).then_some(ConnectedDeviceType::ULoop),
-                    "RP2 Boot" => Some(ConnectedDeviceType::RPBootloader),
-                    "DFU in FS Mode" => Some(ConnectedDeviceType::BridgeBootloader),
-                    _ => None,
-                },
-                None => None,
+    fn determine_device_type(device: &UsbDevice) -> ConnectedDeviceType {
+        match &device.description {
+            Some(value) => match value.as_str() {
+                "Bridge 6" | "Bridge6" => ConnectedDeviceType::Bridge6,
+                "Bridge 4" | "Bridge4" => ConnectedDeviceType::Bridge4,
+                "CLiCK" => ConnectedDeviceType::Click,
+                "uLoop" => ConnectedDeviceType::ULoop,
+                "RP2 Boot" => ConnectedDeviceType::RPBootloader,
+                "DFU in FS Mode" => ConnectedDeviceType::BridgeBootloader,
+                _ => ConnectedDeviceType::Unknown,
             },
-            None => None,
+            None => ConnectedDeviceType::Unknown,
         }
     }
 
-    fn get_device_details(device: &UsbDevice) -> Option<DeviceDetails> {
-        // connect to specific device
-        let possible_device = PirateMIDIDevice::new()
-            .with_vendor_id(device.vendor_id)
-            .with_product_id(device.product_id);
-
-        // attempt to get device details
-        match possible_device.send(Command::Check) {
-            Ok(response) => match response {
-                Response::Check(details) => Some(DeviceDetails::from(details)),
-                _ => {
-                    error!("invalid response type from device!");
-                    None
+    pub fn get_serial_port(&self, baud_rate: u32) -> Result<SerialPortBuilder> {
+        for port in serialport::available_ports().map_err(|e| Error::Serial(e.to_string()))? {
+            debug!("reviewing port: {:?}", port);
+            if let SerialPortType::UsbPort(usb_info) = &port.port_type {
+                if usb_info.serial_number == self.serial_number {
+                    info!("found device via serial number");
+                    return Ok(serialport::new(port.port_name, baud_rate).timeout(USB_TIMEOUT));
                 }
-            },
-            Err(err) => {
-                error!("unable to connect to device: {:?}", err);
-                None
+                if usb_info.vid == self.vendor_id && usb_info.pid == self.product_id {
+                    info!("found device via vid/pid");
+                    return Ok(serialport::new(port.port_name, baud_rate).timeout(USB_TIMEOUT));
+                }
             }
+        }
+        Err(Error::Serial("unable to locate device".to_string()))
+    }
+
+    pub fn try_get_device_details(&mut self, delay: Option<Duration>) -> Result<()> {
+        // ports might not be immidately available, so delay will delay this operation for the duration
+        if delay.is_some() {
+            sleep(delay.unwrap());
+        }
+
+        // find our serial port
+        match self.get_serial_port(USB_DEFAULT_BAUD_RATE) {
+            Ok(builder) => {
+                trace!("serialport builder: {:?}", builder);
+                match PirateMIDIDevice::new()
+                    .with_serialport_builder(builder)
+                    .send(Command::Check)
+                {
+                    Ok(res) => match res {
+                        Response::Check(details) => {
+                            trace!("rx: {:?}", details);
+                            self.device_details = Some(DeviceDetails::from(details));
+                            Ok(())
+                        }
+                        _ => err!(Error::Serial(
+                            "invalid response type from device!".to_string()
+                        )),
+                    },
+                    Err(err) => err!(Error::Serial(err.to_string())),
+                }
+            }
+            Err(err) => err!(Error::Serial(err.to_string())),
         }
     }
 
     pub fn enter_bootloader(&self) -> Result<()> {
         match &self.device_type {
-            Some(device_type) => match device_type {
-                ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => {
-                    enter_bridge_bootloader(self)
-                }
-                ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => {
-                    enter_rpi_bootloader(self)
-                }
-                ConnectedDeviceType::BridgeBootloader | ConnectedDeviceType::RPBootloader => Ok(()), // already in bootloader mode
-            },
-            None => err!(Error::Bootloader("unsupported device".to_string())),
+            ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => {
+                enter_bridge_bootloader(self)
+            }
+            ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => enter_rpi_bootloader(self),
+            ConnectedDeviceType::BridgeBootloader | ConnectedDeviceType::RPBootloader => Ok(()), // already in bootloader mode
+            ConnectedDeviceType::Unknown => {
+                err!(Error::Bootloader("unsupported device".to_string()))
+            }
         }
     }
 }
@@ -149,8 +173,8 @@ impl From<&UsbDevice> for ConnectedDevice {
             product_id: value.product_id.clone(),
             description: value.description.clone(),
             serial_number: value.serial_number.clone(),
-            device_type: ConnectedDevice::parse_device_from_description(value),
-            device_details: ConnectedDevice::get_device_details(value),
+            device_type: ConnectedDevice::determine_device_type(value),
+            device_details: None,
         }
     }
 }

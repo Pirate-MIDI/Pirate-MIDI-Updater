@@ -16,12 +16,9 @@ pub async fn local_binary(
 ) -> Result<()> {
     // select the file type filter based on the device type
     let file_type = match &device.device_type {
-        Some(device_type) => match device_type {
-            ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => "bin",
-            ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => "uf2",
-            _ => "",
-        },
-        None => "",
+        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => "bin",
+        ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => "uf2",
+        _ => "",
     };
 
     // get the local file path
