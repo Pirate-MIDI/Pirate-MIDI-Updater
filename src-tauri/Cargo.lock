@@ -2361,7 +2361,7 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 [[package]]
 name = "pirate-midi-rs"
 version = "1.2.1"
-source = "git+https://github.com/beckler/pirate-midi-rs#5b54de6913ce96cc54c9e6d7d187affa364c2177"
+source = "git+https://github.com/beckler/pirate-midi-rs#a5d6456889a867a4b11514afd158cb147523f892"
 dependencies = [
  "log",
  "serde",
@@ -3016,7 +3016,7 @@ dependencies = [
 [[package]]
 name = "serialport"
 version = "4.2.1-alpha.0"
-source = "git+https://github.com/beckler/serialport-rs#1d37f5950d2d46c3d6a7778ba2f91adb2e95301d"
+source = "git+https://github.com/beckler/serialport-rs#b2d08402060f6660741e6616e8878a65dae97da3"
 dependencies = [
  "CoreFoundation-sys",
  "IOKit-sys",
@@ -3821,14 +3821,14 @@ dependencies = [
 [[package]]
 name = "usb_enumeration"
 version = "0.2.0"
-source = "git+https://github.com/beckler/usb_enumeration#4d07eb463b60e83e95d553e1e649bc1ff821d3bb"
+source = "git+https://github.com/beckler/usb_enumeration#271f37386e8aead7000acd7565f00bd986230ed7"
 dependencies = [
  "core-foundation 0.6.4",
  "crossbeam",
  "io-kit-sys",
  "mach 0.3.2",
  "udev",
- "winapi",
+ "windows-sys 0.45.0",
 ]
 
 [[package]]
@@ -4334,9 +4334,9 @@ checksum = "447660ad36a13288b1db4d4248e857b510e8c3a225c822ba4fb748c0aafecffd"
 
 [[package]]
 name = "winnow"
-version = "0.3.3"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "faf09497b8f8b5ac5d3bb4d05c0a99be20f26fd3d5f2db7b0716e946d5103658"
+checksum = "c95fb4ff192527911dd18eb138ac30908e7165b8944e528b6af93aa4c842d345"
 dependencies = [
  "memchr",
 ]
