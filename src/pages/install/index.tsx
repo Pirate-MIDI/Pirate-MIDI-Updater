@@ -34,7 +34,7 @@ function Install({ devices }: { devices: ConnectedDevice[] }) {
     }
 
     return (
-        <div className='flex flex-col items-center justify-center w-screen h-screen overflow-hidden'>
+        <div className='flex flex-col items-center justify-center flex-shrink-0 w-screen h-screen overflow-hidden'>
             <FadeIn>
                 <ProgressBar size={300} progress={percent} label={percent < 1 ? 'Preparing device...' : percent < 100 ? 'Installing...' : 'Installation Complete'} />
             </FadeIn>
@@ -43,7 +43,7 @@ function Install({ devices }: { devices: ConnectedDevice[] }) {
                 <p className='mb-4 text-sm text-slate-500'>You may now unplug your device</p>
                 <button onClick={onClick} className='flex items-center px-4 py-2 m-2 border border-blue-600 rounded hover:bg-blue-500 hover:text-white'>
                     Update another device
-                    <ArrowUturnLeftIcon className='w-5 h-5 ml-4' />
+                    <ArrowUturnLeftIcon className='icon-right' />
                 </button>
             </FadeIn>
         </div>

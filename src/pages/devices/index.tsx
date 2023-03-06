@@ -4,7 +4,7 @@ import FadeIn from "react-fade-in";
 import DeviceLogo from '../../components/DeviceLogo';
 import BridgeModal from '../../components/BridgeModal';
 import { useRouter } from 'next/router';
-import { DocumentIcon, ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 import updaterIcon from '../../assets/icon-updater.png'
 
@@ -72,21 +72,25 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                 <p className="text-sm">Select an installation method:</p>
                                 <div className="flex flex-row items-center">
                                     <button onClick={() => onLocalInstall(device)} className={`flex items-center px-4 py-2 m-2 text-xs border rounded border-pm-blue-left bg-gradient-to-r hover:from-pm-blue-left hover:to-pm-blue-right hover:text-slate-800`}>
-                                        <DocumentIcon className='w-5 h-5 mr-4' />
+                                        <DocumentIcon className='icon-left' />
                                         Local File
-                                        <ArrowUpIcon className='w-5 h-5 ml-4' />
+                                        <ArrowUpIcon className='icon-right' />
                                     </button>
-                                    <span>OR</span>
+                                    <span hidden={!device.releases}>OR</span>
                                     <button onClick={() => {
                                         router.push({
                                             pathname: '/releases',
                                             query: { serial_number: device.serial_number }
                                         }, '/releases')
-                                    }} className={`flex items-center px-4 py-2 m-2 text-xs border rounded border-emerald-500 bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-400 hover:text-slate-800`}>
-                                        <CheckBadgeIcon className='w-5 h-5 mr-4' />
+                                    }} className={device.releases ? `flex items-center px-4 py-2 m-2 text-xs border rounded border-emerald-500 bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-400 hover:text-slate-800` : `hidden`}>
+                                        <CheckBadgeIcon className='icon-left' />
                                         Official Release
-                                        <ArrowRightIcon className='w-5 h-5 ml-4' />
+                                        <ArrowRightIcon className='icon-right' />
                                     </button>
+                                    <span className={device.releases ? `hidden` : `flex items-center px-4 py-2 m-2 text-xs rounded bg-gradient-to-r from-pm-red-left to-pm-red-right text-white font-bold`}>
+                                        <ExclamationTriangleIcon className="icon-left" />
+                                        Unable to fetch releases
+                                    </span>
                                 </div>
                             </div>
                         </div>

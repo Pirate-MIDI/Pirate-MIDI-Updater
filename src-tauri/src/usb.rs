@@ -90,9 +90,13 @@ pub fn setup_usb_listener(handle: AppHandle) {
                         .filter(|device| device.device_type != ConnectedDeviceType::Unknown)
                         .collect();
 
+                    // get device details, then retrieve the github releases
                     for device in &mut connected_devices {
                         match device.try_get_device_details(Some(USB_TIMEOUT)) {
-                            Ok(_) => (),
+                            Ok(_) => match device.try_get_github_releases().await {
+                                Ok(_) => (), // do nothing on success
+                                Err(err) => error!("error getting github releases: {:?}", err),
+                            },
                             Err(err) => error!("error getting device details: {:?}", err),
                         }
                     }
@@ -103,9 +107,12 @@ pub fn setup_usb_listener(handle: AppHandle) {
                     // convert the device to an expected structure
                     let mut arriving = ConnectedDevice::from(&device);
 
-                    // attempt to call the device API
+                    // get device details, then retrieve the github releases
                     match &mut arriving.try_get_device_details(Some(USB_TIMEOUT)) {
-                        Ok(_) => (),
+                        Ok(_) => match arriving.try_get_github_releases().await {
+                            Ok(_) => (), // do nothing on success
+                            Err(err) => error!("error getting github releases: {:?}", err),
+                        },
                         Err(err) => error!("error getting device details: {:?}", err),
                     }
 

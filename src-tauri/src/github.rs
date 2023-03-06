@@ -101,7 +101,10 @@ impl Asset {
 
 #[cfg(test)]
 mod tests {
-    use crate::{device::ConnectedDevice, github::Asset};
+    use crate::{
+        device::{ConnectedDevice, DeviceDetails},
+        github::Asset,
+    };
 
     #[test]
     fn _is_compatible() {
@@ -111,12 +114,20 @@ mod tests {
         for i in 1..3 {
             mock_devices.push(ConnectedDevice {
                 id: String::from("test"),
+                releases: None,
                 vendor_id: 0,
                 product_id: 0,
                 description: Some(String::from("Bridge 4")),
                 serial_number: Some(String::from("test")),
                 device_type: crate::device::ConnectedDeviceType::Bridge4,
-                device_details: None,
+                device_details: Some(DeviceDetails {
+                    uid: String::from(""),
+                    device_model: String::from(""),
+                    firmware_version: String::from(""),
+                    hardware_version: format!("v1.0.{i}"),
+                    device_name: String::from(""),
+                    profile_id: String::from(""),
+                }),
             })
         }
 

@@ -31,7 +31,7 @@ function ReleaseInfoBar({ release }) {
     }
 
     return release.body ? (
-        <div className='mx-2 border-b h-4/6 border-slate-600'>
+        <div className='mx-2 border-b h-5/6 border-slate-600'>
             <div className='flex items-center justify-between p-4 border-b h-1/6 border-slate-600'>
                 <span className='text-xl font-bold'>{release.name}</span>
                 <div className='text-right'>

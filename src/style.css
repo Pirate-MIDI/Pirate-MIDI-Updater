@@ -44,6 +44,13 @@ button {
   @apply hover:shadow-lg hover:-translate-y-1 dark:hover:shadow-slate-600 active:translate-y-0 active:shadow-none
 }
 
+.icon-left {
+  @apply w-5 h-5 mr-4;
+}
+
+.icon-right {
+  @apply w-5 h-5 ml-4;
+}
 
 .logo:hover {
   @apply -translate-y-1;

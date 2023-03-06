@@ -2,7 +2,9 @@ use std::{thread::sleep, time::Duration};
 
 use self::bootloader::{enter_bridge_bootloader, enter_rpi_bootloader};
 use crate::{
+    commands::github::fetch_releases,
     error::{Error, Result},
+    github::Release,
     USB_DEFAULT_BAUD_RATE, USB_TIMEOUT,
 };
 
@@ -68,6 +70,8 @@ impl From<CheckResponse> for DeviceDetails {
 pub struct ConnectedDevice {
     /// Platform specific unique ID
     pub id: String,
+    /// Available Releases
+    pub releases: Option<Vec<Release>>,
     /// Vendor ID
     pub vendor_id: u16,
     /// Product ID
@@ -151,6 +155,12 @@ impl ConnectedDevice {
         }
     }
 
+    pub async fn try_get_github_releases(&mut self) -> Result<()> {
+        let releases = fetch_releases(self.clone()).await?;
+        self.releases = Some(releases);
+        Ok(())
+    }
+
     pub fn enter_bootloader(&self) -> Result<()> {
         match &self.device_type {
             ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => {
@@ -169,6 +179,7 @@ impl From<&UsbDevice> for ConnectedDevice {
     fn from(value: &UsbDevice) -> Self {
         ConnectedDevice {
             id: value.id.clone(),
+            releases: None,
             vendor_id: value.vendor_id.clone(),
             product_id: value.product_id.clone(),
             description: value.description.clone(),
