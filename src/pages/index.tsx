@@ -47,7 +47,7 @@ function App() {
                 />
               </a>
             </span>
-            <span className='clickable-image'>
+            {/* <span className='clickable-image'>
               <a href='https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface' target='_blank' rel="noreferrer">
                 <Image
                   width={835}
@@ -57,7 +57,7 @@ function App() {
                   alt='uLOOP Image'
                 />
               </a>
-            </span>
+            </span> */}
           </div>
 
           <p>Click a device to learn more about Pirate MIDI&apos;s products.</p>
