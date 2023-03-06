@@ -16,7 +16,7 @@
 }
 
 html, body, #__next {
-  @apply h-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100;
+  @apply h-full bg-slate-100 text-slate-800 dark:bg-pm-black dark:text-slate-100;
 }
 
 .markdown > * {
@@ -44,19 +44,20 @@ button {
   @apply hover:shadow-lg hover:-translate-y-1 dark:hover:shadow-slate-600 active:translate-y-0 active:shadow-none
 }
 
+
 .logo:hover {
   @apply -translate-y-1;
-  filter: drop-shadow(0 10px 1em #de626a) !important;
+  filter: drop-shadow(0 1em 2.1em #de626a) !important;
 }
 
 .image-lift:hover {
   @apply -translate-y-2;
-  filter: drop-shadow(0 10px 1em rgb(55 65 81)) !important;
+  filter: drop-shadow(0 1em 2.1em rgb(55 65 81)) !important;
 }
 
 @media (prefers-color-scheme: dark) {
   .image-lift:hover {
-    filter: drop-shadow(0 10px 1em rgb(242 242 242)) !important;
+    filter: drop-shadow(0 1em 2.1em rgb(242 242 242)) !important;
   }
 }
 

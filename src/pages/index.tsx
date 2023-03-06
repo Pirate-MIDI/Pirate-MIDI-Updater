@@ -5,7 +5,7 @@ import uloopIcon from '../assets/icon-uloop.png'
 import clickIcon from '../assets/icon-click.png'
 import bridge4Icon from '../assets/icon-bridge4.png'
 import bridge6Icon from '../assets/icon-bridge6.png'
-import pirateMidiImage from '../assets/piratemidi.png'
+import pirateMidiImage from '../assets/logo-piratemidi.png'
 
 function App() {
   return (
@@ -17,8 +17,8 @@ function App() {
             <span className='clickable-image'>
               <a href='https://piratemidi.com/pages/bridge-6' target='_blank' rel="noreferrer">
                 <Image
-                  width={288}
-                  height={212}
+                  width={835}
+                  height={500}
                   src={bridge6Icon}
                   className='!p-4 image-lift'
                   alt='Bridge6 Image'
@@ -28,8 +28,8 @@ function App() {
             <span className='clickable-image'>
               <a href='https://piratemidi.com/pages/bridge4' target='_blank' rel="noreferrer">
                 <Image
-                  width={288}
-                  height={212}
+                  width={835}
+                  height={500}
                   src={bridge4Icon}
                   className='!p-4 image-lift'
                   alt='Bridge4 Image'
@@ -39,8 +39,8 @@ function App() {
             <span className='clickable-image'>
               <a href='https://piratemidi.com/products/click-midi-interface-relay-switcher' target='_blank' rel="noreferrer">
                 <Image
-                  width={288}
-                  height={212}
+                  width={835}
+                  height={500}
                   src={clickIcon}
                   className='!p-4 image-lift'
                   alt='CLiCK Image'
@@ -50,8 +50,8 @@ function App() {
             <span className='clickable-image'>
               <a href='https://piratemidi.com/products/%C2%B5loop-4-ch-bypass-and-midi-interface' target='_blank' rel="noreferrer">
                 <Image
-                  width={288}
-                  height={212}
+                  width={835}
+                  height={500}
                   src={uloopIcon}
                   className='!p-4 image-lift'
                   alt='uLOOP Image'
@@ -63,19 +63,16 @@ function App() {
           <p>Click a device to learn more about Pirate MIDI&apos;s products.</p>
         </div>
 
-        <span className='mt-[10vh] clickable-image'>
-          <a href='https://piratemidi.com/' target='_blank' rel="noreferrer">
-            <Image
-              width={75}
-              height={75}
-              className='logo'
-              src={pirateMidiImage}
-              alt='Pirate MIDI Logo'
-            />
-          </a>
+        <span className='mt-[20vh]'>
+          <Image
+            width={200}
+            height={133}
+            src={pirateMidiImage}
+            alt='Pirate MIDI Logo'
+          />
         </span>
       </div>
-    </FadeIn>
+    </FadeIn >
   )
 }
 
