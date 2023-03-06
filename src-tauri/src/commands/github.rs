@@ -70,16 +70,14 @@ pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
             match res.status() {
                 StatusCode::OK => match res.json::<Vec<Release>>().await {
                     Ok(releases) => {
-                        // trace!("releases: {:?}", releases);
                         let compatible: Vec<Release> = releases
                             .iter()
-                            .filter(|release| {
+                            .filter(|&release| {
                                 // find releases compatible with our device
                                 release
                                     .assets
                                     .iter()
-                                    .find(|&asset| asset.is_compatible(&device))
-                                    .is_some()
+                                    .any(|asset| asset.is_compatible(&device))
                             })
                             .cloned()
                             .collect::<Vec<Release>>();
@@ -104,7 +102,7 @@ pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
 
 /// retrieve specific binary asset and save to the filesystem
 pub async fn fetch_compatable_asset(device: &ConnectedDevice, release: Release) -> Result<PathBuf> {
-    match release.assets.iter().find(|&a| a.is_compatible(&device)) {
+    match release.assets.iter().find(|&a| a.is_compatible(device)) {
         Some(asset) => {
             // download the binary
             info!("fetching asset from github: {}", asset.browser_download_url);

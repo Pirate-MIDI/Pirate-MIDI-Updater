@@ -1,26 +1,26 @@
-import FadeIn from "react-fade-in";
-import { invoke } from "@tauri-apps/api/tauri";
+import FadeIn from 'react-fade-in';
+import { invoke } from '@tauri-apps/api/tauri';
 import { useRouter } from 'next/router'
-import { ArrowLeftIcon, ArrowRightIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
-import { useState, useEffect } from "react";
+import { ArrowLeftIcon, ArrowRightIcon, CheckBadgeIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
 
-import ReleaseList from "../../components/ReleaseListColumn";
-import DeviceInfo from "../../components/DeviceInfoBar";
-import Placeholder from "../../components/Placeholder";
-import ReleaseInfo from "../../components/ReleaseInfoBar";
-import InstallBar from "../../components/InstallBar";
+import ReleaseList from '../../components/ReleaseListColumn';
+import DeviceInfo from '../../components/DeviceInfoBar';
+import Placeholder from '../../components/Placeholder';
+import ReleaseInfo from '../../components/ReleaseInfoBar';
 
-import type { Release } from "../../../src-tauri/bindings/Release";
-import type { ConnectedDevice } from "../../../src-tauri/bindings/ConnectedDevice";
-import BridgeModal from "../../components/BridgeModal";
+import type { Release } from '../../../src-tauri/bindings/Release';
+import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevice';
+import BridgeModal from '../../components/BridgeModal';
 
-// import { Asset } from "../../../src-tauri/bindings/Asset";
+// import { Asset } from '../../../src-tauri/bindings/Asset';
 
 function Releases({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter();
     const [releases, setReleases] = useState([])
     const [selected, setSelected] = useState(undefined)
     const [isOpen, setIsOpen] = useState(false)
+    const [showAllReleases, setShowAllReleases] = useState(false)
 
     // retrieve selected device from router
     const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
@@ -31,12 +31,12 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
 
     const onAccept = async (connected: ConnectedDevice, release: Release) => {
         onClose()
-        await invoke("remote_binary", { device: connected, release })
+        await invoke('remote_binary', { device: connected, release })
     }
 
     const onRemoteInstall = async (connected: ConnectedDevice, release: Release) => {
         // show the bridge cable diagram
-        if (connected.device_type === "Bridge6" || connected.device_type === "Bridge4") {
+        if (connected.device_type === 'Bridge6' || connected.device_type === 'Bridge4') {
             setIsOpen(true)
         } else {
             await onAccept(connected, release)
@@ -44,7 +44,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
     }
 
     const stylePrerelease = (release) => {
-        return release.prerelease ? 'hover:bg-amber-400 border-amber-500' : 'hover:bg-emerald-400 border-emerald-500';
+        return release.prerelease ? 'bg-amber-400 border-amber-500' : 'bg-emerald-400 border-emerald-500';
     }
 
     // retrieve releases from Github and select the latest release available
@@ -59,27 +59,34 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
     return releases.length < 1 ? (
         <Placeholder />
     ) : (
-        <FadeIn className="">
-            <div className="flex flex-col h-screen ">
-                <div className="flex h-5/6">
-                    <div className='flex flex-col w-1/4 max-w-xs border-r'>
+        <FadeIn className='overflow-hidden'>
+            <div className='flex flex-col h-screen overflow-hidden'>
+                <div className='flex h-5/6'>
+                    <div className={showAllReleases ? 'flex flex-col w-1/4 max-w-xs border-r' : 'hidden'}>
                         <ReleaseList releases={releases} selected={selected} onSelect={(release) => setSelected(release)} />
                     </div>
-                    <div className="w-3/4">
+                    <div className={showAllReleases ? 'w-3/4' : 'w-full'}>
                         <DeviceInfo device={device} />
-                        <ReleaseInfo release={selected} />
+                        <ReleaseInfo device={device} release={selected} />
                     </div>
                 </div>
-                <div className="flex items-center justify-between p-4 border-t h-1/6">
-                    <button onClick={() => router.back()} className='flex items-center px-4 py-2 border rounded border-slate-400'>
-                        <ArrowLeftIcon className="icon-left" />
-                        <span>Device List</span>
+                <div className='flex items-center justify-between p-4 border-t h-1/6'>
+                    <button onClick={() => setShowAllReleases(!showAllReleases)} className='flex items-center px-4 py-2 border rounded border-slate-300'>
+                        <ChevronUpDownIcon className='icon-left' />
+                        Select a different release
                     </button>
-                    <button onClick={() => onRemoteInstall(device, selected)} className={`flex items-center px-4 py-2 font-bold border rounded hover:text-slate-800 ${stylePrerelease(selected)}`}>
-                        <CheckBadgeIcon className='icon-left' />
-                        Install {selected.name}
-                        <ArrowRightIcon className='icon-right' />
-                    </button>
+                    <div className='flex'>
+                        <button onClick={() => router.back()} className='flex items-center px-4 py-2 m-2 border rounded border-slate-300'>
+                            <ArrowLeftIcon className='icon-left' />
+                            Back to Device List
+                        </button>
+                        <button onClick={() => onRemoteInstall(device, selected)} className={`flex items-center px-4 py-2 m-2 border rounded text-slate-800 ${stylePrerelease(selected)}`}>
+                            <CheckBadgeIcon className='icon-left' />
+                            Install {selected.name}
+                            <ArrowRightIcon className='icon-right' />
+                        </button>
+                    </div>
+
                 </div>
             </div>
             <BridgeModal show={isOpen} onClose={onClose} onAccept={() => onAccept(device, selected)} />

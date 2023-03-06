@@ -1,6 +1,6 @@
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from '@tauri-apps/api/tauri';
 import Image from 'next/image';
-import FadeIn from "react-fade-in";
+import FadeIn from 'react-fade-in';
 import DeviceLogo from '../../components/DeviceLogo';
 import BridgeModal from '../../components/BridgeModal';
 import { useRouter } from 'next/router';
@@ -9,7 +9,7 @@ import { DocumentIcon, ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon, ExclamationT
 import updaterIcon from '../../assets/icon-updater.png'
 
 import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevice'
-import { useState } from "react";
+import { useState } from 'react';
 
 function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter()
@@ -22,21 +22,21 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
 
     const onAccept = async () => {
         onClose()
-        await invoke("local_binary", { device: selected })
+        await invoke('local_binary', { device: selected })
     }
 
     const onLocalInstall = async (device: ConnectedDevice) => {
         // show the bridge cable diagram
-        if (device.device_type === "Bridge6" || device.device_type === "Bridge4") {
+        if (device.device_type === 'Bridge6' || device.device_type === 'Bridge4') {
             setIsOpen(true)
             setSelected(device)
         } else {
-            await invoke("local_binary", { device: device })
+            await invoke('local_binary', { device: device })
         }
     }
 
     return (
-        <FadeIn className="overflow-hidden">
+        <FadeIn className='overflow-hidden'>
             <div className='flex items-center py-4 mx-4 mb-2 border-b'>
                 <Image
                     width={75}
@@ -63,15 +63,14 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                 />
                             </span>
                             <div className='flex flex-col flex-grow pl-8 mx-2 text-xs text-left border-l'>
-                                <span className='text-lg font-bold'>{device.device_details ? device.device_details.deviceName : "N/A"}</span>
-                                <span>UID: <strong>{device.device_details ? device.device_details.uid : "N/A"}</strong></span>
-                                <span>Firmware: <strong>{device.device_details ? device.device_details.firmwareVersion : "N/A"}</strong> </span>
-                                <span>Hardware: <strong>{device.device_details ? device.device_details.hardwareVersion : "N/A"}</strong> </span>
+                                <span className='text-lg font-bold'>{device.device_details ? device.device_details.deviceName : 'N/A'}</span>
+                                <span>Firmware: <strong>{device.device_details ? device.device_details.firmwareVersion : 'N/A'}</strong> </span>
+                                <span>Hardware: <strong>{device.device_details ? device.device_details.hardwareVersion : 'N/A'}</strong> </span>
                             </div>
-                            <div className="flex flex-col items-center">
-                                <p className="text-sm">Select an installation method:</p>
-                                <div className="flex flex-row items-center">
-                                    <button onClick={() => onLocalInstall(device)} className={`flex items-center px-4 py-2 m-2 text-xs border rounded border-pm-blue-left bg-gradient-to-r hover:from-pm-blue-left hover:to-pm-blue-right hover:text-slate-800`}>
+                            <div className='flex flex-col items-center'>
+                                <p className='text-sm'>Select an installation method:</p>
+                                <div className='flex flex-row items-center'>
+                                    <button onClick={() => onLocalInstall(device)} className={'flex items-center px-4 py-2 m-2 text-sm border rounded border-pm-blue-left hover:bg-pm-blue-right hover:text-slate-800'}>
                                         <DocumentIcon className='icon-left' />
                                         Local File
                                         <ArrowUpIcon className='icon-right' />
@@ -82,13 +81,13 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                             pathname: '/releases',
                                             query: { serial_number: device.serial_number }
                                         }, '/releases')
-                                    }} className={device.releases ? `flex items-center px-4 py-2 m-2 text-xs border rounded border-emerald-500 bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-400 hover:text-slate-800` : `hidden`}>
+                                    }} className={device.releases ? 'flex items-center px-4 py-2 m-2 text-sm border rounded bg-emerald-400 border-emerald-500 text-slate-800' : 'hidden'}>
                                         <CheckBadgeIcon className='icon-left' />
-                                        Official Release
+                                        Latest Release
                                         <ArrowRightIcon className='icon-right' />
                                     </button>
-                                    <span className={device.releases ? `hidden` : `flex items-center px-4 py-2 m-2 text-xs rounded bg-gradient-to-r from-pm-red-left to-pm-red-right text-white font-bold`}>
-                                        <ExclamationTriangleIcon className="icon-left" />
+                                    <span className={device.releases ? 'hidden' : 'flex items-center px-4 py-2 m-2 text-xs rounded bg-gradient-to-r from-pm-red-left to-pm-red-right text-white font-bold'}>
+                                        <ExclamationTriangleIcon className='icon-left' />
                                         Unable to fetch releases
                                     </span>
                                 </div>

@@ -4,24 +4,27 @@ import DeviceLogo from './DeviceLogo'
 import { ConnectedDevice } from '../../src-tauri/bindings/ConnectedDevice'
 
 function DeviceInfoBar({ device }: { device: ConnectedDevice }) {
-    return (
-        <div className='flex items-center justify-between p-4 mx-2 border-b h-1/6 border-slate-600'>
+    return device ? (
+        <div className='flex items-center justify-between p-4 mx-2 font-mono text-xs border-b h-1/6 border-slate-300'>
             <div>
                 <p className='uppercase'>
                     <span className='text-emerald-500'>CONNECTED</span> - {device.device_type}
                 </p>
-                <p>Serial: {device.serial_number}</p>
-                <p>UID: {device.device_details ? device.device_details.uid : 'N/A'}</p>
-
+                <div className={device.device_details ? '' : 'hidden'}>
+                    <p>UID: {device.device_details ? device.device_details.uid : 'N/A'}</p>
+                    <p>HARDWARE: {device.device_details ? device.device_details.hardwareVersion : 'N/A'} | FIRMWARE: {device.device_details ? device.device_details.firmwareVersion : 'N/A'}</p>
+                </div>
             </div>
-            <span className='mx-6 mt-1'>
-                <Image
-                    width={100}
-                    height={50}
-                    src={DeviceLogo(device)}
-                    alt={device.device_type + ' Logo'}
-                />
-            </span>
+            <Image
+                width={100}
+                height={50}
+                src={DeviceLogo(device)}
+                alt={device.device_type + ' Logo'}
+            />
+        </div>
+    ) : (
+        <div className='flex items-center justify-center py-12 text-slate-400'>
+            <span>Device is not available</span>
         </div>
     )
 }

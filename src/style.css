@@ -12,7 +12,7 @@
 
 * {
   //transition: color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-  @apply transition;
+  @apply transition-all;
 }
 
 html, body, #__next {
@@ -41,7 +41,7 @@ span.clickable-image > a > span, span.logo > a > span {
 }
 
 button {
-  @apply hover:shadow-lg hover:-translate-y-1 dark:hover:shadow-slate-600 active:translate-y-0 active:shadow-none
+  @apply hover:shadow-md hover:-translate-y-0.5 dark:hover:shadow-slate-600 active:translate-y-0 active:shadow-none
 }
 
 .icon-left {
@@ -53,7 +53,7 @@ button {
 }
 
 .logo:hover {
-  @apply -translate-y-1;
+  @apply -translate-y-0.5;
   filter: drop-shadow(0 1em 2.1em #de626a) !important;
 }
 

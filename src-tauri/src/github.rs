@@ -55,7 +55,7 @@ impl Asset {
                 return &value[adjusted_pos_a..];
             }
         }
-        return "";
+        ""
     }
 
     fn _is_compatible(&self, device: &ConnectedDevice, device_str: &str) -> bool {
@@ -90,8 +90,8 @@ impl Asset {
         match &device.device_type {
             // assume format: bridgeX_v1.2.1.1.bin || device_v1.0.0.0.uf2
             // the last number in the version is the compatible revision
-            ConnectedDeviceType::Bridge6 => self._is_compatible(&device, "bridge6"),
-            ConnectedDeviceType::Bridge4 => self._is_compatible(&device, "bridge4"),
+            ConnectedDeviceType::Bridge6 => self._is_compatible(device, "bridge6"),
+            ConnectedDeviceType::Bridge4 => self._is_compatible(device, "bridge4"),
             ConnectedDeviceType::Click => self._is_not_diag("click"),
             ConnectedDeviceType::Unknown => false,
             _ => true, // assume it's true by default if we have a device type

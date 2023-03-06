@@ -25,13 +25,7 @@ pub fn enter_rpi_bootloader(device: &ConnectedDevice) -> Result<()> {
         Ok(builder) => match builder.open() {
             Ok(_) => Ok(()),
             Err(err) => match err.kind() {
-                serialport::ErrorKind::Io(sub_kind) => match sub_kind {
-                    std::io::ErrorKind::Other => Ok(()), // ignore this because on windows this can get thrown
-                    _ => err!(Error::Serial(format!(
-                        "Unable to open RP serial port: {}",
-                        err
-                    ))),
-                },
+                serialport::ErrorKind::Io(std::io::ErrorKind::Other) => Ok(()), // ignore this specific error because on windows this can get thrown
                 _ => err!(Error::Serial(format!(
                     "Unable to open RP serial port: {}",
                     err

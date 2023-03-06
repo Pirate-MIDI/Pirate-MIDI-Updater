@@ -126,8 +126,8 @@ impl ConnectedDevice {
 
     pub fn try_get_device_details(&mut self, delay: Option<Duration>) -> Result<()> {
         // ports might not be immidately available, so delay will delay this operation for the duration
-        if delay.is_some() {
-            sleep(delay.unwrap());
+        if let Some(duration) = delay {
+            sleep(duration);
         }
 
         // find our serial port
@@ -157,8 +157,15 @@ impl ConnectedDevice {
 
     pub async fn try_get_github_releases(&mut self) -> Result<()> {
         let releases = fetch_releases(self.clone()).await?;
+        debug!("releases: {:?}", releases);
         self.releases = Some(releases);
         Ok(())
+    }
+
+    pub async fn try_get_all_device_info(&mut self) -> Result<()> {
+        // get device details, then retrieve the github releases - the order of this is important!
+        self.try_get_device_details(Some(USB_TIMEOUT))?;
+        self.try_get_github_releases().await
     }
 
     pub fn enter_bootloader(&self) -> Result<()> {
@@ -180,8 +187,8 @@ impl From<&UsbDevice> for ConnectedDevice {
         ConnectedDevice {
             id: value.id.clone(),
             releases: None,
-            vendor_id: value.vendor_id.clone(),
-            product_id: value.product_id.clone(),
+            vendor_id: value.vendor_id,
+            product_id: value.product_id,
             description: value.description.clone(),
             serial_number: value.serial_number.clone(),
             device_type: ConnectedDevice::determine_device_type(value),

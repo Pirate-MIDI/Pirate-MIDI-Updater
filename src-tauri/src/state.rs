@@ -17,7 +17,7 @@ pub enum InstallerState {
     #[default]
     Init,
     Bootloader {
-        device: ConnectedDevice,
+        device: Box<ConnectedDevice>,
         binary: PathBuf,
     },
 }
@@ -120,14 +120,14 @@ impl InstallState {
     ) -> Result<()> {
         match self.current_state.try_write() {
             Ok(mut guard) => {
-                *guard = InstallerState::Bootloader {
-                    device: device.clone(),
-                    binary: binary,
-                };
-
                 // enter the bootloader
-                match device.enter_bootloader() {
+                match &device.enter_bootloader() {
                     Ok(_) => {
+                        // update the state and emit it
+                        *guard = InstallerState::Bootloader {
+                            device: Box::new(device),
+                            binary,
+                        };
                         InstallState::emit_state_update(guard, handle);
                         Ok(())
                     }

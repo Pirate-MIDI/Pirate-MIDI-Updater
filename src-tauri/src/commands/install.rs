@@ -43,7 +43,7 @@ pub async fn local_binary(
     match local_file_path {
         Some(file_path) => {
             state
-                .bootloader_transition(device, file_path.into(), &handle)
+                .bootloader_transition(device, file_path, &handle)
                 .unwrap();
 
             Ok(())
@@ -61,7 +61,7 @@ pub async fn remote_binary(
 ) -> Result<()> {
     // retrieve the remote binary
     match fetch_compatable_asset(&device, release).await {
-        Ok(file_path) => state.bootloader_transition(device, file_path.into(), &handle),
+        Ok(file_path) => state.bootloader_transition(device, file_path, &handle),
         Err(err) => err!(Error::Other(format!(
             "unable to retrieve asset: {:?}",
             err.to_string()
