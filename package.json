@@ -14,7 +14,7 @@
     "@loadingio/loading-bar": "^0.1.1",
     "@tauri-apps/api": "^1.2.0",
     "autoprefixer": "^10.4.13",
-    "next": "^12.3.4",
+    "next": "^13.2.3",
     "postcss": "^8.4.21",
     "rc-progress": "^3.4.1",
     "react": "^18.2.0",
