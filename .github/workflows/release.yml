@@ -31,18 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - platform: macos-latest
-          #   target: aarch64-apple-darwin
-          - platform: macos-latest
-            target: x86_64-apple-darwin
-          #- platform: ubuntu-latest
-          #  target: aarch64-unknown-linux-gnu
-          - platform: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-          #- platform: windows-latest
-          #  target: aarch64-pc-windows-msvc
-          - platform: windows-latest
-            target: x86_64-pc-windows-msvc
+          - platform: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -111,7 +100,6 @@ jobs:
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           ENABLE_CODE_SIGNING: ${{ secrets.APPLE_CERTIFICATE }}
         with:
-          args: --target ${{ matrix.target }}
           releaseId: ${{ needs.release_please.outputs.release_id }}
           tauriScript: npm run tauri
 
