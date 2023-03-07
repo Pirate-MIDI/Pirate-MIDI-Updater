@@ -19,6 +19,18 @@ use crate::state::InstallState;
 use crate::state::InstallerState;
 use crate::USB_POLL_INTERVAL;
 
+// valid devices have a known device type, and have alphanumeric serial numbers
+fn is_valid_device(device: &ConnectedDevice) -> bool {
+    device.device_type != ConnectedDeviceType::Unknown
+        && device.serial_number.is_some()
+        && device
+            .serial_number
+            .as_ref()
+            .unwrap()
+            .chars()
+            .all(char::is_alphanumeric)
+}
+
 fn install_bridge_devices(handle: AppHandle, binary: &Path) -> Result<()> {
     // these values are for tracking install progress
     let total_bytes = binary.metadata().unwrap().len() as f32;
@@ -85,7 +97,7 @@ pub fn setup_usb_listener(handle: AppHandle) {
                     let mut connected_devices: Vec<ConnectedDevice> = devices
                         .iter()
                         .map(ConnectedDevice::from)
-                        .filter(|device| device.device_type != ConnectedDeviceType::Unknown)
+                        .filter(is_valid_device)
                         .collect();
 
                     // get all device info for all devices
@@ -102,7 +114,7 @@ pub fn setup_usb_listener(handle: AppHandle) {
                     // convert the device to an expected structure
                     let mut arriving = ConnectedDevice::from(&device);
 
-                    if arriving.device_type != ConnectedDeviceType::Unknown {
+                    if is_valid_device(&arriving) {
                         // get all device info
                         match arriving.try_get_all_device_info().await {
                             Ok(_) => (), // do nothing on success
