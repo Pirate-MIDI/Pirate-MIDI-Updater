@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.7](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.6...v0.10.7) (2023-03-07)
+
+
+### Bug Fixes
+
+* windows detection fixes, gh action fix, removed unneeded driver inf files ([e253596](https://github.com/beckler/Pirate-MIDI-Updater/commit/e253596d06a52463f9981e10d1886fe03477024e))
+
 ## [0.10.6](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.5...v0.10.6) (2023-03-07)
 
 
