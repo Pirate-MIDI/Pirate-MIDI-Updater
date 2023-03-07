@@ -11,7 +11,7 @@ jobs:
     outputs:
       tag_name: ${{ steps.release.outputs.tag_name }}
       release_id: ${{ steps.release.outputs.id }}
-      upload_url: ${{ setps.release.outputs.upload_url }}
+      upload_url: ${{ steps.release.outputs.upload_url }}
       release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - uses: google-github-actions/release-please-action@v3
