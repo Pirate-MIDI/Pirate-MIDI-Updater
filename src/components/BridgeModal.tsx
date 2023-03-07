@@ -32,12 +32,12 @@ function BridgeModal({ show, onClose, onAccept }) {
                             <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                                 <Dialog.Title
                                     as="h3"
-                                    className="text-lg font-medium leading-6 text-gray-900"
+                                    className="text-lg font-medium leading-6 text-slate-900"
                                 >
                                     Prepare your Device
                                 </Dialog.Title>
                                 <div className="mt-2">
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-sm text-slate-500">
                                         Before installing firmware, Bridge devices require connecting the <strong>Flexi 1</strong> port to the <strong>Flexi 2</strong> port with a TS or TRS cable.
                                     </p>
                                 </div>
@@ -54,7 +54,7 @@ function BridgeModal({ show, onClose, onAccept }) {
                                 <div className="flex justify-end mt-4">
                                     <button
                                         type="button"
-                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border rounded-md hover:bg-blue-300"
+                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium border rounded-md border-pm-blue-left bg-pm-blue-right text-slate-900"
                                         onClick={onAccept}>
                                         I&apos;m ready!
                                     </button>

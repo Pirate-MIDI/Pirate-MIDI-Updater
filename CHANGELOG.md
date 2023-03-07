@@ -1,156 +1,156 @@
 # Changelog
 
-## [0.9.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.5...v0.9.0) (2023-03-01)
+## [0.9.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.5...v0.9.0) (2023-03-01)
 
 
 ### Features
 
-* bridge dfu update is now supported ([d26cacd](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/d26cacd9d0b7eb261e20e8adebab53a2205e41aa))
+* bridge dfu update is now supported ([d26cacd](https://github.com/beckler/Pirate-MIDI-Updater/commit/d26cacd9d0b7eb261e20e8adebab53a2205e41aa))
 
 
 ### Bug Fixes
 
-* attempting to fix the updater again ([139da4b](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/139da4b0f02e5c74f718f1a72a37e81674dc0c9c))
+* attempting to fix the updater again ([139da4b](https://github.com/beckler/Pirate-MIDI-Updater/commit/139da4b0f02e5c74f718f1a72a37e81674dc0c9c))
 
-## [0.8.5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.4...v0.8.5) (2023-03-01)
-
-
-### Bug Fixes
-
-* fixed file path for macos specific actions ([980c903](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/980c903ee1bd8e585e7f0b0b022bc3051502d71b))
-
-## [0.8.4](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.3...v0.8.4) (2023-03-01)
+## [0.8.5](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.4...v0.8.5) (2023-03-01)
 
 
 ### Bug Fixes
 
-* attempting to fix the updater ([fc354e5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/fc354e53ffc24116a5ab0a16fd39afe5de4fd336))
-* push file dialog off main thread ([10b4601](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/10b4601c674dd0caf8bd08406538fb863428c1b9))
+* fixed file path for macos specific actions ([980c903](https://github.com/beckler/Pirate-MIDI-Updater/commit/980c903ee1bd8e585e7f0b0b022bc3051502d71b))
 
-## [0.8.3](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.2...v0.8.3) (2023-03-01)
-
-
-### Bug Fixes
-
-* change github action rust toolchain ([3beb987](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/3beb987138556d964a9819d86dcbeb73753e317b))
-* github actions ([0f1a0a3](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/0f1a0a36398d16eae9dfe22645cc25d1a553939d))
-* github actions again ([8fbc70f](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/8fbc70f7c7b8d193c09b7a9c33f6dfedb335e3af))
-* migrated from pnpm to npm ([304e867](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/304e8679cd99a3c429161bee9f309b49a4e37df0))
-* migrated from pnpm to npm - script issue ([b8a974c](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/b8a974ccda4d62d30914d7e8967a88061ec91a84))
-* removed tauri-api ([5d7a307](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/5d7a3078da191581167cefbfc836f3e48521cb35))
-* testing github action ([e028e6d](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/e028e6da3c8b04f7343da167cb05b3124832a7e2))
-* updated gh action - rust cache ([9471d29](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/9471d2945d62cece2ff50ac2a3578fa427922ebe))
-
-## [0.8.2](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.1...v0.8.2) (2023-03-01)
+## [0.8.4](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.3...v0.8.4) (2023-03-01)
 
 
 ### Bug Fixes
 
-* github actions ([a62746a](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/a62746a5ffacecdcea6a0b14f8ef465590ec5375))
+* attempting to fix the updater ([fc354e5](https://github.com/beckler/Pirate-MIDI-Updater/commit/fc354e53ffc24116a5ab0a16fd39afe5de4fd336))
+* push file dialog off main thread ([10b4601](https://github.com/beckler/Pirate-MIDI-Updater/commit/10b4601c674dd0caf8bd08406538fb863428c1b9))
 
-## [0.8.1](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.8.0...v0.8.1) (2023-02-28)
+## [0.8.3](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.2...v0.8.3) (2023-03-01)
 
 
 ### Bug Fixes
 
-* github actions ([94e2a4b](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/94e2a4b276d56ef25618c0d0038ee1cd36f789ce))
+* change github action rust toolchain ([3beb987](https://github.com/beckler/Pirate-MIDI-Updater/commit/3beb987138556d964a9819d86dcbeb73753e317b))
+* github actions ([0f1a0a3](https://github.com/beckler/Pirate-MIDI-Updater/commit/0f1a0a36398d16eae9dfe22645cc25d1a553939d))
+* github actions again ([8fbc70f](https://github.com/beckler/Pirate-MIDI-Updater/commit/8fbc70f7c7b8d193c09b7a9c33f6dfedb335e3af))
+* migrated from pnpm to npm ([304e867](https://github.com/beckler/Pirate-MIDI-Updater/commit/304e8679cd99a3c429161bee9f309b49a4e37df0))
+* migrated from pnpm to npm - script issue ([b8a974c](https://github.com/beckler/Pirate-MIDI-Updater/commit/b8a974ccda4d62d30914d7e8967a88061ec91a84))
+* removed tauri-api ([5d7a307](https://github.com/beckler/Pirate-MIDI-Updater/commit/5d7a3078da191581167cefbfc836f3e48521cb35))
+* testing github action ([e028e6d](https://github.com/beckler/Pirate-MIDI-Updater/commit/e028e6da3c8b04f7343da167cb05b3124832a7e2))
+* updated gh action - rust cache ([9471d29](https://github.com/beckler/Pirate-MIDI-Updater/commit/9471d2945d62cece2ff50ac2a3578fa427922ebe))
 
-## [0.8.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.7.2...v0.8.0) (2023-02-28)
+## [0.8.2](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.1...v0.8.2) (2023-03-01)
+
+
+### Bug Fixes
+
+* github actions ([a62746a](https://github.com/beckler/Pirate-MIDI-Updater/commit/a62746a5ffacecdcea6a0b14f8ef465590ec5375))
+
+## [0.8.1](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.0...v0.8.1) (2023-02-28)
+
+
+### Bug Fixes
+
+* github actions ([94e2a4b](https://github.com/beckler/Pirate-MIDI-Updater/commit/94e2a4b276d56ef25618c0d0038ee1cd36f789ce))
+
+## [0.8.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.7.2...v0.8.0) (2023-02-28)
 
 
 ### Features
 
-* added windows support with updated drivers ([4c0101c](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/4c0101c2845d625e3ce4dcd21e8863324c49adc4))
-* updated wix installer to include driver installer ([27e7823](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/27e782397fca481aeb7db4a2c9f2c0c4df0b748f))
+* added windows support with updated drivers ([4c0101c](https://github.com/beckler/Pirate-MIDI-Updater/commit/4c0101c2845d625e3ce4dcd21e8863324c49adc4))
+* updated wix installer to include driver installer ([27e7823](https://github.com/beckler/Pirate-MIDI-Updater/commit/27e782397fca481aeb7db4a2c9f2c0c4df0b748f))
 
 
 ### Bug Fixes
 
-* github actions - updated testing script ([cd1b88c](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/cd1b88c6419fabd62f201d5cfe7a80e031074f37))
+* github actions - updated testing script ([cd1b88c](https://github.com/beckler/Pirate-MIDI-Updater/commit/cd1b88c6419fabd62f201d5cfe7a80e031074f37))
 
-## [0.7.2](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.7.1...v0.7.2) (2023-02-24)
-
-
-### Bug Fixes
-
-* github actions - adding cache ([48cbb0a](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/48cbb0ab0cb11587832f7d50357975ebceffaddd))
-
-## [0.7.1](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.7.0...v0.7.1) (2023-02-24)
+## [0.7.2](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.7.1...v0.7.2) (2023-02-24)
 
 
 ### Bug Fixes
 
-* github actions ([8007360](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/8007360c882c4f1a953ec10b0b3a6adbd92d6317))
+* github actions - adding cache ([48cbb0a](https://github.com/beckler/Pirate-MIDI-Updater/commit/48cbb0ab0cb11587832f7d50357975ebceffaddd))
 
-## [0.7.0](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.8...v0.7.0) (2023-02-23)
+## [0.7.1](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.7.0...v0.7.1) (2023-02-24)
+
+
+### Bug Fixes
+
+* github actions ([8007360](https://github.com/beckler/Pirate-MIDI-Updater/commit/8007360c882c4f1a953ec10b0b3a6adbd92d6317))
+
+## [0.7.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.8...v0.7.0) (2023-02-23)
 
 
 ### Features
 
-* added apple code signing ([d884bad](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/d884bad2391ecf777cdd3b2c7c40761d7a3e7403))
+* added apple code signing ([d884bad](https://github.com/beckler/Pirate-MIDI-Updater/commit/d884bad2391ecf777cdd3b2c7c40761d7a3e7403))
 
-## [0.6.8](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.7...v0.6.8) (2023-02-23)
-
-
-### Miscellaneous Chores
-
-* release 0.6.8 ([33ebf24](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/33ebf2453ab0535769fb8c0bccc9e63bf489b360))
-
-## [0.6.7](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.6...v0.6.7) (2023-02-23)
+## [0.6.8](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.7...v0.6.8) (2023-02-23)
 
 
 ### Miscellaneous Chores
 
-* release 0.6.7 ([1a94acb](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/1a94acbe8088e0056ef135d6c21c2c2d8ccf8342))
+* release 0.6.8 ([33ebf24](https://github.com/beckler/Pirate-MIDI-Updater/commit/33ebf2453ab0535769fb8c0bccc9e63bf489b360))
 
-## [0.6.6](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.5...v0.6.6) (2023-02-23)
-
-
-### Miscellaneous Chores
-
-* release 0.6.6 ([972cb58](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/972cb582c38fc50b04504754d59a2053c1e99bff))
-
-## [0.6.5](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.4...v0.6.5) (2023-02-23)
+## [0.6.7](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.6...v0.6.7) (2023-02-23)
 
 
 ### Miscellaneous Chores
 
-* release 0.6.5 ([fd35640](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/fd356407bd955c50491b56a114ce276a3d94a48b))
+* release 0.6.7 ([1a94acb](https://github.com/beckler/Pirate-MIDI-Updater/commit/1a94acbe8088e0056ef135d6c21c2c2d8ccf8342))
 
-## [0.6.4](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.3-beta...v0.6.4) (2023-02-23)
+## [0.6.6](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.5...v0.6.6) (2023-02-23)
 
 
 ### Miscellaneous Chores
 
-* release 0.6.4 ([1137c8b](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/1137c8be503d708f2a83be88b19d2e8cfab5bb30))
+* release 0.6.6 ([972cb58](https://github.com/beckler/Pirate-MIDI-Updater/commit/972cb582c38fc50b04504754d59a2053c1e99bff))
 
-## [0.6.3-beta](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.2-beta...v0.6.3-beta) (2023-02-23)
+## [0.6.5](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.4...v0.6.5) (2023-02-23)
+
+
+### Miscellaneous Chores
+
+* release 0.6.5 ([fd35640](https://github.com/beckler/Pirate-MIDI-Updater/commit/fd356407bd955c50491b56a114ce276a3d94a48b))
+
+## [0.6.4](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.3-beta...v0.6.4) (2023-02-23)
+
+
+### Miscellaneous Chores
+
+* release 0.6.4 ([1137c8b](https://github.com/beckler/Pirate-MIDI-Updater/commit/1137c8be503d708f2a83be88b19d2e8cfab5bb30))
+
+## [0.6.3-beta](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.2-beta...v0.6.3-beta) (2023-02-23)
 
 
 ### Bug Fixes
 
-* github actions ([c82ce2f](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/c82ce2f38958aa3ab4884b08071b14d401dd944d))
+* github actions ([c82ce2f](https://github.com/beckler/Pirate-MIDI-Updater/commit/c82ce2f38958aa3ab4884b08071b14d401dd944d))
 
-## [0.6.2-beta](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.1-beta...v0.6.2-beta) (2023-02-23)
-
-
-### Bug Fixes
-
-* github actions ([9858a11](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/9858a114cb646dcf6151f11ee6ce16bcc28c9b9c))
-
-## [0.6.1-beta](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.6.0-beta...v0.6.1-beta) (2023-02-23)
+## [0.6.2-beta](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.1-beta...v0.6.2-beta) (2023-02-23)
 
 
 ### Bug Fixes
 
-* github actions ([4cf15c6](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/4cf15c6097596e47fb047c1cb1dd9022b1b3018e))
+* github actions ([9858a11](https://github.com/beckler/Pirate-MIDI-Updater/commit/9858a114cb646dcf6151f11ee6ce16bcc28c9b9c))
 
-## [0.6.0-beta](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/compare/v0.5.0-beta...v0.6.0-beta) (2023-02-23)
+## [0.6.1-beta](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.6.0-beta...v0.6.1-beta) (2023-02-23)
+
+
+### Bug Fixes
+
+* github actions ([4cf15c6](https://github.com/beckler/Pirate-MIDI-Updater/commit/4cf15c6097596e47fb047c1cb1dd9022b1b3018e))
+
+## [0.6.0-beta](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.5.0-beta...v0.6.0-beta) (2023-02-23)
 
 
 ### Features
 
-* remote install now works for click, started working on local and remote for bridge ([78d2d92](https://github.com/beckler/Pirate-MIDI-Firmware-Updater/commit/78d2d92358d0e3c6b38f25aed4eee77212e9e426))
+* remote install now works for click, started working on local and remote for bridge ([78d2d92](https://github.com/beckler/Pirate-MIDI-Updater/commit/78d2d92358d0e3c6b38f25aed4eee77212e9e426))
 
 ## [0.5.0-beta](https://github.com/beckler/ahoy-next/compare/v0.4.1-beta...v0.5.0-beta) (2023-02-22)
 

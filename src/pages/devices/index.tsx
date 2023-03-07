@@ -70,7 +70,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                             <div className='flex flex-col items-center'>
                                 <p className='text-sm'>Select an installation method:</p>
                                 <div className='flex flex-row items-center'>
-                                    <button onClick={() => onLocalInstall(device)} className={'flex items-center px-4 py-2 m-2 text-sm border rounded border-pm-blue-left hover:bg-pm-blue-right hover:text-slate-800'}>
+                                    <button onClick={() => onLocalInstall(device)} className={'flex items-center px-4 py-2 m-2 text-sm border rounded border-pm-blue-left bg-pm-blue-right text-slate-800'}>
                                         <DocumentIcon className='icon-left' />
                                         Local File
                                         <ArrowUpIcon className='icon-right' />

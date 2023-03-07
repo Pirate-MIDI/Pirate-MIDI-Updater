@@ -47,21 +47,21 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
                 <Disclosure as="div" className={getResetRequired() ? '' : 'hidden'}>
                     {({ open }) => (
                         <>
-                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left border rounded focus:outline-none focus-visible:ring">
+                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-yellow-300 border border-yellow-300 rounded">
                                 <div className='flex items-center'>
                                     <BookOpenIcon className='icon-left' />
                                     <span>Show/Hide Factory Reset Instructions</span>
                                 </div>
                                 <ChevronUpIcon
                                     className={`${open ? 'rotate-180 transform' : ''
-                                        } h-5 w-5`}
+                                        } h-5 w-5 text-yellow-300`}
                                 />
                             </Disclosure.Button>
                             <Disclosure.Panel className="p-4 text-sm">
                                 <FadeIn>
-                                    <div className='flex items-center px-2 py-1 text-xs text-yellow-300 border border-yellow-300 rounded'>
+                                    <div className='flex items-center px-2 py-1 text-xs border rounded border-pm-red-right text-pm-red-right'>
                                         <ExclamationTriangleIcon className='w-4 h-4 mr-2' />
-                                        <p>Performing this action will <strong>delete all presets and user data</strong> from the device.<br />
+                                        <p><strong>Performing this action will delete all presets and user data from the device.</strong><br />
                                             Utilize the&nbsp;
                                             <a className='inline text-blue-400 underline' href="https://edit.piratemidi.com" target='_blank' rel="noreferrer">
                                                 Web Editor
@@ -70,28 +70,25 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
                                         </p>
                                     </div>
                                     <p className='mt-4'>
-                                        <span></span>To Factory Reset your device, do one of the following:<br />
-                                        - If you are able to access the device menu on your device, you can find this option under:<br />
-                                        &nbsp; &nbsp; &nbsp;- System &gt; Reset &gt; Factory<br />
-                                        - If you are unable to access the device menu on your device:<br />
-                                        &nbsp; &nbsp; &nbsp;- Hold <strong>Footswitch 1</strong> while applying power to your device<br />
+                                        To Factory Reset Bridge devices:<br />
+                                        - Hold <strong>Footswitch 1</strong> down while applying power to your device. Power can be applied via 9v or USB. Hold until all LEDs have flashed white.
                                     </p>
                                 </FadeIn>
                             </Disclosure.Panel>
                         </>
                     )}
                 </Disclosure>
-                <Disclosure as="div" className={getResetRequired() ? "mt-2" : ''} >
+                <Disclosure as="div" defaultOpen={true} className={getResetRequired() ? "mt-4" : ''} >
                     {({ open }) => (
                         <>
-                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left border rounded focus:outline-none">
+                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left border rounded focus:outline-none text-pm-blue-right border-pm-blue-right">
                                 <div className='flex items-center'>
                                     <BookOpenIcon className='icon-left' />
                                     <span>Show/Hide Release Notes</span>
                                 </div>
                                 <ChevronUpIcon
                                     className={`${open ? 'rotate-180 transform' : ''
-                                        } h-5 w-5`}
+                                        } h-5 w-5 text-pm-blue-right`}
                                 />
                             </Disclosure.Button>
                             <Disclosure.Panel>
