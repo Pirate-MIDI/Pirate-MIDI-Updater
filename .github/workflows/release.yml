@@ -41,7 +41,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "npm"
 
       - name: setup rust cache
         uses: Swatinem/rust-cache@v2
@@ -63,7 +62,7 @@ jobs:
         run: mkdir dist
 
       - name: install app dependencies and build it
-        run: npm install --legacy-peer-deps && npm run build
+        run: yarn install && yarn build
 
       - name: windows - build driver installer
         if: matrix.platform == 'windows-latest'
@@ -100,7 +99,6 @@ jobs:
           ENABLE_CODE_SIGNING: ${{ secrets.APPLE_CERTIFICATE }}
         with:
           releaseId: ${{ needs.release_please.outputs.release_id }}
-          tauriScript: npm run tauri
 
   create_update_json:
     name: "Create latest.json file"
