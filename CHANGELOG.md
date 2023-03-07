@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.9.0...v0.10.0) (2023-03-07)
+
+
+### Features
+
+* added factory reset instructions and possibly detection, updater json upload ([7f9a664](https://github.com/beckler/Pirate-MIDI-Updater/commit/7f9a6641e07b5eed1338f145fb9c4ac7fcc362b1))
+
+
+### Bug Fixes
+
+* all github annotation issues ([ab7247e](https://github.com/beckler/Pirate-MIDI-Updater/commit/ab7247ec80d7c16ab20c6fda1ef6e3edfd10c57b))
+* lots of bug fixes with the bridge device communication, refactored and simplified ([28c2e93](https://github.com/beckler/Pirate-MIDI-Updater/commit/28c2e9395a0463dadf80964f130f5fd27b90d94d))
+* lots of crazy bug fixes, ui updates, etc ([5476ef2](https://github.com/beckler/Pirate-MIDI-Updater/commit/5476ef27f86b7298ea1253130724f13263ed66a4))
+* updated release file ([4951e56](https://github.com/beckler/Pirate-MIDI-Updater/commit/4951e561be1220b61a38e6ef3e3db0e91925f80b))
+
 ## [0.9.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.8.5...v0.9.0) (2023-03-01)
 
 
