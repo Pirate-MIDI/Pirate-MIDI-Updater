@@ -1,4 +1,4 @@
-# Pirate MIDI Firmware Updater
+# Pirate MIDI Updater
 
 This is a (hopefully) easy-to-use cross-platform executable designed to update the firmware for Pirate MIDI devices.
 
