@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.14...v0.11.0) (2023-03-08)
+
+
+### Features
+
+* added more distinct backend states ([aae1ec5](https://github.com/beckler/Pirate-MIDI-Updater/commit/aae1ec5e975ddb5e5235cffbf3b2c5649a385d03))
+* added more distinct states between steps, removed unused deps ([30f270e](https://github.com/beckler/Pirate-MIDI-Updater/commit/30f270e10fb842d6b4d6859abc59f1e32494d590))
+
 ## [0.10.14](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.13...v0.10.14) (2023-03-08)
 
 
