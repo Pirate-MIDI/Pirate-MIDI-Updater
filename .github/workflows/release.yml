@@ -114,19 +114,14 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: src-tauri
+          workspaces: updater
 
       - name: install rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libudev-dev libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
-
       - name: Generate update.json
-        run: cargo run --bin update > ../_output/latest.json
-        working-directory: src-tauri
+        run: cargo run > ../_output/latest.json
+        working-directory: updater
 
       - name: remove old latest.json
         uses: flcdrg/remove-release-asset-action@v1

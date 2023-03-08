@@ -1,6 +1,6 @@
 use crate::ghdata::Root;
 use crate::updatefile::UpdateFile;
-use tauri::regex::Regex;
+use regex::Regex;
 
 mod ghdata;
 mod updatefile;
