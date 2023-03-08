@@ -135,6 +135,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release_please.outputs.upload_url }}
-          asset_path: _output/latest.json
+          asset_path: ./_output/latest.json
           asset_name: latest.json
           asset_content_type: application/json
