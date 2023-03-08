@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.11](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.10...v0.10.11) (2023-03-08)
+
+
+### Bug Fixes
+
+* updater ([4a68bd8](https://github.com/beckler/Pirate-MIDI-Updater/commit/4a68bd8f774ad8f635f4b8442b35d89dc58f7245))
+
 ## [0.10.10](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.9...v0.10.10) (2023-03-08)
 
 
