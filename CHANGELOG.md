@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.14](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.13...v0.10.14) (2023-03-08)
+
+
+### Bug Fixes
+
+* updated the app to cargo workspace, updater utility is it's own thing now ([df1466c](https://github.com/beckler/Pirate-MIDI-Updater/commit/df1466cc77e54238441d4a2a18464c82a388a3ba))
+
 ## [0.10.13](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.12...v0.10.13) (2023-03-08)
 
 
