@@ -60,7 +60,7 @@ function Install() {
         }, 10000);
 
         return () => clearInterval(interval);
-    }, [status]);
+    }, [device_type, status]);
 
     return (
         <div className='flex flex-col items-center justify-center flex-shrink-0 w-screen h-screen overflow-hidden'>
