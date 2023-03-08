@@ -5,8 +5,10 @@ use futures::SinkExt;
 use futures::StreamExt;
 use log::debug;
 use log::error;
+use serde::Serialize;
 use std::path::Path;
 use tauri::{AppHandle, Manager};
+use ts_rs::TS;
 use usb_enumeration::Event as UsbEvent;
 use usb_enumeration::{Event, Observer};
 
@@ -18,6 +20,20 @@ use crate::error::Result;
 use crate::state::InstallState;
 use crate::state::InstallerState;
 use crate::USB_POLL_INTERVAL;
+
+#[derive(TS, Serialize, Clone, Debug)]
+#[ts(export)]
+pub enum InstallStatus {
+    Preparing,
+    Installing,
+}
+
+#[derive(TS, Serialize, Clone, Debug)]
+#[ts(export)]
+pub struct InstallProgress {
+    status: InstallStatus,
+    progress: u32,
+}
 
 // valid devices have a known device type, and have alphanumeric serial numbers
 fn is_valid_device(device: &ConnectedDevice) -> bool {
@@ -36,12 +52,42 @@ fn install_bridge_devices(handle: AppHandle, binary: &Path) -> Result<()> {
     let total_bytes = binary.metadata().unwrap().len() as f32;
     let mut total_copied_bytes: f32 = 0.0;
 
+    // send initial update
+    handle
+        .emit_all(
+            "install_progress",
+            InstallProgress {
+                status: InstallStatus::Preparing,
+                progress: 0,
+            },
+        )
+        .unwrap();
+
     // this is our install progress callback handler - passed to the installer
     let progress_handler = move |copied_bytes: usize| {
+        // determine percentage
         total_copied_bytes += copied_bytes as f32;
-        let percentage = ((total_copied_bytes / total_bytes) * 100.0).round() as u64;
+        let percentage = ((total_copied_bytes / total_bytes) * 100.0).round() as u32;
         debug!("total bytes: {total_bytes}, total copied: {total_copied_bytes}, copied: {copied_bytes}, percentage: {percentage}");
-        handle.emit_all("install_progress", percentage).unwrap();
+
+        // send progress
+        handle
+            .emit_all(
+                "install_progress",
+                InstallProgress {
+                    status: InstallStatus::Installing,
+                    progress: percentage,
+                },
+            )
+            .unwrap();
+
+        // send post install message
+        if percentage >= 100 {
+            handle
+                .state::<InstallState>()
+                .post_install_transition(&handle)
+                .unwrap();
+        }
     };
 
     // call the installation method - returns Result<()>
@@ -49,12 +95,42 @@ fn install_bridge_devices(handle: AppHandle, binary: &Path) -> Result<()> {
 }
 
 fn install_rpi_devices(handle: AppHandle, binary: &Path) -> Result<u64> {
+    // send initial update
+    handle
+        .emit_all(
+            "install_progress",
+            InstallProgress {
+                status: InstallStatus::Preparing,
+                progress: 0,
+            },
+        )
+        .unwrap();
+
     // this is our install progress callback handler - passed to the installer
     let progress_handler = |process_info: TransitProcess| {
+        // determine percentage
         let percentage = ((process_info.copied_bytes as f32 / process_info.total_bytes as f32)
             * 100.0)
-            .round() as u64;
-        handle.emit_all("install_progress", percentage).unwrap();
+            .round() as u32;
+
+        // send progress
+        handle
+            .emit_all(
+                "install_progress",
+                InstallProgress {
+                    status: InstallStatus::Installing,
+                    progress: percentage,
+                },
+            )
+            .unwrap();
+
+        // send post install message
+        if percentage >= 100 {
+            handle
+                .state::<InstallState>()
+                .post_install_transition(&handle)
+                .unwrap();
+        }
     };
 
     // call the installation method - returns Result<u64>
@@ -128,15 +204,17 @@ pub fn setup_usb_listener(handle: AppHandle) {
                         match read_guard.clone() {
                             // if we're in the initial state, and if the device matches an expected device type
                             // then add it to the list of connected devices
-                            InstallerState::Init => match &arriving.device_type {
-                                ConnectedDeviceType::Bridge4
-                                | ConnectedDeviceType::Bridge6
-                                | ConnectedDeviceType::Click
-                                | ConnectedDeviceType::ULoop => {
-                                    state.add_device(arriving, &emitter).unwrap()
+                            InstallerState::Init | InstallerState::PostInstall => {
+                                match &arriving.device_type {
+                                    ConnectedDeviceType::Bridge4
+                                    | ConnectedDeviceType::Bridge6
+                                    | ConnectedDeviceType::Click
+                                    | ConnectedDeviceType::ULoop => {
+                                        state.add_device(arriving, &emitter).unwrap()
+                                    }
+                                    _ => (),
                                 }
-                                _ => (),
-                            },
+                            }
                             // if we're in bootloader state, take the device and attempt to update it.
                             InstallerState::Bootloader { device, binary } => {
                                 // drop the reader so we don't deadlock in case we need to write

@@ -20,6 +20,7 @@ pub enum InstallerState {
         device: Box<ConnectedDevice>,
         binary: PathBuf,
     },
+    PostInstall,
 }
 
 #[derive(Default)]
@@ -138,6 +139,23 @@ impl InstallState {
                 "unable to get lock: {:?}",
                 err
             ))),
+        }
+    }
+
+    pub fn post_install_transition(&self, handle: &AppHandle) -> Result<()> {
+        match self.current_state.try_write() {
+            Ok(mut guard) => {
+                *guard = InstallerState::PostInstall;
+                InstallState::emit_state_update(guard, handle);
+                Ok(())
+            }
+            Err(err) => {
+                error!("unable to get lock: {:?}", err);
+                Err(crate::error::Error::Other(format!(
+                    "unable to get lock: {:?}",
+                    err
+                )))
+            }
         }
     }
 }

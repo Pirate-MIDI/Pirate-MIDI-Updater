@@ -21,20 +21,6 @@ pub async fn local_binary(
         _ => "",
     };
 
-    // get the local file path
-    // let local_file_path = match dialog::select(file_type, Some("")) {
-    //     Ok(response) => match response {
-    //         dialog::Response::Okay(selected_path) => Some(selected_path),
-    //         dialog::Response::OkayMultiple(_) | dialog::Response::Cancel => {
-    //             debug!("local file selection cancelled");
-    //             None
-    //         }
-    //     },
-    //     Err(e) => {
-    //         info!("local file selection cancelled: {:?}", e);
-    //         None
-    //     }
-    // };
     let local_file_path = FileDialogBuilder::new()
         .add_filter("Firmware Binary", &[file_type])
         .set_title("Select the firmware file")
