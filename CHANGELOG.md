@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.11.0...v0.11.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* added back deps ([2005604](https://github.com/beckler/Pirate-MIDI-Updater/commit/2005604d00f234a460c0be2a8ba5ff73a979568e))
+
 ## [0.11.0](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.10.14...v0.11.0) (2023-03-08)
 
 
