@@ -11,36 +11,18 @@ import ReleaseInfo from '../../components/ReleaseInfoBar';
 
 import type { Release } from '../../../src-tauri/bindings/Release';
 import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevice';
-import BridgeModal from '../../components/BridgeModal';
-
-// import { Asset } from '../../../src-tauri/bindings/Asset';
 
 function Releases({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter();
     const [releases, setReleases] = useState([])
     const [selected, setSelected] = useState(undefined)
-    const [isOpen, setIsOpen] = useState(false)
     const [showAllReleases, setShowAllReleases] = useState(false)
 
     // retrieve selected device from router
     const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
 
-    const onClose = () => {
-        setIsOpen(false)
-    }
-
-    const onAccept = async (connected: ConnectedDevice, release: Release) => {
-        onClose()
-        await invoke('remote_binary', { device: connected, release })
-    }
-
     const onRemoteInstall = async (connected: ConnectedDevice, release: Release) => {
-        // show the bridge cable diagram
-        if (connected.device_type === 'Bridge6' || connected.device_type === 'Bridge4') {
-            setIsOpen(true)
-        } else {
-            await onAccept(connected, release)
-        }
+        await invoke('remote_binary', { device: connected, release })
     }
 
     const stylePrerelease = (release) => {
@@ -86,10 +68,8 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
                             <ArrowRightIcon className='icon-right' />
                         </button>
                     </div>
-
                 </div>
             </div>
-            <BridgeModal show={isOpen} onClose={onClose} onAccept={() => onAccept(device, selected)} />
         </FadeIn>
     )
 }

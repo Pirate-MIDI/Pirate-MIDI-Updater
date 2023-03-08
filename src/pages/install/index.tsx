@@ -2,25 +2,46 @@ import { useState, useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
 import FadeIn from 'react-fade-in'
-import { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevice'
+import { InstallProgress } from '../../../src-tauri/bindings/InstallProgress'
+import { ConnectedDeviceType } from '../../../src-tauri/bindings/ConnectedDeviceType'
 import { useRouter } from 'next/router'
 import ProgressBar from '../../components/ProgressBar'
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline'
+import BridgeModal from '../../components/BridgeModal';
 
-
-
-function Install({ devices }: { devices: ConnectedDevice[] }) {
+function Install() {
     const router = useRouter()
     const [percent, setPercent] = useState<number>(0)
+    const [status, setStatus] = useState<String>("Waiting")
+    const [isOpen, setIsOpen] = useState(false)
 
-    // retrieve selected device from router
-    const device: ConnectedDevice = devices.find((d) => d.serial_number === router.query.serial_number)
+    const device_type = router.query.device_type as ConnectedDeviceType;
+
+    const onClose = () => {
+        setIsOpen(false)
+    }
+
+    const onAccept = async () => {
+        onClose()
+        await invoke('post_install')
+    }
+
+    const label = (status) => {
+        switch (status) {
+            case "Preparing":
+                return "Preparing device..."
+            case "Installing":
+                return "Installing..."
+            case "Waiting":
+                return "Waiting for device..."
+        }
+    }
 
     // listen for install events
     useEffect(() => {
-        const installListener = listen<number>('install_progress', event => {
+        const installListener = listen<InstallProgress>('install_progress', event => {
             console.log(event.payload)
-            setPercent(event.payload)
+            setStatus(event.payload.status)
+            setPercent(event.payload.progress)
         })
 
         // destructor
@@ -29,22 +50,23 @@ function Install({ devices }: { devices: ConnectedDevice[] }) {
         }
     }, [])
 
-    const onClick = async () => {
-        await invoke("post_install")
-    }
+    // if we don't recieve an updated status, show the modal after 10 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log('interval triggered - status:', status, '\n device:', device_type)
+            if (status === "Waiting" && (device_type === 'Bridge6' || device_type === 'Bridge4')) {
+                setIsOpen(true)
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [status]);
 
     return (
         <div className='flex flex-col items-center justify-center flex-shrink-0 w-screen h-screen overflow-hidden'>
             <FadeIn>
-                <ProgressBar size={300} progress={percent} label={percent < 1 ? 'Preparing device...' : percent < 100 ? 'Installing...' : 'Installation Complete'} />
-            </FadeIn>
-            <FadeIn visible={percent > 99} className='flex flex-col items-center mt-2'>
-                <p className='mt-4 text-xl font-bold'>Installation Complete!</p>
-                <p className='mb-4 text-sm text-slate-500'>You may now unplug your device</p>
-                <button onClick={onClick} className='flex items-center px-4 py-2 m-2 border border-blue-600 rounded hover:bg-blue-500 hover:text-white'>
-                    Update another device
-                    <ArrowUturnLeftIcon className='icon-right' />
-                </button>
+                <ProgressBar size={300} progress={percent} label={label(status)} />
+                <BridgeModal show={isOpen} onClose={onClose} onAccept={() => onAccept()} />
             </FadeIn>
         </div>
     )

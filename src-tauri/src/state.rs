@@ -1,6 +1,6 @@
 use std::{
     path::PathBuf,
-    sync::{RwLock, RwLockWriteGuard, TryLockError},
+    sync::{PoisonError, RwLock, RwLockWriteGuard},
 };
 
 use log::{debug, error};
@@ -30,51 +30,42 @@ pub struct InstallState {
 }
 
 impl InstallState {
-    fn emit_device_update(guard: RwLockWriteGuard<Vec<ConnectedDevice>>, handle: &AppHandle) {
-        debug!("emitted: {:?}", guard);
-        handle.emit_all("devices_update", guard.clone()).unwrap();
+    fn emit_device_update(&self, handle: &AppHandle) {
+        let devices = self.devices.read().unwrap();
+        debug!("emitted: {:?}", devices);
+        handle.emit_all("devices_update", devices.clone()).unwrap();
     }
 
-    fn emit_state_update(guard: RwLockWriteGuard<InstallerState>, handle: &AppHandle) {
-        debug!("emitted: {:?}", guard);
-        handle.emit_all("installer_state", guard.clone()).unwrap();
-    }
-
-    pub fn add_devices(
-        &self,
-        devices: &mut Vec<ConnectedDevice>,
-        handle: &AppHandle,
-    ) -> std::result::Result<(), TryLockError<RwLockWriteGuard<Vec<ConnectedDevice>>>> {
-        match self.devices.try_write() {
-            Ok(mut guard) => {
-                guard.append(devices);
-                InstallState::emit_device_update(guard, handle);
-
-                Ok(())
-            }
-            Err(err) => {
-                error!("unable to get lock: {:?}", err);
-                Err(err)
-            }
-        }
+    fn emit_state_update(&self, handle: &AppHandle) {
+        let current_state = self.current_state.read().unwrap();
+        debug!("emitted: {:?}", current_state);
+        handle
+            .emit_all("installer_state", current_state.clone())
+            .unwrap();
     }
 
     pub fn add_device(
         &self,
         device: ConnectedDevice,
         handle: &AppHandle,
-    ) -> std::result::Result<(), TryLockError<RwLockWriteGuard<Vec<ConnectedDevice>>>> {
-        match self.devices.try_write() {
+    ) -> std::result::Result<(), PoisonError<RwLockWriteGuard<Vec<ConnectedDevice>>>> {
+        let write = match self.devices.write() {
             Ok(mut guard) => {
                 guard.push(device);
-                InstallState::emit_device_update(guard, handle);
-
                 Ok(())
             }
             Err(err) => {
                 error!("unable to get lock: {:?}", err);
                 Err(err)
             }
+        };
+
+        match write {
+            Ok(_) => {
+                self.emit_device_update(handle);
+                Ok(())
+            }
+            Err(err) => Err(err),
         }
     }
 
@@ -82,25 +73,31 @@ impl InstallState {
         &self,
         device: ConnectedDevice,
         handle: &AppHandle,
-    ) -> std::result::Result<(), TryLockError<RwLockWriteGuard<Vec<ConnectedDevice>>>> {
-        match self.devices.try_write() {
+    ) -> std::result::Result<(), PoisonError<RwLockWriteGuard<Vec<ConnectedDevice>>>> {
+        let write = match self.devices.write() {
             Ok(mut guard) => {
                 guard.retain(|d| d.serial_number != device.serial_number);
-                InstallState::emit_device_update(guard, handle);
                 Ok(())
             }
             Err(err) => {
                 error!("unable to get lock: {:?}", err);
                 Err(err)
             }
+        };
+
+        match write {
+            Ok(_) => {
+                self.emit_device_update(handle);
+                Ok(())
+            }
+            Err(err) => Err(err),
         }
     }
 
     pub fn init_transition(&self, handle: &AppHandle) -> Result<()> {
-        match self.current_state.try_write() {
+        let write = match self.current_state.write() {
             Ok(mut guard) => {
                 *guard = InstallerState::Init;
-                InstallState::emit_state_update(guard, handle);
                 Ok(())
             }
             Err(err) => {
@@ -110,6 +107,14 @@ impl InstallState {
                     err
                 )))
             }
+        };
+
+        match write {
+            Ok(_) => {
+                self.emit_state_update(handle);
+                Ok(())
+            }
+            Err(err) => Err(err),
         }
     }
 
@@ -119,7 +124,7 @@ impl InstallState {
         binary: PathBuf,
         handle: &AppHandle,
     ) -> Result<()> {
-        match self.current_state.try_write() {
+        let write = match self.current_state.write() {
             Ok(mut guard) => {
                 // enter the bootloader
                 match &device.enter_bootloader() {
@@ -129,7 +134,6 @@ impl InstallState {
                             device: Box::new(device),
                             binary,
                         };
-                        InstallState::emit_state_update(guard, handle);
                         Ok(())
                     }
                     Err(err) => err!(crate::error::Error::Bootloader(err.to_string())),
@@ -139,14 +143,21 @@ impl InstallState {
                 "unable to get lock: {:?}",
                 err
             ))),
+        };
+
+        match write {
+            Ok(_) => {
+                self.emit_state_update(handle);
+                Ok(())
+            }
+            Err(err) => Err(err),
         }
     }
 
     pub fn post_install_transition(&self, handle: &AppHandle) -> Result<()> {
-        match self.current_state.try_write() {
+        let write = match self.current_state.write() {
             Ok(mut guard) => {
                 *guard = InstallerState::PostInstall;
-                InstallState::emit_state_update(guard, handle);
                 Ok(())
             }
             Err(err) => {
@@ -156,6 +167,14 @@ impl InstallState {
                     err
                 )))
             }
+        };
+
+        match write {
+            Ok(_) => {
+                self.emit_state_update(handle);
+                Ok(())
+            }
+            Err(err) => Err(err),
         }
     }
 }

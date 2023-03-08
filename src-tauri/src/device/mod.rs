@@ -164,7 +164,10 @@ impl ConnectedDevice {
 
     pub async fn try_get_all_device_info(&mut self) -> Result<()> {
         // get device details, then retrieve the github releases - the order of this is important!
-        self.try_get_device_details(Some(USB_TIMEOUT))?;
+        match self.try_get_device_details(Some(USB_TIMEOUT)) {
+            Ok(_) => (),
+            Err(err) => info!("unable to get device details: {:?}", err),
+        }
         self.try_get_github_releases().await
     }
 

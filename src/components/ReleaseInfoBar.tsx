@@ -17,7 +17,8 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
 
     const getResetRequired = () => {
         console.log("determineing reset")
-        if (release && device && release.name && device.device_details) {
+        if (release && device && release.name && device.device_details
+            && (device.device_type === 'Bridge4' || device.device_type === 'Bridge6')) {
             const releaseVer = parseSemVer(release.name)
             const deviceVer = parseSemVer(device.device_details.firmwareVersion)
 

@@ -41,23 +41,7 @@ fn build_headers() -> HeaderMap {
     headers
 }
 
-#[tauri::command]
-/// retrieve all compatable github releases
-pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
-    // perform the fetch
-    info!("fetching releases from github...");
-
-    // determine which repo to get
-    let repo = match &device.device_type {
-        ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => GITHUB_BRIDGE_REPO,
-        ConnectedDeviceType::Click => GITHUB_CLICK_REPO,
-        ConnectedDeviceType::ULoop => todo!(),
-        ConnectedDeviceType::RPBootloader | ConnectedDeviceType::BridgeBootloader => {
-            todo!()
-        }
-        ConnectedDeviceType::Unknown => todo!(),
-    };
-
+async fn get_releases(device: &ConnectedDevice, repo: &str) -> Result<Vec<Release>> {
     // retrieve the releases!
     let url = format!("{}/repos/{}/{}/releases", GITHUB_API_URL, GITHUB_ORG, repo);
     let request = reqwest::Client::new()
@@ -97,6 +81,29 @@ pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
             trace!("error [raw]: {:?}", err);
             Err(Error::Http(err.to_string()))
         }
+    }
+}
+
+#[tauri::command]
+/// retrieve all compatable github releases
+pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
+    // perform the fetch
+    info!("fetching releases from github...");
+
+    // determine which repo to get
+    match &device.device_type {
+        ConnectedDeviceType::BridgeBootloader
+        | ConnectedDeviceType::RPBootloader
+        | ConnectedDeviceType::Unknown
+        | ConnectedDeviceType::ULoop => {
+            return Err(Error::Other(
+                "github releases do not exist for this device type".to_string(),
+            ))
+        }
+        ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => {
+            get_releases(&device, GITHUB_BRIDGE_REPO).await
+        }
+        ConnectedDeviceType::Click => get_releases(&device, GITHUB_CLICK_REPO).await,
     }
 }
 

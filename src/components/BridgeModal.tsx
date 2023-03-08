@@ -20,7 +20,7 @@ function BridgeModal({ show, onClose, onAccept }) {
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex items-center justify-center min-h-full p-4 text-center">
+                    <div className="flex items-center justify-center min-h-full p-2 text-center">
                         <Transition.Child
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -29,19 +29,16 @@ function BridgeModal({ show, onClose, onAccept }) {
                             leave="ease-in duration-200"
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95">
-                            <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                            <Dialog.Panel className="w-full max-w-md p-4 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                                 <Dialog.Title
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-slate-900"
                                 >
-                                    Prepare your Device
+                                    Issues entering Bootloader
                                 </Dialog.Title>
-                                <div className="mt-2">
-                                    <p className="text-sm text-slate-500">
-                                        Before installing firmware, Bridge devices require connecting the <strong>Flexi 1</strong> port to the <strong>Flexi 2</strong> port with a TS or TRS cable.
-                                    </p>
-                                </div>
-
+                                <p className="mt-2 text-sm text-slate-500">
+                                    Before installing firmware, Bridge devices may occasionally require connecting the <strong>Flexi 1</strong> port to the <strong>Flexi 2</strong> port with a <strong>TS or TRS</strong> cable.
+                                </p>
                                 <div className='flex justify-center w-full'>
                                     <Image
                                         width={400}
@@ -50,13 +47,16 @@ function BridgeModal({ show, onClose, onAccept }) {
                                         alt={'Bridge Flexi Diagram'}
                                     />
                                 </div>
-
+                                <p className="mt-2 text-sm text-slate-500">
+                                    Please connect a cable in the configuration shown and start the installation process over again.<br />
+                                </p>
+                                <p className="mt-4 text-sm font-bold text-center text-slate-500">It is safe to disconnect your device.</p>
                                 <div className="flex justify-end mt-4">
                                     <button
                                         type="button"
-                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium border rounded-md border-pm-blue-left bg-pm-blue-right text-slate-900"
+                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium border rounded-md border-pm-blue-left hover:bg-pm-blue-right text-slate-900"
                                         onClick={onAccept}>
-                                        I&apos;m ready!
+                                        Start Over
                                     </button>
                                 </div>
                             </Dialog.Panel>

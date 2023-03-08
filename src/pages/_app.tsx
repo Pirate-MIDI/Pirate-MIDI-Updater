@@ -36,13 +36,16 @@ export default function Ahoy({ Component, pageProps }: AppProps) {
     switch (installerState.type) {
       case "Init":
         void router.replace(devices.length > 0 ? '/devices' : '/')
-        break;
+        break
       case "Bootloader":
+        console.log(installerState.device)
         void router.replace({
           pathname: '/install',
-          query: { serial_number: installerState.device.serial_number, binary: installerState.binary }
+          query: { device_type: installerState.device.device_type }
         }, '/releases')
-        break;
+        break
+      case "PostInstall":
+        void router.replace('/postinstall')
     }
   }, [devices, installerState])
 

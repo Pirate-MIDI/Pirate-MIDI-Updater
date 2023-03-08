@@ -179,12 +179,10 @@ pub fn setup_usb_listener(handle: AppHandle) {
                     // get all device info for all devices
                     for arriving in &mut connected_devices {
                         match arriving.try_get_all_device_info().await {
-                            Ok(_) => (), // do nothing on success
+                            Ok(_) => state.add_device(arriving.clone(), &emitter).unwrap(),
                             Err(err) => error!("error getting device details: {:?}", err),
                         }
                     }
-
-                    state.add_devices(&mut connected_devices, &emitter).unwrap();
                 }
                 UsbEvent::Connect(device) => {
                     // convert the device to an expected structure
