@@ -9,7 +9,7 @@ mod updatefile;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
     let response: Root = client
-        .get("https://api.github.com/repos/beckler/Pirate-MIDI-Updater/releases/latest")
+        .get("https://api.github.com/repos/Pirate-MIDI/Pirate-MIDI-Updater/releases/latest")
         .header("user-agent", "ahoy/0.0.1")
         .send()
         .await?
