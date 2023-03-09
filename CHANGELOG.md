@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v0.11.1...v1.0.0) (2023-03-09)
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([1e4ab61](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/1e4ab61ecf678f5ebd7c528a1c9238279967e4fe))
+
 ## [0.11.1](https://github.com/beckler/Pirate-MIDI-Updater/compare/v0.11.0...v0.11.1) (2023-03-08)
 
 
