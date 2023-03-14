@@ -70,7 +70,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                             <div className='flex flex-col items-center'>
                                 <p className='text-sm'>Select an installation method:</p>
                                 <div className='flex flex-row items-center'>
-                                    <button onClick={() => onLocalInstall(device)} className={'flex items-center px-4 py-2 m-2 text-sm border rounded border-pm-blue-left bg-pm-blue-right text-slate-800'}>
+                                    <button onClick={() => onLocalInstall(device)} className={'flex items-center px-4 py-2 m-2 text-sm border rounded border-pm-blue-left text-pm-blue-left dark:text-pm-blue-right dark:border-pm-blue-right hover:bg-pm-blue-right hover:border-pm-blue-right hover:text-slate-800'}>
                                         <DocumentIcon className='icon-left' />
                                         Local File
                                         <ArrowUpIcon className='icon-right' />
@@ -81,7 +81,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                             pathname: '/releases',
                                             query: { serial_number: device.serial_number }
                                         }, '/releases')
-                                    }} className={device.releases ? 'flex items-center px-4 py-2 m-2 text-sm border rounded bg-emerald-400 border-emerald-500 text-slate-800' : 'hidden'}>
+                                    }} className={device.releases ? 'flex items-center px-4 py-2 m-2 text-sm border rounded bg-emerald-300 border-emerald-400 text-slate-800 hover:bg-emerald-400' : 'hidden'}>
                                         <CheckBadgeIcon className='icon-left' />
                                         Latest Release
                                         <ArrowRightIcon className='icon-right' />

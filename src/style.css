@@ -41,7 +41,7 @@ span.clickable-image > a > span, span.logo > a > span {
 }
 
 button {
-  @apply hover:shadow-md hover:-translate-y-0.5 dark:hover:shadow-slate-600 active:translate-y-0 active:shadow-none
+  @apply hover:shadow-md hover:-translate-y-0.5 dark:hover:shadow-slate-700 active:translate-y-0 active:shadow-none
 }
 
 .icon-left {

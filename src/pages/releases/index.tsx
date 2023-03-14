@@ -26,7 +26,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
     }
 
     const stylePrerelease = (release) => {
-        return release.prerelease ? 'bg-amber-400 border-amber-500' : 'bg-emerald-400 border-emerald-500';
+        return release.prerelease ? 'bg-amber-400 border-amber-500' : 'bg-emerald-300 border-emerald-400 hover:bg-emerald-400';
     }
 
     // retrieve releases from Github and select the latest release available
