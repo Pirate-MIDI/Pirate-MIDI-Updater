@@ -12,7 +12,7 @@
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.16",
     "@tauri-apps/api": "^1.2.0",
-    "next": "^13.2.3",
+    "next": "^13.2.4",
     "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-content-loader": "^6.2.0",
