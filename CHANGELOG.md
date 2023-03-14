@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.0...v1.0.1) (2023-03-14)
+
+
+### Bug Fixes
+
+* updated colors and styles based on dark/light modes ([203041f](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/203041f156f3312141ffb724f35712b7c8fbe739))
+
 ## [1.0.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v0.11.1...v1.0.0) (2023-03-09)
 
 
