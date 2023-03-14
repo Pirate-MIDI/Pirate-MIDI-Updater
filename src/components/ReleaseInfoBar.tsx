@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import { Disclosure } from '@headlessui/react'
-import { ChevronUpIcon, ExclamationTriangleIcon, BookOpenIcon, BookmarkIcon } from '@heroicons/react/24/outline'
+import { ChevronUpIcon, ExclamationTriangleIcon, BookOpenIcon } from '@heroicons/react/24/outline'
 import FadeIn from 'react-fade-in/lib/FadeIn'
 import { parseSemVer } from 'semver-parser'
 import { ConnectedDevice } from '../../src-tauri/bindings/ConnectedDevice'
@@ -34,7 +34,7 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
             <div className='flex items-center justify-between p-4 border-b h-1/6 border-slate-300'>
                 <span className='flex items-center'>
                     <span className='text-lg font-bold'>{release.name}</span>
-                    <span className={getResetRequired() ? 'flex items-center px-2 py-1 ml-4 text-xs text-yellow-300 border border-yellow-300 rounded' : 'hidden'}>
+                    <span className={getResetRequired() ? 'flex items-center px-2 py-1 ml-4 text-xs font-bold text-yellow-600 border border-yellow-600 dark:text-yellow-300 dark:border-yellow-300 rounded' : 'hidden'}>
                         <ExclamationTriangleIcon className='w-4 h-4 mr-2' />
                         <span>Installing this version may require a Factory Reset</span>
                     </span>
@@ -48,14 +48,14 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
                 <Disclosure as="div" className={getResetRequired() ? '' : 'hidden'}>
                     {({ open }) => (
                         <>
-                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-yellow-300 border border-yellow-300 rounded">
+                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-yellow-600 border border-yellow-600 rounded dark:text-yellow-300 dark:border-yellow-300">
                                 <div className='flex items-center'>
                                     <BookOpenIcon className='icon-left' />
                                     <span>Show/Hide Factory Reset Instructions</span>
                                 </div>
                                 <ChevronUpIcon
                                     className={`${open ? 'rotate-180 transform' : ''
-                                        } h-5 w-5 text-yellow-300`}
+                                        } h-5 w-5 text-yellow-600 dark:text-yellow-300`}
                                 />
                             </Disclosure.Button>
                             <Disclosure.Panel className="p-4 text-sm">
@@ -82,14 +82,14 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
                 <Disclosure as="div" defaultOpen={true} className={getResetRequired() ? "mt-4" : ''} >
                     {({ open }) => (
                         <>
-                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left border rounded focus:outline-none text-pm-blue-right border-pm-blue-right">
+                            <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left border rounded focus:outline-none text-pm-blue-left border-pm-blue-left dark:text-pm-blue-right dark:border-pm-blue-right">
                                 <div className='flex items-center'>
                                     <BookOpenIcon className='icon-left' />
                                     <span>Show/Hide Release Notes</span>
                                 </div>
                                 <ChevronUpIcon
                                     className={`${open ? 'rotate-180 transform' : ''
-                                        } h-5 w-5 text-pm-blue-right`}
+                                        } h-5 w-5 text-pm-blue-left dark:text-pm-blue-right`}
                                 />
                             </Disclosure.Button>
                             <Disclosure.Panel>

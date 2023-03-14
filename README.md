@@ -2,17 +2,17 @@
 
 This is a (hopefully) easy-to-use cross-platform executable designed to update the firmware for Pirate MIDI devices.
 
-It supports the following devices:
-- [ ] Bridge 6
-- [ ] Bridge 4
+It supports updates for the following devices:
+- [x] Bridge 6
+- [x] Bridge 4
 - [x] CLiCK
 - [ ] uLOOP
 
-It's backend functionality is written in [Rust](https://www.rust-lang.org/), and uses the [Tauri Framework](https://tauri.app/) + Typescript for the GUI.
+It's backend functionality is written in [Rust](https://www.rust-lang.org/), and uses the [Tauri Framework](https://tauri.app/) + Typescript + Next.js for the GUI.
 
 ## Status
 
-THIS SOFTWARE IS CURRENTLY CONSIDERED BETA, AND AS SUCH IS POSSIBLY UNSTABLE... but I think it's alright tbh.
+This app is considered stable, but that doesn't mean it can't run into issues. 
 
 If you're concerned, or believe you may have bricked your device, please read the section: [Bridge Device Recovery](#bridge-device-recovery)
 
@@ -44,5 +44,4 @@ If you're concerned, or believe you may have bricked your device, there is a pat
 - For the Bridge6, hold FS6 while powering up/plugging in a USB cable.
 - For the Bridge4, hold FS3 while powering up/plugging in a USB cable (Thanks Simon!).
 - Wait about 10-15 seconds, as the device won't appear to do anything.
-- Run the command: `ahoy install --skip-bootloader ~/path/to/your/downloaded/firmware.bin`
 - As a backup method, you can use the `dfu-util` command as [laid out here](https://learn.piratemidi.com/software/downloads) (click "Details & Instructions").

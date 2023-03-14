@@ -84,7 +84,6 @@
     },
     "windows": [
       {
-        "theme": "Dark",
         "fullscreen": false,
         "resizable": true,
         "title": "Pirate MIDI Updater",
