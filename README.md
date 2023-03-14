@@ -2,7 +2,7 @@
 
 This is a (hopefully) easy-to-use cross-platform executable designed to update the firmware for Pirate MIDI devices.
 
-It supports updates for the following devices:
+It currently supports updating the following devices:
 - [x] Bridge 6
 - [x] Bridge 4
 - [x] CLiCK

@@ -45,30 +45,43 @@ const GITHUB_ORG: &str = "Pirate-MIDI";
 
 fn main() {
     let context = tauri::generate_context!();
-    tauri::Builder::default()
-        .menu(tauri::Menu::os_default(&context.package_info().name))
-        .manage(InstallState::default())
-        .setup(|app| {
-            // listen for the 'ready' event - but we only need to hear it one time
-            let handle = app.app_handle();
-            app.app_handle().once_global("ready", move |_| {
-                debug!("ready event recieved");
-                usb::setup_usb_listener(handle);
-            });
 
-            Ok(())
-        })
-        .plugin(
-            tauri_plugin_log::Builder::default()
-                .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
-                .build(),
-        )
-        .invoke_handler(tauri::generate_handler![
-            crate::commands::github::fetch_releases,
-            crate::commands::install::local_binary,
-            crate::commands::install::remote_binary,
-            crate::commands::install::post_install,
-        ])
-        .run(context)
-        .expect("error while running tauri application");
+    sentry_tauri::init(
+        sentry::release_name!(),
+        |_| {
+            sentry::init(("https://c01c6e44f7ba49dab4908e3654de6dc5@o4504839482507264.ingest.sentry.io/4504839485652992", sentry::ClientOptions {
+                release: sentry::release_name!(),
+                ..Default::default()
+            }))
+        },
+        |sentry_plugin| {
+            tauri::Builder::default()
+                .menu(tauri::Menu::os_default(&context.package_info().name))
+                .manage(InstallState::default())
+                .setup(|app| {
+                    // listen for the 'ready' event - but we only need to hear it one time
+                    let handle = app.app_handle();
+                    app.app_handle().once_global("ready", move |_| {
+                        debug!("ready event recieved");
+                        usb::setup_usb_listener(handle);
+                    });
+
+                    Ok(())
+                })
+                .plugin(
+                    tauri_plugin_log::Builder::default()
+                        .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
+                        .build(),
+                )
+                .plugin(sentry_plugin)
+                .invoke_handler(tauri::generate_handler![
+                    crate::commands::github::fetch_releases,
+                    crate::commands::install::local_binary,
+                    crate::commands::install::remote_binary,
+                    crate::commands::install::post_install,
+                ])
+                .run(context)
+                .expect("error while running tauri application");
+        },
+    );
 }
