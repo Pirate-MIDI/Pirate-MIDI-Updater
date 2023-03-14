@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.1...v1.0.2) (2023-03-14)
+
+
+### Bug Fixes
+
+* added sentry error tracking ([2a72099](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/2a720990fb29e3f69d5139c015fcc393cd165aa2))
+
 ## [1.0.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.0...v1.0.1) (2023-03-14)
 
 
