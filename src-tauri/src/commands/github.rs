@@ -61,7 +61,7 @@ async fn get_releases(device: &ConnectedDevice, repo: &str) -> Result<Vec<Releas
                                 release
                                     .assets
                                     .iter()
-                                    .any(|asset| asset.is_compatible(&device))
+                                    .any(|asset| asset.is_compatible(device))
                             })
                             .cloned()
                             .collect::<Vec<Release>>();
@@ -74,7 +74,9 @@ async fn get_releases(device: &ConnectedDevice, repo: &str) -> Result<Vec<Releas
                     log::error!("Rate limited from Github - headers: {:?}", res.headers());
                     err!(Error::Http("Github rate limit hit!".to_string()))
                 }
-                _ => todo!(),
+                _ => err!(Error::Http(
+                    "recieved an unsupported http status code".to_string()
+                )),
             }
         }
         Err(err) => {
@@ -95,11 +97,9 @@ pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
         ConnectedDeviceType::BridgeBootloader
         | ConnectedDeviceType::RPBootloader
         | ConnectedDeviceType::Unknown
-        | ConnectedDeviceType::ULoop => {
-            return Err(Error::Other(
-                "github releases do not exist for this device type".to_string(),
-            ))
-        }
+        | ConnectedDeviceType::ULoop => Err(Error::Other(
+            "github releases do not exist for this device type".to_string(),
+        )),
         ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => {
             get_releases(&device, GITHUB_BRIDGE_REPO).await
         }

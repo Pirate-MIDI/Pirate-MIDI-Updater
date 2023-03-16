@@ -227,7 +227,9 @@ pub fn setup_usb_listener(handle: AppHandle) {
                                         match install_bridge_devices(emitter.app_handle(), &binary)
                                         {
                                             Ok(_) => (), // do nothing
-                                            Err(_) => todo!(),
+                                            Err(err) => {
+                                                error!("unable to continue install: {:?}", err)
+                                            }
                                         }
                                     }
                                     ConnectedDeviceType::Click
@@ -235,7 +237,9 @@ pub fn setup_usb_listener(handle: AppHandle) {
                                     | ConnectedDeviceType::RPBootloader => {
                                         match install_rpi_devices(emitter.app_handle(), &binary) {
                                             Ok(_) => (), // do nothing
-                                            Err(_) => todo!(),
+                                            Err(err) => {
+                                                error!("unable to continue install: {:?}", err)
+                                            }
                                         }
                                     }
                                     _ => (),

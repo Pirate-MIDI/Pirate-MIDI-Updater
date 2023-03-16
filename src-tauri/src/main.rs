@@ -13,12 +13,10 @@ macro_rules! err {
     };
 }
 
-use std::time::Duration;
-
-use log::debug;
+use log::info;
 use state::InstallState;
+use std::time::Duration;
 use tauri::Manager;
-use tauri_plugin_log::LogTarget;
 
 // modules
 mod commands;
@@ -46,9 +44,17 @@ const GITHUB_ORG: &str = "Pirate-MIDI";
 fn main() {
     let context = tauri::generate_context!();
 
+    // setup the app
     sentry_tauri::init(
         sentry::release_name!(),
         |_| {
+            // set up logging for sentry - assign it to the global logger
+            let dest = stderrlog::new().verbosity(log::Level::Trace).clone();
+            let logger = sentry_log::SentryLogger::with_dest(dest);
+            log::set_max_level(log::LevelFilter::Info);
+            log::set_boxed_logger(Box::new(logger)).unwrap();
+
+            // initialize the sentry instance
             sentry::init(("https://c01c6e44f7ba49dab4908e3654de6dc5@o4504839482507264.ingest.sentry.io/4504839485652992", sentry::ClientOptions {
                 release: sentry::release_name!(),
                 ..Default::default()
@@ -62,17 +68,12 @@ fn main() {
                     // listen for the 'ready' event - but we only need to hear it one time
                     let handle = app.app_handle();
                     app.app_handle().once_global("ready", move |_| {
-                        debug!("ready event recieved");
+                        info!("ready event recieved");
                         usb::setup_usb_listener(handle);
                     });
 
                     Ok(())
                 })
-                .plugin(
-                    tauri_plugin_log::Builder::default()
-                        .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
-                        .build(),
-                )
                 .plugin(sentry_plugin)
                 .invoke_handler(tauri::generate_handler![
                     crate::commands::github::fetch_releases,
