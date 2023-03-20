@@ -18,7 +18,7 @@
     "react-content-loader": "^6.2.1",
     "react-dom": "^18.2.0",
     "react-fade-in": "^2.0.1",
-    "react-markdown": "^8.0.5",
+    "react-markdown": "^8.0.6",
     "react-spinners": "^0.13.8",
     "semver-parser": "^4.1.3"
   },
