@@ -33,6 +33,7 @@ sentry = "0.27"
 sentry-tauri = "0.1.0"
 sentry-log = "0.30.0"
 stderrlog = "0.5.4"
+backoff = "0.4.0"
 
 [features]
 # by default Tauri runs in production mode

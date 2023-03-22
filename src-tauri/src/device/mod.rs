@@ -1,5 +1,3 @@
-use std::{thread::sleep, time::Duration};
-
 use self::bootloader::{enter_bridge_bootloader, enter_rpi_bootloader};
 use crate::{
     commands::github::fetch_releases,
@@ -8,7 +6,8 @@ use crate::{
     USB_DEFAULT_BAUD_RATE, USB_TIMEOUT,
 };
 
-use log::{debug, info, trace};
+use backoff::{retry, ExponentialBackoff};
+use log::{debug, error, info, trace};
 use pirate_midi_rs::{check::CheckResponse, Command, PirateMIDIDevice, Response};
 use serde::{Deserialize, Serialize};
 use serialport::{SerialPortBuilder, SerialPortType};
@@ -124,14 +123,10 @@ impl ConnectedDevice {
         Err(Error::Serial("unable to locate device".to_string()))
     }
 
-    pub fn try_get_device_details(&mut self, delay: Option<Duration>) -> Result<()> {
-        // ports might not be immidately available, so delay will delay this operation for the duration
-        if let Some(duration) = delay {
-            sleep(duration);
-        }
-
+    pub fn try_get_device_details(&mut self) -> Result<()> {
         // find our serial port
-        match self.get_serial_port(USB_DEFAULT_BAUD_RATE) {
+
+        let op = || match self.get_serial_port(USB_DEFAULT_BAUD_RATE) {
             Ok(builder) => {
                 trace!("serialport builder: {:?}", builder);
                 match PirateMIDIDevice::new()
@@ -144,29 +139,39 @@ impl ConnectedDevice {
                             self.device_details = Some(DeviceDetails::from(details));
                             Ok(())
                         }
-                        _ => err!(Error::Serial(
-                            "invalid response type from device!".to_string()
-                        )),
+                        _ => err!(backoff::Error::Permanent(String::from(
+                            "invalid response type from device"
+                        ))),
                     },
-                    Err(err) => err!(Error::Serial(err.to_string())),
+                    Err(err) => err!(backoff::Error::transient(err.to_string())),
                 }
             }
-            Err(err) => err!(Error::Serial(err.to_string())),
-        }
+            Err(err) => err!(backoff::Error::transient(err.to_string())),
+        };
+
+        let backoff = ExponentialBackoff::default();
+        retry(backoff, op).map_err(|err| Error::Serial(err.to_string()))
     }
 
     pub async fn try_get_github_releases(&mut self) -> Result<()> {
-        let releases = fetch_releases(self.clone()).await?;
-        debug!("releases: {:?}", releases);
-        self.releases = Some(releases);
+        match fetch_releases(self.clone()).await {
+            Ok(releases) => self.releases = Some(releases),
+            Err(e) => error!("unable to fetch releases from github: {:?}", e),
+        }
         Ok(())
     }
 
     pub async fn try_get_all_device_info(&mut self) -> Result<()> {
         // get device details, then retrieve the github releases - the order of this is important!
-        match self.try_get_device_details(Some(USB_TIMEOUT)) {
-            Ok(_) => (),
-            Err(err) => info!("unable to get device details: {:?}", err),
+        // only attempt to get device details for those who support the device API
+        match self.device_type {
+            ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => {
+                match self.try_get_device_details() {
+                    Ok(_) => (),
+                    Err(err) => info!("unable to get device details: {:?}", err),
+                }
+            }
+            _ => (),
         }
         self.try_get_github_releases().await
     }
