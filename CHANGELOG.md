@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.3...v1.0.4) (2023-03-22)
+
+
+### Bug Fixes
+
+* added exponential backoff when retrieving device details from bridge6/4 ([ad5c473](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/ad5c47341a7926663ca0c868e48764cb00c1973b))
+* removed info modal from local bridge6/4 installs ([9e67153](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/9e67153d604cc1807b446f52746cf2eec4a51114))
+
 ## [1.0.3](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.2...v1.0.3) (2023-03-16)
 
 
