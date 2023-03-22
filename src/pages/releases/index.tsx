@@ -31,6 +31,7 @@ function Releases({ devices }: { devices: ConnectedDevice[] }) {
 
     // retrieve releases from Github and select the latest release available
     useEffect(() => {
+        console.log(device)
         if (device && device.releases) {
             setReleases(device.releases)
             // get the latest stable version - not beta
