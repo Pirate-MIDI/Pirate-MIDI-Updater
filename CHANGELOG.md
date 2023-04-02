@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.4...v1.0.5) (2023-04-02)
+
+
+### Bug Fixes
+
+* added more verbose logging ([b30f772](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/b30f772e2ca33c7f8e9ebf52ceb3415c0b32da37))
+
 ## [1.0.4](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.3...v1.0.4) (2023-03-22)
 
 
