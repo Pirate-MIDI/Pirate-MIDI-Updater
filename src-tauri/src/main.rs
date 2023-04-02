@@ -14,9 +14,10 @@ macro_rules! err {
 }
 
 use log::info;
+use simplelog::{CombinedLogger, Config, SimpleLogger, WriteLogger};
 use state::InstallState;
-use std::time::Duration;
-use tauri::Manager;
+use std::{fs::File, path::PathBuf, time::Duration};
+use tauri::{api::path::app_log_dir, Manager};
 
 // modules
 mod commands;
@@ -44,15 +45,45 @@ const GITHUB_ORG: &str = "Pirate-MIDI";
 fn main() {
     let context = tauri::generate_context!();
 
+    // launch time
+    let mut launch_time = chrono::offset::Utc::now()
+        .format("%Y-%m-%d-%H:%M")
+        .to_string();
+
+    // append ".txt" to the end of the launch time for filename usage
+    launch_time.push_str(".txt");
+
+    // setup the log file path
+    let log_file_path = match app_log_dir(context.config()) {
+        Some(path) => path,
+        None => PathBuf::from("."),
+    }
+    .join(launch_time);
+
     // setup the app
     sentry_tauri::init(
         sentry::release_name!(),
         |_| {
-            // set up logging for sentry - assign it to the global logger
-            let dest = stderrlog::new().verbosity(log::Level::Trace).clone();
-            let logger = sentry_log::SentryLogger::with_dest(dest);
-            log::set_max_level(log::LevelFilter::Info);
+            // setup the terminal logger
+            let term_logger = SimpleLogger::new(log::LevelFilter::Info, Config::default());
+
+            // setup the local file logger
+            let comb_logger = match File::create(&log_file_path) {
+                Ok(writer) => {
+                    let file_logger =
+                        WriteLogger::new(log::LevelFilter::Trace, Config::default(), writer);
+                    CombinedLogger::new(vec![term_logger, file_logger])
+                }
+                Err(_) => CombinedLogger::new(vec![term_logger]),
+            };
+
+            // tie the local logger(s) to sentry
+            let logger = sentry_log::SentryLogger::with_dest(comb_logger);
+            log::set_max_level(log::LevelFilter::Trace);
             log::set_boxed_logger(Box::new(logger)).unwrap();
+
+            // print where the log is going to get written
+            info!("log file location: {}", log_file_path.display());
 
             // initialize the sentry instance
             sentry::init(("https://c01c6e44f7ba49dab4908e3654de6dc5@o4504839482507264.ingest.sentry.io/4504839485652992", sentry::ClientOptions {

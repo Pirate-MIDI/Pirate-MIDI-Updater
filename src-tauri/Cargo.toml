@@ -32,8 +32,9 @@ semver = "1.0.16"
 sentry = "0.27"
 sentry-tauri = "0.1.0"
 sentry-log = "0.30.0"
-stderrlog = "0.5.4"
 backoff = "0.4.0"
+simplelog = "0.12.1"
+chrono = "0.4.24"
 
 [features]
 # by default Tauri runs in production mode
