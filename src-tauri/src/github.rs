@@ -111,7 +111,7 @@ mod tests {
         let mut mock_devices: Vec<ConnectedDevice> = vec![];
         let mut mock_assets: Vec<Asset> = vec![];
 
-        for i in 1..3 {
+        for i in 1..4 {
             mock_devices.push(ConnectedDevice {
                 id: String::from("test"),
                 releases: None,
@@ -151,41 +151,47 @@ mod tests {
         println!("assets: {:?}", mock_assets);
         println!("devices: {:?}", mock_devices);
 
+        // Asset: bridge4_v1.0.1.1.bin - HW: v1.0.1 - true
         assert_eq!(
             mock_assets[0]._is_compatible(&mock_devices[0], "bridge4"),
             true
         );
+
+        // Asset: bridge4_v1.0.1.1.bin - HW: v1.0.2 - false
         assert_eq!(
             mock_assets[0]._is_compatible(&mock_devices[1], "bridge4"),
             false
         );
 
-        assert_eq!(
-            mock_assets[1]._is_compatible(&mock_devices[0], "bridge4"),
-            false
-        );
+        // Asset: bridge4_v1.0.1.2.bin - HW: v1.0.2 - true
         assert_eq!(
             mock_assets[1]._is_compatible(&mock_devices[1], "bridge4"),
             true
         );
 
+        // Asset: bridge4_v1.0.1.2.bin - HW: v1.0.3 - false
         assert_eq!(
-            mock_assets[2]._is_compatible(&mock_devices[0], "bridge4"),
-            false
-        );
-        assert_eq!(
-            mock_assets[2]._is_compatible(&mock_devices[1], "bridge4"),
+            mock_assets[1]._is_compatible(&mock_devices[2], "bridge4"),
             false
         );
 
+        // Asset: bridge4_v1.0.1.3.bin - HW: v1.0.3 - false
+        assert_eq!(
+            mock_assets[2]._is_compatible(&mock_devices[2], "bridge4"),
+            true
+        );
+
+        // All Bridge 6 should fail - even with compatiable versions
         assert_eq!(
             mock_assets[0]._is_compatible(&mock_devices[0], "bridge6"),
             false
         );
+
         assert_eq!(
             mock_assets[0]._is_compatible(&mock_devices[1], "bridge6"),
             false
         );
+
         // assert_eq!(result, 4);
     }
 }
