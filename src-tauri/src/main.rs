@@ -27,6 +27,7 @@ mod error;
 mod github;
 mod state;
 mod usb;
+mod validation;
 
 /* GLOBAL CONSTANTS */
 // usb / device

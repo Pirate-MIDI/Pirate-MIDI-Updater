@@ -29,7 +29,7 @@ function BridgeModal({ show, onClose, onAccept }) {
                             leave="ease-in duration-200"
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95">
-                            <Dialog.Panel className="w-full max-w-md p-4 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                            <Dialog.Panel className="w-full max-w-md p-4 overflow-hidden text-left align-middle transition-all transform bg-white rounded-lg shadow-xl">
                                 <Dialog.Title
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-slate-900"

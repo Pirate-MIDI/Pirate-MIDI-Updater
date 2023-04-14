@@ -8,12 +8,25 @@ import { DocumentIcon, ArrowUpIcon, ArrowRightIcon, CheckBadgeIcon, ExclamationT
 import updaterIcon from '../../assets/icon-updater.png'
 
 import type { ConnectedDevice } from '../../../src-tauri/bindings/ConnectedDevice'
+import IncompatableModal from '../../components/IncompatableModal';
+import { useState } from 'react';
 
 function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
     const router = useRouter()
+    const [isOpen, setIsOpen] = useState(false)
+    const [errorDevice, setErrorDevice] = useState(undefined)
 
     const onLocalInstall = async (device: ConnectedDevice) => {
-        await invoke('local_binary', { device })
+        await invoke('local_binary', { device }).catch((e) => {
+            console.log(e)
+            setErrorDevice(device)
+            setIsOpen(true)
+        })
+    }
+
+    const closeModal = () => {
+        setIsOpen(false)
+        setErrorDevice(undefined)
     }
 
     return (
@@ -43,10 +56,12 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                                     alt={device.device_type + ' Logo'}
                                 />
                             </span>
-                            <div className='flex flex-col flex-grow pl-8 mx-2 text-xs text-left border-l'>
+                            <div className='flex flex-col flex-grow pl-8 mx-2 space-y-1 text-xs text-left border-l'>
                                 <span className='text-lg font-bold'>{device.device_details ? device.device_details.deviceName : 'N/A'}</span>
-                                <span>Firmware: <strong>{device.device_details ? device.device_details.firmwareVersion : 'N/A'}</strong> </span>
-                                <span>Hardware: <strong>{device.device_details ? device.device_details.hardwareVersion : 'N/A'}</strong> </span>
+                                <div className='flex flex-col'>
+                                    <span><strong className='text-sm'>{device.device_details ? device.device_details.firmwareVersion : 'N/A'}</strong> Current Firmware Version</span>
+                                    <span><strong className='text-sm'>{device.device_details ? device.device_details.hardwareVersion : 'N/A'}</strong> Hardware Revision</span>
+                                </div>
                             </div>
                             <div className='flex flex-col items-center'>
                                 <p className='text-sm'>Select an installation method:</p>
@@ -77,6 +92,7 @@ function AvailableDevices({ devices }: { devices: ConnectedDevice[] }) {
                     </li>
                 ))}
             </ul>
+            <IncompatableModal show={isOpen} onClose={closeModal} onAccept={closeModal} device={errorDevice} />
         </FadeIn>
     )
 }

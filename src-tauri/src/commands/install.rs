@@ -6,7 +6,10 @@ use crate::{
     error::{Error, Result},
     github::Release,
     state::InstallState,
+    validation::is_file_compatible,
 };
+
+// COMMANDS
 
 #[tauri::command]
 pub async fn local_binary(
@@ -28,11 +31,16 @@ pub async fn local_binary(
 
     match local_file_path {
         Some(file_path) => {
-            state
-                .bootloader_transition(device, file_path, &handle)
-                .unwrap();
+            // VERIFY COMPATIBILITY
+            if is_file_compatible(&device, &file_path) {
+                state
+                    .bootloader_transition(device, file_path, &handle)
+                    .unwrap();
 
-            Ok(())
+                Ok(())
+            } else {
+                Err(Error::Incompatable("binary is incompatable".to_string()))
+            }
         }
         None => Err(Error::IO("local file selection cancelled".to_string())),
     }

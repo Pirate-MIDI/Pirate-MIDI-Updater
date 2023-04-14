@@ -16,6 +16,8 @@ pub enum Error {
     Install(String),
     #[error("failed to enter bootloader: {0:?}")]
     Bootloader(String),
+    #[error("incompatable version: {0:?}")]
+    Incompatable(String),
 }
 
 pub type Result<T> = ::std::result::Result<T, Error>;
