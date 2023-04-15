@@ -64,6 +64,10 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
                                         <ExclamationTriangleIcon className='w-4 h-4 mr-2' />
                                         <p><strong>Performing this action will delete all presets and user data from the device.</strong><br />
                                             Utilize the&nbsp;
+                                            <a className='inline text-blue-400 underline' href="https://pirate-midi-dev.web.app/backup" target='_blank' rel='noreferrer'>
+                                                Backup Utility
+                                            </a>
+                                            &nbsp;or&nbsp;
                                             <a className='inline text-blue-400 underline' href="https://edit.piratemidi.com" target='_blank' rel="noreferrer">
                                                 Web Editor
                                             </a>

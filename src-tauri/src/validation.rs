@@ -19,7 +19,7 @@ fn after<'value>(value: &'value str, a: &str) -> &'value str {
 
 fn _is_compatible(device: &ConnectedDevice, file_name: &str) -> bool {
     let device_str = match &device.device_type {
-        ConnectedDeviceType::Bridge6 => file_name,
+        ConnectedDeviceType::Bridge6 => "bridge6",
         ConnectedDeviceType::Bridge4 => "bridge4",
         _ => "",
     };
