@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.1.0...v1.1.1) (2023-04-15)
+
+
+### Bug Fixes
+
+* build error ([ef443a4](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/ef443a4902ad0ba3b726089db1d9bca838cb46f0))
+
 ## [1.1.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.5...v1.1.0) (2023-04-15)
 
 
