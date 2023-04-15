@@ -56,22 +56,28 @@ fn _is_not_diag(device: &ConnectedDevice, file_name: &str) -> bool {
     file_name.starts_with(format!("{device_str}_v").as_str())
 }
 
-pub fn is_name_compatible(device: &ConnectedDevice, file_name: &str) -> bool {
+pub fn is_name_compatible(device: &ConnectedDevice, file_name: &str, allow_diag: bool) -> bool {
     match &device.device_type {
         // assume format: bridgeX_v1.2.1.1.bin || device_v1.0.0.0.uf2
         // the last number in the version is the compatible revision
         ConnectedDeviceType::Bridge6 | ConnectedDeviceType::Bridge4 => {
             _is_compatible(device, &file_name)
         }
-        ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => _is_not_diag(device, &file_name),
+        ConnectedDeviceType::Click | ConnectedDeviceType::ULoop => {
+            if !allow_diag {
+                _is_not_diag(device, &file_name)
+            } else {
+                true
+            }
+        }
         ConnectedDeviceType::Unknown => false,
         _ => true, // assume it's true by default if we have a device type
     }
 }
 
-pub fn is_file_compatible(device: &ConnectedDevice, binary: &PathBuf) -> bool {
+pub fn is_file_compatible(device: &ConnectedDevice, binary: &PathBuf, allow_diag: bool) -> bool {
     let file_name = binary.file_name().unwrap().to_string_lossy();
-    is_name_compatible(device, &file_name)
+    is_name_compatible(device, &file_name, allow_diag)
 }
 
 #[cfg(test)]
@@ -114,27 +120,51 @@ mod tests {
         println!("devices: {:?}", mock_devices);
 
         // Asset: bridge4_v1.0.1.1.bin - HW: v1.0.1 - true
-        assert_eq!(is_name_compatible(&mock_devices[0], &mock_assets[0]), true);
+        assert_eq!(
+            is_name_compatible(&mock_devices[0], &mock_assets[0], false),
+            true
+        );
 
         // Asset: bridge4_v1.0.1.1.bin - HW: v1.0.2 - false
-        assert_eq!(is_name_compatible(&mock_devices[1], &mock_assets[0]), false);
+        assert_eq!(
+            is_name_compatible(&mock_devices[1], &mock_assets[0], false),
+            false
+        );
 
         // Asset: bridge4_v1.0.1.2.bin - HW: v1.0.2 - true
-        assert_eq!(is_name_compatible(&mock_devices[1], &mock_assets[1]), true);
+        assert_eq!(
+            is_name_compatible(&mock_devices[1], &mock_assets[1], false),
+            true
+        );
 
         // Asset: bridge4_v1.0.1.2.bin - HW: v1.0.3 - false
-        assert_eq!(is_name_compatible(&mock_devices[2], &mock_assets[1]), false);
+        assert_eq!(
+            is_name_compatible(&mock_devices[2], &mock_assets[1], false),
+            false
+        );
 
         // Asset: bridge4_v1.0.1.3.bin - HW: v1.0.3 - true
-        assert_eq!(is_name_compatible(&mock_devices[2], &mock_assets[2]), true);
+        assert_eq!(
+            is_name_compatible(&mock_devices[2], &mock_assets[2], false),
+            true
+        );
 
         // Asset: bridge4_v1.0.1.2.bin - HW: v1.0.3 - false
-        assert_eq!(is_name_compatible(&mock_devices[2], &mock_assets[1]), false);
+        assert_eq!(
+            is_name_compatible(&mock_devices[2], &mock_assets[1], false),
+            false
+        );
 
         // All Bridge 6 should fail - even with compatiable versions
-        assert_eq!(is_name_compatible(&mock_devices[0], "bridge6"), false);
+        assert_eq!(
+            is_name_compatible(&mock_devices[0], "bridge6", false),
+            false
+        );
 
-        assert_eq!(is_name_compatible(&mock_devices[1], "bridge6"), false);
+        assert_eq!(
+            is_name_compatible(&mock_devices[1], "bridge6", false),
+            false
+        );
 
         // assert_eq!(result, 4);
     }

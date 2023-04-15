@@ -31,8 +31,8 @@ pub async fn local_binary(
 
     match local_file_path {
         Some(file_path) => {
-            // VERIFY COMPATIBILITY
-            if is_file_compatible(&device, &file_path) {
+            // VERIFY COMPATIBILITY - also allow diag installs for rpi devices
+            if is_file_compatible(&device, &file_path, true) {
                 state
                     .bootloader_transition(device, file_path, &handle)
                     .unwrap();
