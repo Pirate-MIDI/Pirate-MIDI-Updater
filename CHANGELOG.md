@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.5...v1.1.0) (2023-04-15)
+
+
+### Features
+
+* added binary version checking for locally installed files ([84b9345](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/84b9345880ca5d14f336f720858f7efa08908efb))
+
+
+### Bug Fixes
+
+* c/p bug; added new backup config link ([b06e0c4](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/b06e0c41a96d1cf8887c521b2427b60de4ecdb49))
+
 ## [1.0.5](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.0.4...v1.0.5) (2023-04-02)
 
 
