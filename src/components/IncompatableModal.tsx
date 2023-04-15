@@ -47,7 +47,7 @@ function IncompatableModal({ show, onClose, onAccept, device }) {
                                 </p>
                                 <div className='flex items-center p-8 justify-evenly'>
                                     <div className='flex flex-col items-center'>
-                                        <p className='text-xs uppercase'>Your Device's Hardware Version</p>
+                                        <p className='text-xs uppercase'>Your Device&apos;s Hardware Version</p>
                                         <p className='text-lg'>
                                             <span className='text-slate-400'>v{head}</span><strong>{tail}</strong>
                                         </p>
