@@ -26,7 +26,7 @@ usb_enumeration = { git = "https://github.com/beckler/usb_enumeration" }
 futures = "0.3.26"
 ts-rs = "6.2.1"
 serialport = { git = "https://github.com/beckler/serialport-rs" }
-sysinfo = "0.28.0"
+sysinfo = "0.29.0"
 fs_extra = "1.3.0"
 semver = "1.0.16"
 sentry = "0.27"
