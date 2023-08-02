@@ -41,6 +41,7 @@ const USB_TIMEOUT: Duration = Duration::from_secs(1);
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_BRIDGE_REPO: &str = "Pirate-MIDI-BridgeOS";
 const GITHUB_CLICK_REPO: &str = "Pirate-MIDI-CLiCK";
+const GITHUB_ULOOP_REPO: &str = "Pirate-MIDI-uLoop";
 const GITHUB_ORG: &str = "Pirate-MIDI";
 
 fn main() {

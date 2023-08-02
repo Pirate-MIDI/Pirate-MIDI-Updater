@@ -11,7 +11,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crate::device::{ConnectedDevice, ConnectedDeviceType};
 use crate::error::{Error, Result};
 use crate::github::Release;
-use crate::{GITHUB_API_URL, GITHUB_BRIDGE_REPO, GITHUB_CLICK_REPO, GITHUB_ORG};
+use crate::{GITHUB_API_URL, GITHUB_BRIDGE_REPO, GITHUB_CLICK_REPO, GITHUB_ORG, GITHUB_ULOOP_REPO};
 
 #[derive(Serialize, Deserialize)]
 struct Query {
@@ -74,9 +74,11 @@ async fn get_releases(device: &ConnectedDevice, repo: &str) -> Result<Vec<Releas
                     log::error!("Rate limited from Github - headers: {:?}", res.headers());
                     err!(Error::Http("Github rate limit hit!".to_string()))
                 }
-                _ => err!(Error::Http(
-                    "recieved an unsupported http status code".to_string()
-                )),
+                status => {
+                    err!(Error::Http(
+                        format!("recieved an unsupported http status code: {status}").to_string()
+                    ))
+                }
             }
         }
         Err(err) => {
@@ -96,14 +98,14 @@ pub async fn fetch_releases(device: ConnectedDevice) -> Result<Vec<Release>> {
     match &device.device_type {
         ConnectedDeviceType::BridgeBootloader
         | ConnectedDeviceType::RPBootloader
-        | ConnectedDeviceType::Unknown
-        | ConnectedDeviceType::ULoop => Err(Error::Other(
+        | ConnectedDeviceType::Unknown => Err(Error::Other(
             "github releases do not exist for this device type".to_string(),
         )),
         ConnectedDeviceType::Bridge4 | ConnectedDeviceType::Bridge6 => {
             get_releases(&device, GITHUB_BRIDGE_REPO).await
         }
         ConnectedDeviceType::Click => get_releases(&device, GITHUB_CLICK_REPO).await,
+        ConnectedDeviceType::ULoop => get_releases(&device, GITHUB_ULOOP_REPO).await,
     }
 }
 
