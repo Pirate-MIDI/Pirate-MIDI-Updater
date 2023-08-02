@@ -5,7 +5,7 @@ const ProgressBar = (props) => {
         trackWidth = 10,
         trackColor = `#ddd`,
         indicatorWidth = 10,
-        indicatorColor = `#07c`,
+        indicatorColor = `#e46368`,
         indicatorCap = `round`,
         label = `Loading...`,
         spinnerMode = false,

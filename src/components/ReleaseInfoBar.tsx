@@ -29,21 +29,8 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
 
     const published = release.published_at ? new Date(release.published_at).toDateString() : 'N/A'
 
-    return device && release.body ? (
-        <div className='mx-2 h-5/6'>
-            <div className='flex items-center justify-between p-4 border-b h-1/6 border-slate-300'>
-                <span className='flex items-center'>
-                    <span className='text-lg font-bold'>{release.name}</span>
-                    <span className={getResetRequired() ? 'flex items-center px-2 py-1 ml-4 text-xs font-bold text-yellow-600 border border-yellow-600 dark:text-yellow-300 dark:border-yellow-300 rounded' : 'hidden'}>
-                        <ExclamationTriangleIcon className='w-4 h-4 mr-2' />
-                        <span>Installing this version may require a Factory Reset</span>
-                    </span>
-                </span>
-                <div className='text-right'>
-                    <p className='text-xs text-slate-400'>Channel: <strong>{getChannel(release.prerelease)}</strong></p>
-                    <p className='text-xs text-slate-400'>Published: <strong>{published}</strong></p>
-                </div>
-            </div>
+    const getDescription = (release) => {
+        return release && release.body ? (
             <div className='p-4 overflow-y-auto h-5/6 dark:[color-scheme:dark]'>
                 <Disclosure as="div" className={getResetRequired() ? '' : 'hidden'}>
                     {({ open }) => (
@@ -106,6 +93,29 @@ function ReleaseInfoBar({ device, release }: { device: ConnectedDevice, release:
                     )}
                 </Disclosure>
             </div>
+        ) : (
+            <div className='flex items-center justify-center py-12 text-slate-400'>
+                <span>This release does not contain any additional information</span>
+            </div>
+        )
+    }
+
+    return device ? (
+        <div className='mx-2 h-5/6'>
+            <div className='flex items-center justify-between p-4 border-b h-1/6 border-slate-300'>
+                <span className='flex items-center'>
+                    <span className='text-lg font-bold'>{release.name}</span>
+                    <span className={getResetRequired() ? 'flex items-center px-2 py-1 ml-4 text-xs font-bold text-yellow-600 border border-yellow-600 dark:text-yellow-300 dark:border-yellow-300 rounded' : 'hidden'}>
+                        <ExclamationTriangleIcon className='w-4 h-4 mr-2' />
+                        <span>Installing this version may require a Factory Reset</span>
+                    </span>
+                </span>
+                <div className='text-right'>
+                    <p className='text-xs text-slate-400'>Channel: <strong>{getChannel(release.prerelease)}</strong></p>
+                    <p className='text-xs text-slate-400'>Published: <strong>{published}</strong></p>
+                </div>
+            </div>
+            {getDescription(release)}
         </div>
     ) : (
         <div className='flex items-center justify-center py-12 text-slate-400'>
