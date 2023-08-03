@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.1.1...v1.2.0) (2023-08-03)
+
+
+### Features
+
+* added initial uloop support ([cef22d9](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/cef22d956d857f1ee656b9d317bfc8997baa6470))
+* added loading icon on main page ([f9e3cef](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/f9e3cef5e725a1de0fa912d14d4e5fdc54fab972))
+* added menu item for help and support ([1361f04](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/1361f0480a85c84501e93f4c280c030e77a8f933))
+* added menu item to access logs ([80702ba](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/80702ba39ee3b22156c2f930e2d626b26f15349f))
+
 ## [1.1.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.1.0...v1.1.1) (2023-04-15)
 
 
