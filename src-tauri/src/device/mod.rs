@@ -96,8 +96,8 @@ impl ConnectedDevice {
             Some(value) => match value.as_str() {
                 "Bridge 6" | "Bridge6" => ConnectedDeviceType::Bridge6,
                 "Bridge 4" | "Bridge4" => ConnectedDeviceType::Bridge4,
-                "CLiCK" => ConnectedDeviceType::Click,
-                "uLoop" => ConnectedDeviceType::ULoop,
+                "CLiCK" | "CLiCK_Diagnostics" => ConnectedDeviceType::Click,
+                "uLoop" | "uLoop_Diagnostics" => ConnectedDeviceType::ULoop,
                 "RP2 Boot" => ConnectedDeviceType::RPBootloader,
                 "DFU in FS Mode" => ConnectedDeviceType::BridgeBootloader,
                 _ => ConnectedDeviceType::Unknown,
