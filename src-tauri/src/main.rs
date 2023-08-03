@@ -93,14 +93,33 @@ fn main() {
 
     let _guard = sentry_tauri::minidump::init(&client);
 
-    // menu
+    // log menu
     let menu_log_path = CustomMenuItem::new("open_log_path", "Open Log Directory");
     let menu_log_file = CustomMenuItem::new("open_log_file", "Open Current Log");
     let log_submenu = Submenu::new(
         "Logs",
         Menu::new().add_item(menu_log_path).add_item(menu_log_file),
     );
-    let menu = tauri::Menu::os_default(&context.package_info().name).add_submenu(log_submenu);
+
+    // help menu
+    let menu_help_discord =
+        CustomMenuItem::new("open_help_discord", "Community Support via Discord");
+    let menu_help_facebook =
+        CustomMenuItem::new("open_menu_facebook", "Community Support via Facebook");
+    let menu_help_learn = CustomMenuItem::new("open_help_learn", "Visit the Learning Center");
+    let menu_help_email = CustomMenuItem::new("open_help_email", "Email Support");
+    let help_submenu = Submenu::new(
+        "Help",
+        Menu::new()
+            .add_item(menu_help_email)
+            .add_item(menu_help_learn)
+            .add_item(menu_help_discord)
+            .add_item(menu_help_facebook),
+    );
+
+    let menu = tauri::Menu::os_default(&context.package_info().name)
+        .add_submenu(log_submenu)
+        .add_submenu(help_submenu);
 
     // build app + run
     tauri::Builder::default()
@@ -108,6 +127,12 @@ fn main() {
         .on_menu_event(move |event| match event.menu_item_id() {
             "open_log_path" => open::that_detached(&logging_path).unwrap(),
             "open_log_file" => open::that_detached(&log_file_path).unwrap(),
+            "open_help_email" => open::that_detached("mailto:info@piratemidi.com").unwrap(),
+            "open_help_learn" => open::that_detached("https://learn.piratemidi.com").unwrap(),
+            "open_help_discord" => open::that_detached("https://discord.gg/x722K7ksA6").unwrap(),
+            "open_menu_facebook" => {
+                open::that_detached("https://facebook.com/groups/pirate.midi.users").unwrap()
+            }
             _ => todo!("unimplemented menu item!"),
         })
         .manage(InstallState::default())
