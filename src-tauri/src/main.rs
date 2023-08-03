@@ -17,7 +17,7 @@ use log::info;
 use simplelog::{CombinedLogger, Config, SimpleLogger, WriteLogger};
 use state::InstallState;
 use std::{fs::File, path::PathBuf, time::Duration};
-use tauri::{api::path::app_log_dir, Manager};
+use tauri::{api::path::app_log_dir, CustomMenuItem, Manager, Menu, Submenu};
 
 // modules
 mod commands;
@@ -56,66 +56,77 @@ fn main() {
     launch_time.push_str(".txt");
 
     // setup the log file path
-    let log_file_path = match app_log_dir(context.config()) {
+    let logging_path = match app_log_dir(context.config()) {
         Some(path) => path,
         None => PathBuf::from("."),
-    }
-    .join(launch_time);
+    };
+    let log_file_path = logging_path.join(launch_time);
 
-    // setup the app
-    sentry_tauri::init(
-        sentry::release_name!(),
-        |_| {
-            // setup the terminal logger
-            let term_logger = SimpleLogger::new(log::LevelFilter::Info, Config::default());
+    // setup the sentry client
+    let client = sentry_tauri::sentry::init((
+        "https://c01c6e44f7ba49dab4908e3654de6dc5@o4504839482507264.ingest.sentry.io/4504839485652992",
+        sentry_tauri::sentry::ClientOptions{
+            release: sentry_tauri::sentry::release_name!(),
+            ..Default::default()
+        }
+    ));
 
-            // setup the local file logger
-            let comb_logger = match File::create(&log_file_path) {
-                Ok(writer) => {
-                    let file_logger =
-                        WriteLogger::new(log::LevelFilter::Trace, Config::default(), writer);
-                    CombinedLogger::new(vec![term_logger, file_logger])
-                }
-                Err(_) => CombinedLogger::new(vec![term_logger]),
-            };
+    // setup the terminal logger
+    let term_logger = SimpleLogger::new(log::LevelFilter::Info, Config::default());
 
-            // tie the local logger(s) to sentry
-            let logger = sentry_log::SentryLogger::with_dest(comb_logger);
-            log::set_max_level(log::LevelFilter::Trace);
-            log::set_boxed_logger(Box::new(logger)).unwrap();
+    // setup the local file logger
+    let comb_logger = match File::create(&log_file_path) {
+        Ok(writer) => {
+            let file_logger = WriteLogger::new(log::LevelFilter::Trace, Config::default(), writer);
+            CombinedLogger::new(vec![term_logger, file_logger])
+        }
+        Err(_) => CombinedLogger::new(vec![term_logger]),
+    };
 
-            // print where the log is going to get written
-            info!("log file location: {}", log_file_path.display());
+    // tie the local logger(s) to sentry
+    let logger = sentry_log::SentryLogger::with_dest(comb_logger);
+    log::set_max_level(log::LevelFilter::Trace);
+    log::set_boxed_logger(Box::new(logger)).unwrap();
 
-            // initialize the sentry instance
-            sentry::init(("https://c01c6e44f7ba49dab4908e3654de6dc5@o4504839482507264.ingest.sentry.io/4504839485652992", sentry::ClientOptions {
-                release: sentry::release_name!(),
-                ..Default::default()
-            }))
-        },
-        |sentry_plugin| {
-            tauri::Builder::default()
-                .menu(tauri::Menu::os_default(&context.package_info().name))
-                .manage(InstallState::default())
-                .setup(|app| {
-                    // listen for the 'ready' event - but we only need to hear it one time
-                    let handle = app.app_handle();
-                    app.app_handle().once_global("ready", move |_| {
-                        info!("ready event recieved");
-                        usb::setup_usb_listener(handle);
-                    });
+    // print where the log is going to get written
+    info!("log file location: {}", log_file_path.display());
 
-                    Ok(())
-                })
-                .plugin(sentry_plugin)
-                .invoke_handler(tauri::generate_handler![
-                    crate::commands::github::fetch_releases,
-                    crate::commands::install::local_binary,
-                    crate::commands::install::remote_binary,
-                    crate::commands::install::post_install,
-                ])
-                .run(context)
-                .expect("error while running tauri application");
-        },
+    let _guard = sentry_tauri::minidump::init(&client);
+
+    // menu
+    let menu_log_path = CustomMenuItem::new("open_log_path", "Open Log Directory");
+    let menu_log_file = CustomMenuItem::new("open_log_file", "Open Current Log");
+    let log_submenu = Submenu::new(
+        "Logs",
+        Menu::new().add_item(menu_log_path).add_item(menu_log_file),
     );
+    let menu = tauri::Menu::os_default(&context.package_info().name).add_submenu(log_submenu);
+
+    // build app + run
+    tauri::Builder::default()
+        .menu(menu)
+        .on_menu_event(move |event| match event.menu_item_id() {
+            "open_log_path" => open::that_detached(&logging_path).unwrap(),
+            "open_log_file" => open::that_detached(&log_file_path).unwrap(),
+            _ => todo!("unimplemented menu item!"),
+        })
+        .manage(InstallState::default())
+        .setup(|app| {
+            // listen for the 'ready' event - but we only need to hear it one time
+            let handle = app.app_handle();
+            app.app_handle().once_global("ready", move |_| {
+                info!("ready event recieved");
+                usb::setup_usb_listener(handle);
+            });
+            Ok(())
+        })
+        .plugin(sentry_tauri::plugin())
+        .invoke_handler(tauri::generate_handler![
+            crate::commands::github::fetch_releases,
+            crate::commands::install::local_binary,
+            crate::commands::install::remote_binary,
+            crate::commands::install::post_install,
+        ])
+        .run(context)
+        .expect("error while running tauri application");
 }
