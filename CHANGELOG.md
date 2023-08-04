@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.2.0...v1.2.1) (2023-08-03)
+
+
+### Bug Fixes
+
+* added diagnostic image detection for uloop and click ([95a99c4](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/95a99c4522d72c7bbe74d82871907782324dca39))
+
 ## [1.2.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.1.1...v1.2.0) (2023-08-03)
 
 
