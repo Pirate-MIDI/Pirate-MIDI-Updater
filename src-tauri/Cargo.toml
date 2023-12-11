@@ -24,7 +24,7 @@ rusb = { version = "0.9.1", features = ["vendored"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 usb_enumeration = { git = "https://github.com/beckler/usb_enumeration" }
 futures = "0.3.26"
-ts-rs = "6.2.1"
+ts-rs = "7.0.0"
 serialport = { git = "https://github.com/beckler/serialport-rs" }
 sysinfo = "0.29.4"
 fs_extra = "1.3.0"
