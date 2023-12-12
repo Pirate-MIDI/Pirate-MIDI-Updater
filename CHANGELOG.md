@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.2.1...v1.3.0) (2023-12-12)
+
+
+### Features
+
+* added upstream fix + support for bridge os 2.0 ([fa20ae3](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/fa20ae367154ac95c927d9eec960d4072252b0f1))
+
 ## [1.2.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.2.0...v1.2.1) (2023-08-03)
 
 
