@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.3.1...v1.4.0) (2024-01-13)
+
+
+### Features
+
+* support for bridgeOS 2.0 ([7c1588d](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/7c1588d51ffa1d2f6acee150b5e15ff55bea18a4))
+
 ## [1.3.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.3.0...v1.3.1) (2023-12-12)
 
 
