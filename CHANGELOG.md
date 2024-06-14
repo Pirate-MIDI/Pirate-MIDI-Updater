@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.4.0...v1.4.1) (2024-06-14)
+
+
+### Bug Fixes
+
+* additional DFU enhancements ([227f1fb](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/227f1fbcd207eb38d8dbf8c069cfa66d86c76a6e))
+* updated DFU process & fixed bug where warning would open when cancelling local file install ([241108a](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/241108af74c7f5b6dedf280b22b727191b97dfc4))
+
 ## [1.4.0](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.3.1...v1.4.0) (2024-01-13)
 
 
