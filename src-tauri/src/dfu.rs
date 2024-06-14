@@ -76,7 +76,13 @@ where
         Ok(_) => {
             if dfu_iface.will_detach() {
                 match dfu_iface.detach() {
-                    Ok(_) => Ok(()),
+                    Ok(_) => match dfu_iface.usb_reset() {
+                        Ok(_) => Ok(()),
+                        Err(err) => {
+                            error!("usb reset error: {}", err);
+                            Err(Error::Install(err.to_string()))
+                        }
+                    },
                     Err(err) => {
                         error!("dfu detach error: {}", err);
                         Err(Error::Install(err.to_string()))
