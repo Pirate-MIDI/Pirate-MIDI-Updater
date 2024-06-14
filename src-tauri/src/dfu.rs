@@ -1,6 +1,6 @@
 use crate::{
     error::{Error, Result},
-    USB_BRIDGE_PRODUCT_DFU_ID, USB_BRIDGE_VENDOR_ID,
+    DFUSE_DEFAULT_ADDRESS, USB_BRIDGE_PRODUCT_DFU_ID, USB_BRIDGE_VENDOR_ID,
 };
 use dfu_libusb::DfuLibusb;
 use fs_extra::file::{copy_with_progress, CopyOptions, TransitProcess};
@@ -55,31 +55,66 @@ where
     let file = std::fs::File::open(binary)
         .map_err(|e| Error::IO(format!("could not open firmware file: {}", e)))?;
 
-    // create + open the DFU interface
-    let mut dfu_iface = {
-        let context = rusb::Context::new()
-            .map_err(|e| Error::Install(format!("unable to create usb context: {}", e)))?;
-        // open the DFU interface
-        DfuLibusb::open(
-            &context,
-            USB_BRIDGE_VENDOR_ID,
-            USB_BRIDGE_PRODUCT_DFU_ID,
-            0,
-            0,
-        )
-        .map_err(|e| Error::Install(e.to_string()))?
-    };
+    // create our USB context
+    let context = rusb::Context::new()
+        .map_err(|e| Error::Install(format!("unable to create usb context: {}", e)))?;
+
+    // open the device
+    let (device, handle) = open_device(&context, USB_BRIDGE_VENDOR_ID, USB_BRIDGE_PRODUCT_DFU_ID)?;
+
+    // build the DFU interface
+    let mut dfu_iface = DfuLibusb::from_usb_device(device, handle, 0, 0)
+        .map_err(|e| Error::Install(e.to_string()))?;
 
     // setup our progress bar
-    dfu_iface.with_progress(progress_handler);
+    dfu_iface
+        .with_progress(progress_handler)
+        .override_address(DFUSE_DEFAULT_ADDRESS);
 
     // PERFORM THE INSTALL
     match dfu_iface.download_all(file) {
-        Ok(_) => Ok(()),
+        Ok(_) => {
+            if dfu_iface.will_detach() {
+                match dfu_iface.detach() {
+                    Ok(_) => Ok(()),
+                    Err(err) => {
+                        error!("dfu detach error: {}", err);
+                        Err(Error::Install(err.to_string()))
+                    }
+                }
+            } else {
+                Ok(())
+            }
+        }
         Err(dfu_libusb::Error::LibUsb(rusb::Error::Io)) => Ok(()),
         Err(err) => {
             error!("dfu download error: {}", err);
             Err(Error::Install(err.to_string()))
         }
     }
+}
+
+fn open_device<C: rusb::UsbContext>(
+    context: &C,
+    vid: u16,
+    pid: u16,
+) -> Result<(rusb::Device<C>, rusb::DeviceHandle<C>)> {
+    let devices = context
+        .devices()
+        .map_err(|e| Error::USB(format!("unable to enumerate usb devices: {}", e)))?;
+    for device in devices.iter() {
+        let device_desc = match device.device_descriptor() {
+            Ok(x) => x,
+            Err(_) => continue,
+        };
+
+        if device_desc.vendor_id() == vid && device_desc.product_id() == pid {
+            let handle = device
+                .open()
+                .map_err(|e| Error::USB(format!("unable to open usb device: {}", e)))?;
+            return Ok((device, handle));
+        }
+    }
+
+    Err(Error::USB(format!("unable to find usb device")))
 }

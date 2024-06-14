@@ -6,6 +6,8 @@ use thiserror::Error;
 pub enum Error {
     #[error("unable to retrieve file: {0:?}")]
     IO(String),
+    #[error("usb connection failed: {0:?}")]
+    USB(String),
     #[error("failed to make a request: {0:?}")]
     Http(String),
     #[error("other error: {0:?}")]

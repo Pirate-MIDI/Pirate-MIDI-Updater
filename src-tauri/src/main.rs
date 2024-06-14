@@ -37,6 +37,7 @@ const USB_DEFAULT_BAUD_RATE: u32 = 9600;
 const USB_POLL_INTERVAL: u32 = 1; // in seconds
 const USB_RPI_BOOTLOADER_BAUD_RATE: u32 = 1200;
 const USB_TIMEOUT: Duration = Duration::from_secs(1);
+const DFUSE_DEFAULT_ADDRESS: u32 = 0x08000000;
 // github
 const GITHUB_API_URL: &str = "https://api.github.com";
 const GITHUB_BRIDGE_REPO: &str = "Pirate-MIDI-BridgeOS";
