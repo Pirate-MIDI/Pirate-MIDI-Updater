@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.4.4...v1.4.5) (2024-06-18)
+
+
+### Miscellaneous Chores
+
+* release 1.4.5 ([a8f8552](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/commit/a8f85523378f0be3e4eea2cd793792ecddd2ed98))
+
 ## [1.4.4](https://github.com/Pirate-MIDI/Pirate-MIDI-Updater/compare/v1.4.3...v1.4.4) (2024-06-18)
 
 
