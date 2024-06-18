@@ -100,6 +100,7 @@ jobs:
           ENABLE_CODE_SIGNING: ${{ secrets.APPLE_CERTIFICATE }}
         with:
           releaseId: ${{ needs.release_please.outputs.release_id }}
+          args: --verbose
 
   create_update_json:
     name: "Create latest.json file"
